@@ -1,0 +1,527 @@
+<%- include("includes/head") %>
+<%- include("includes/navbar") %>
+<h1>My Wishlist</h1>
+
+<% if (!wishlist || wishlist.length === 0) { %>
+  <p class="no-item">No items in wishlist. <i class="fa-solid fa-heart" style="color: #f7020f;"></i></p>
+<% } else { %>
+  <div class="wishlist-grid">
+  <% wishlist.forEach(function(p)  { %>
+  <div class="wishlist-card">
+  <!-- Clickable Image -->
+  <a href="/show/<%= p._id %>">
+<img src="<%= p.imageUrls && p.imageUrls.length ? p.imageUrls[0] : '/images/placeholder.png' %>" 
+                     alt="<%= p.name %>">  </a>
+
+  <div class="product-info">
+    <!-- Product Name -->
+    <h3 class="product-name"><%= p.name %></h3>
+
+    <!-- Price Section -->
+    <div class="product-price">
+      <span class="sale-price">₹<%= p.salePrice %></span>
+              <span class="mrp">₹<%= p.mrp %></span>
+      <% if(p.mrp && p.mrp > p.salePrice){ 
+           let discount = Math.round(((p.mrp - p.salePrice) / p.mrp) * 100);
+      %>
+        <span class="discount">(<%= discount %>% OFF)</span>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="card-actions">
+    <button class="remove-btn" onclick="removeFromWishlist('<%= p._id %>')">Remove</button>
+    <button class="cart-btn" onclick="addToCartFromWishlist('<%= p._id %>')">Add to Cart</button>
+  </div>
+</div>
+<% }) %>
+  </div>
+  <% } %>
+
+
+
+<!-- //  Login/Signup Modal  -->
+    <div class="login-modal" id="loginModal">
+      <div class="modal-container">
+        <button class="close-btn" id="closeModal">×</button>
+        <div class="modal-left">
+          <h2 class="name">Shiv Shakti</h2>
+          <p class="name-subtitle">S&nbsp;U&nbsp;I&nbsp;T&nbsp;S</p>
+          <div class="offer-box">
+            <span>EXTRA 10% OFF on Prepaid</span>
+          </div>
+        </div>
+        <div class="modal-right">
+          <h3 class="login-heading">Login/Signup</h3>
+          <p class="login-subtext"> Please enter mobile number to continue</p>
+          <div class="input-container">
+            <div class="phone-input">
+              <span class="country-code">+91</span>
+              <input type="tel" placeholder="Enter Mobile Number" maxlength="10">
+            </div>
+            <div class="notification-option">
+              <input type="checkbox" id="notifyCheckbox" checked>
+              <label for="notifyCheckbox">Notify me for any updates & offers</label>
+            </div>
+            <button id="sendOtpBtn"  class="submit-button">Send OTP</button>
+            <p class="terms-text">I accept that I have read & understood Shiv Shakti's <a href="#">Privacy Policy</a> and <a href="#">T&C's</a></p>
+          </div>
+        </div>
+    <div id="otpStep" class="modal-verify" style="display:none;">
+      <h3 class="verify-heading">Enter the 6-digit OTP</h3>
+      <form id="otpForm" action="/verify-otp" method="POST">
+    <div class="otp-container">
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+    </div>
+
+    <!-- Hidden field that holds the joined OTP -->
+    <input type="hidden" name="otp" id="otpHidden">
+
+    <button type="submit" id="verifyOtpBtn" class="submit-button">Verify OTP</button>
+   </form>
+  <p class="terms-text">
+    I accept that I have read & understood Shiv Shakti's 
+    <a href="#">Privacy Policy</a> and <a href="#">T&C's</a>
+  </p>
+</div>
+
+    </div>
+    </div>
+
+<!-- Size Selection Popup -->
+<div id="sizePopup" class="popup-overlay" style="display: none;">
+  <div class="popup">
+    <button id="popupClose" class="popup-close">&times;</button>
+    <h5>Select Size</h5>
+    <div id="popupSizes" class="popup-sizes"></div>
+    <div class="popup-actions">
+      <button id="popupContinue" class="btn">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<style>
+/* Toast container */
+#toast-container {
+  position: fixed;
+  bottom: 30px; /* distance from bottom */
+  left: 50%;    /* center horizontally */
+  transform: translateX(-50%); /* center by shifting left */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;   /* spacing between multiple toasts if stacked */
+  z-index: 9999;
+}
+
+/* Toast */
+.toast {
+  min-width: 200px;
+  max-width: 90%; /* responsive on small screens */
+  padding: 12px 18px;
+  border-radius: 24px;
+  color: #fff;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+@media  (max-width: 480px) {
+  .toast {
+    font-size: 14px;
+    padding: 10px 14px;
+    max-width: 150px;
+  }
+}
+
+/* Show toast */
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Success toast */
+.toast.success {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+/* Error toast */
+.toast.error {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+</style>
+
+<style>
+.popup-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999;
+}
+
+.popup {
+  background: #fff;
+  border-radius: 16px;
+  padding: 25px 20px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+.popup-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.popup-sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.chip {
+  width: 50px;            /* fixed width for circle */
+  height: 50px;           /* fixed height for circle */
+  border-radius: 50%;     /* circular */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #c3c0c0;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  flex-shrink: 0;         /* prevent shrinking in horizontal row */
+}
+
+.popup-sizes .chip:hover {
+  transform: scale(1.1);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.chip.selected {
+ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+
+
+.btn {
+ margin-top: 15px;
+  padding: 10px 25px;
+  width: 100%;
+  font-weight: 700;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+}
+
+.btn:hover{
+   transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+
+
+@keyframes slideUp {
+  0% { transform: translateY(30px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+</style>
+
+
+<%- include("includes/footer") %>
+
+<style>
+
+.no-item {
+  text-align: center;
+  font-size: 48px;
+  color: #555;
+  margin-top: 50px;
+}
+.no-item i{
+  font-size: 48px;
+}
+ /* Wishlist Heading */
+h1 {
+  font-size: 32px;
+  color: #333;
+  margin-left: 220px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* Wishlist Grid Layout */
+.wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 30px;
+  max-width: 1150px;
+  margin: 0 auto 50px;
+  padding: 0 20px;
+}
+
+/* Wishlist Card */
+.wishlist-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.wishlist-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+}
+
+/* Product Image */
+.wishlist-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+/* Product Info */
+.product-info {
+  flex-grow: 1;
+  margin-top: 5px;
+}
+
+.product-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+  text-align: left;
+}
+
+/* Price Section */
+.product-price {
+  margin: 10px 0;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.product-price .sale-price {
+  color: #000;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.product-price .mrp {
+  color: #666;
+  text-decoration: line-through;
+  font-size: 15px;
+}
+
+.product-price .discount {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* Action Buttons */
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cart-btn,
+.remove-btn {
+  flex: 1;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+/* Add to Cart Button */
+.cart-btn {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)}
+.cart-btn:hover {
+background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%)}
+
+
+/* Remove Button */
+.remove-btn {
+background:#515254;
+}
+.remove-btn:hover {
+  background: #171717;
+}
+
+/* Tablets */
+@media (max-width: 992px) {
+  .wishlist-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 products per row */
+    gap: 20px;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 768px) {
+  h1{
+    margin-top: 40px;
+    margin-left: 22px;
+  }
+  .wishlist-grid {
+    grid-template-columns: 1fr; /* 1 product per row */
+    gap: 15px;
+  }
+
+
+  .wishlist-card img {
+    height: 220px; /* optional smaller image on mobile */
+  }
+
+  .product-name {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .product-price {
+    font-size: 14px;
+  }
+
+  .cart-btn,
+  .remove-btn {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}
+</style>
+<script>
+let selectedProductId = null;
+let selectedSize = null;
+
+// 🧠 Show size popup (just like product page)
+async function addToCartFromWishlist(id) {
+  try {
+    // ✅ Fetch product variants to show available sizes
+    const res = await fetch(`/api/products/${id}`);
+    const data = await res.json();
+
+    if (!data || !data.variants || data.variants.length === 0) {
+      // If no sizes, directly add to cart
+      await addToCartRequest(id, null);
+      return;
+    }
+
+    // Save selected product ID
+    selectedProductId = id;
+
+    // Clear and show popup
+    const popup = document.getElementById("sizePopup");
+    const sizeContainer = document.getElementById("popupSizes");
+    sizeContainer.innerHTML = "";
+
+    data.variants.forEach(v => {
+      if (v.stock > 0) {
+        const btn = document.createElement("button");
+        btn.className = "chip";
+        btn.textContent = v.size;
+        btn.dataset.size = v.size;
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("#popupSizes .chip").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          selectedSize = v.size;
+          document.getElementById("popupContinue").disabled = false;
+        });
+        sizeContainer.appendChild(btn);
+      }
+    });
+
+    popup.style.display = "flex";
+  } catch (err) {
+    console.error("Error loading product sizes:", err);
+    await addToCartRequest(id, null);
+  }
+}
+
+// ✅ When Continue button clicked
+document.getElementById("popupContinue").addEventListener("click", async () => {
+  if (!selectedProductId || !selectedSize) return;
+  await addToCartRequest(selectedProductId, selectedSize);
+  closePopup();
+});
+
+// ✅ Close popup button
+document.getElementById("popupClose").addEventListener("click", closePopup);
+
+function closePopup() {
+  document.getElementById("sizePopup").style.display = "none";
+  selectedProductId = null;
+  selectedSize = null;
+  document.getElementById("popupContinue").disabled = true;
+}
+
+// ✅ Add product to cart API
+async function addToCartRequest(id, size) {
+  try {
+    const res = await fetch(`/cart/add/${id}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ size, quantity: 1 })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      // Optionally remove from wishlist
+      await fetch(`/wishlist/remove/${id}`, { method: "POST" });
+      showToast("Added to cart");
+      location.reload();
+    } else {
+      showToast(data.message || "Failed to add to cart");
+    }
+  } catch (err) {
+    console.error("Error adding to cart:", err);
+  }
+}
+
+// ✅ Remove from wishlist (no change)
+async function removeFromWishlist(id) {
+  const res = await fetch(`/wishlist/remove/${id}`, { method: 'POST' });
+  const data = await res.json();
+ if (data.success) {
+  showToast("Removed from wishlist");
+  setTimeout(() => {
+    location.reload();
+  }, 500); // .5 seconds delay
+} else {
+    showToast(data.message || "Failed to remove from wishlist");
+  }
+}
+</script>

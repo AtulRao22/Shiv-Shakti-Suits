@@ -1,0 +1,614 @@
+<%- include("includes/head") %>
+<%- include("includes/navbar") %>
+
+
+<div class="checkout-container">
+    <div class="checkout-steps-container">
+
+        <div class="progress-bar">
+            <div class="step active" id="step-address">
+                <span class="step-icon">1</span>
+                Shipping Address
+            </div>
+            <div class="step" id="step-summary">
+                <span class="step-icon">2</span>
+                Order Summary
+            </div>
+            <div class="step" id="step-payment">
+                <span class="step-icon">3</span>
+                Payment
+            </div>
+        </div>
+
+        <div class="checkout-card active" id="shipping-card">
+            <div class="card-header">
+                <h2>Shipping Address</h2>
+            </div>
+            <hr class="card-divider">
+
+            <div id="address-selection-container">
+                <div class="card-content">
+                    <div class="address-details">
+                        <div class="saved-address-container">
+                            <div class="address-header">
+                                <h3>Saved Address</h3>
+                                <button class="edit-btn">Edit</button>
+                            </div>
+                            <p id="selected-address-text">Atul Rao, Sector 2, Malviya Nagar, Jaipur - 302017</p>
+                            <button id="continue-to-summary" class="continue-btn">Continue</button>
+                        </div>
+                    </div>
+                    <div class="address-list">
+                        <h4>Select a Saved Address</h4>
+                        <div class="address-item">
+                            <label>
+                                <input type="radio" name="shipping-address" value="Atul Rao" checked data-full-address="Atul Rao, Sector 2, Malviya Nagar, Jaipur - 302017">
+                                <div class="address-text">
+                                    <span class="address-name">Atul Rao</span>
+                                    <span class="address-details-text">Sector 2, Malviya Nagar, Jaipur - 302017</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="address-item">
+                            <label>
+                                <input type="radio" name="shipping-address" value="Rishi Kataria" data-full-address="Rishi Kataria, Drone hostel 7, room 16, Mnit Jaipur, JAIPUR, Rajasthan - 302017">
+                                <div class="address-text">
+                                    <span class="address-name">Rishi Kataria</span>
+                                    <span class="address-details-text">Drone hostel 7, room 16, Mnit Jaipur, JAIPUR, Rajasthan - 302017</span>
+                                </div>
+                            </label>
+                        </div>
+                        <button id="add-new-address-btn" class="add-new-address-btn">Add New Address</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="add-new-address-form" class="new-address-form-container" style="display: none;">
+                <div class="form-row">
+                    <input type="text" id="new-name" placeholder="Name" class="input-full">
+                </div>
+                <div class="form-row">
+                    <input type="text" id="new-phone" placeholder="10-digit mobile number" class="input-half">
+                    <input type="text" id="new-pincode" placeholder="Pincode" class="input-half">
+                </div>
+                <div class="form-row">
+                    <input type="text" id="new-address-line" placeholder="Address" class="input-full">
+                </div>
+                <div class="form-row">
+                    <input type="text" id="new-locality" placeholder="Locality/City" class="input-full">
+                </div>
+                <div class="form-row">
+                    <input type="text" id="new-district" placeholder="District" class="input-half">
+                    <input type="text" id="new-state" placeholder="State" class="input-half">
+                </div>
+                <div class="form-row">
+                    <input type="text" placeholder="Landmark (Optional)" class="input-half">
+                    <input type="text" placeholder="Alternate Phone (Optional)" class="input-half">
+                </div>
+                <div class="form-row">
+                    <button id="save-new-address" class="save-address-btn">SAVE AND DELIVER HERE</button>
+                    <button id="cancel-add-address" class="cancel-btn">CANCEL</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkout-card inactive" id="summary-card">
+  <div class="card-header">
+    <h2>Order Summary</h2>
+  </div>
+  <div class="card-content">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Qty</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% let total = 0; %>
+        <% cart.forEach(item => { 
+             let subtotal = item.salePrice * item.qty;
+             total += subtotal;
+        %>
+          <tr>
+            <td>
+              <img src="<%= item.image %>" alt="<%= item.name %>" width="50">
+              <%= item.name %>
+            </td>
+            <td><%= item.qty %></td>
+            <td>₹<%= subtotal %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <button id="continue-to-payment" class="continue-btn">Continue to Payment</button>
+  </div>
+</div>
+
+
+        <div class="checkout-card inactive" id="payment-card">
+  <div class="card-header">
+    <h2>Payment</h2>
+  </div>
+  <div class="card-content">
+    <form action="/checkout/place-order" method="POST">
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="paymentMethod" value="COD" checked>
+        <label class="form-check-label">Cash on Delivery</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="paymentMethod" value="Online">
+        <label class="form-check-label">Online Payment</label>
+      </div>
+      <button type="submit" class="continue-btn">Place Order</button>
+    </form>
+  </div>
+</div>
+
+
+    <div class="price-details-container">
+        <div class="price-details-card">
+            <h3>PRICE DETAILS</h3>
+            <hr>
+            <div class="price-item">
+                <p>Price (1 item)</p>
+                <p>₹15,999</p>
+            </div>
+            <div class="price-item">
+                <p>Shipping Fee</p>
+                <p>₹40</p>
+            </div>
+            <hr>
+            <div class="price-item total-amount">
+                <h4>Total Payable</h4>
+                <h4>₹16,039</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+body {
+    font-family: sans-serif;
+    background-color: #f1f3f6;
+    margin: 0;
+    padding: 20px;
+}
+
+.checkout-container {
+    display: flex;
+    max-width: 1200px;
+    margin: auto;
+    gap: 20px;
+}
+
+.checkout-steps-container {
+    flex: 3;
+}
+
+.checkout-card.active-step {
+    pointer-events: auto;
+    opacity: 1;
+}
+
+/* Progress Bar Styling */
+.progress-bar {
+    display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+    padding: 15px 30px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    position: relative;
+    font-weight: bold;
+}
+
+.progress-bar .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #878787;
+    flex: 1;
+}
+
+/* Base styles for the circle with number/icon */
+.step-icon {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    border: 1px solid #e0e0e0;
+}
+
+/* Styles for the "Address" step (completed) */
+.step.completed .step-icon {
+    background-color: #fff;
+    color: #2874f0;
+    border-color: #2874f0;
+    font-size: 1.2em;
+}
+
+/* Styles for the "Order Summary" step (active) */
+.step.active .step-icon {
+    background-color: #2874f0;
+    border-color: #2874f0;
+    color: #fff;
+}
+
+/* Styles for the "Payment" step (inactive) */
+.step.inactive .step-icon {
+    background-color: #fff;
+    border-color: #e0e0e0;
+    color: #878787;
+}
+
+/* The horizontal line between steps */
+.progress-bar .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: calc(50% + 15px);
+    width: calc(100% - 30px);
+    height: 2px;
+    background-color: #e0e0e0;
+    z-index: 1;
+}
+
+/* The solid blue line for completed steps */
+.progress-bar .step.completed:not(:last-child)::after {
+    background-color: #2874f0;
+}
+
+.step.active {
+    color: #212121;
+}
+
+/* card */
+.checkout-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.card-header h2 {
+    font-size: 1.25rem;
+    color: #212121;
+    margin: 0;
+}
+
+.card-divider {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 15px 0;
+}
+
+/* Inactive Card Styling */
+.checkout-card.inactive {
+    background-color: #f9f9f9;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* Shipping Address Card Specifics */
+.card-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.address-details {
+    flex: 2;
+    padding-right: 20px;
+    border-right: 1px dashed #e0e0e0;
+}
+
+.address-list {
+    flex: 1;
+}
+
+.saved-address-container {
+    background-color: #f7f9fd;
+    border: 1px solid #dcdfe6;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.address-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.edit-btn, .continue-btn, .add-new-address-btn {
+    background-color: #2874f0;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.edit-btn {
+    background-color: transparent;
+    color: #2874f0;
+    border: 1px solid #2874f0;
+}
+
+.address-list h4 {
+    margin: 0 0 10px 0;
+    color: #555;
+}
+
+/* Updated styling for the address list items */
+.address-item {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start; /* This aligns all items to the top */
+}
+
+.address-item label {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+}
+
+.address-item input[type="radio"] {
+    margin-right: 10px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+.address-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.address-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.address-details-text {
+    font-size: 0.9em;
+    color: #777;
+}
+
+/* All other CSS remains the same */
+.add-new-address-btn {
+    background-color: #fff;
+    color: #2874f0;
+    border: 1px dashed #2874f0;
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* Price Details Card Styling */
+.price-details-container {
+    flex: 1;
+}
+
+.price-details-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.price-details-card h3 {
+    font-size: 1rem;
+    color: #878787;
+    margin: 0 0 15px 0;
+}
+
+.price-details-card hr {
+    border: none;
+    border-top: 1px dashed #e0e0e0;
+    margin: 10px 0;
+}
+
+.price-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.price-item p {
+    margin: 0;
+    color: #555;
+}
+
+.total-amount {
+    margin-top: 20px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 15px;
+}
+
+.total-amount h4 {
+    margin: 0;
+}
+
+/* New Address Form Styling */
+.new-address-form-container {
+    background-color: #fff;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 20px;
+    padding-top: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.form-row .input-full,
+.form-row .input-half,
+.form-row select,
+.form-row textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.form-row .input-full,
+.form-row textarea {
+    width: 100%;
+}
+
+.form-row .input-half,
+.form-row select {
+    width: calc(50% - 5px);
+}
+
+.form-row textarea {
+    resize: vertical;
+}
+
+.save-address-btn {
+    background-color: #fb641b;
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.cancel-btn {
+    background-color: #fff;
+    color: #2874f0;
+    padding: 12px 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ---- SIMULATED BACKEND LOGIC ----
+    const hasSavedAddresses = true; // Set to 'false' to test the new user experience
+
+    // ---- DOM Elements ----
+    const addressSelectionContainer = document.getElementById('address-selection-container');
+    const addNewAddressForm = document.getElementById('add-new-address-form');
+    const addNewAddressBtn = document.getElementById('add-new-address-btn');
+    const saveNewAddressBtn = document.getElementById('save-new-address');
+    const cancelAddAddressBtn = document.getElementById('cancel-add-address');
+    const continueToSummaryBtn = document.getElementById('continue-to-summary');
+
+    // ---- Checkout Step Elements ----
+    const shippingCard = document.getElementById('shipping-card');
+    const summaryCard = document.getElementById('summary-card');
+    const stepAddress = document.getElementById('step-address');
+    const stepSummary = document.getElementById('step-summary');
+
+    // ---- Form Inputs for New Address ----
+    const newNameInput = document.getElementById('new-name');
+    const newPhoneInput = document.getElementById('new-phone');
+    const newPincodeInput = document.getElementById('new-pincode');
+    const newAddressLineInput = document.getElementById('new-address-line');
+    const newLocalityInput = document.getElementById('new-locality');
+    const newDistrictInput = document.getElementById('new-district');
+    const newStateInput = document.getElementById('new-state');
+
+    // ---- Function to Move to Next Step ----
+    function moveToOrderSummary() {
+        stepAddress.classList.remove('active');
+        stepAddress.classList.add('completed');
+        stepSummary.classList.add('active');
+        shippingCard.classList.remove('active');
+        shippingCard.classList.add('inactive');
+        summaryCard.classList.remove('inactive');
+        summaryCard.classList.add('active-step');
+    }
+
+    // ---- Initial Page Load Logic ----
+    if (hasSavedAddresses) {
+        addressSelectionContainer.style.display = 'block';
+        addNewAddressForm.style.display = 'none';
+    } else {
+        addressSelectionContainer.style.display = 'none';
+        addNewAddressForm.style.display = 'block';
+    }
+
+    // ---- Event Listeners ----
+    addNewAddressBtn.addEventListener('click', function() {
+        addressSelectionContainer.style.display = 'none';
+        addNewAddressForm.style.display = 'block';
+    });
+
+    cancelAddAddressBtn.addEventListener('click', function() {
+        // Reset to original state
+        if (hasSavedAddresses) {
+            addressSelectionContainer.style.display = 'block';
+            addNewAddressForm.style.display = 'none';
+        } else {
+            // New user, so the form remains visible
+            addNewAddressForm.style.display = 'block';
+        }
+    });
+
+    saveNewAddressBtn.addEventListener('click', function(event) {
+        event.preventDefault();
+
+        // In a real app, you'd send this data to the backend.
+        // For this demo, we'll simulate a successful save.
+        
+        // After saving, transition to the next step
+        moveToOrderSummary();
+    });
+
+    continueToSummaryBtn.addEventListener('click', function() {
+        moveToOrderSummary();
+    });
+
+    const paymentCard = document.getElementById('payment-card');
+const stepPayment = document.getElementById('step-payment');
+const continueToPaymentBtn = document.getElementById('continue-to-payment');
+
+function moveToPayment() {
+  stepSummary.classList.remove('active');
+  stepSummary.classList.add('completed');
+  stepPayment.classList.add('active');
+  summaryCard.classList.remove('active-step');
+  summaryCard.classList.add('inactive');
+  paymentCard.classList.remove('inactive');
+  paymentCard.classList.add('active-step');
+}
+
+continueToPaymentBtn.addEventListener('click', function() {
+  moveToPayment();
+});
+
+});
+</script>

@@ -1,0 +1,654 @@
+<%- include("includes/head") %>
+<%- include("includes/navbar") %>
+
+<h1>My Cart</h1>
+
+<% if (!cart || cart.length === 0) { %>
+  <p class="no-item">Cart is empty. <i class="fa-solid fa-cart-shopping"></i></p>
+<% } else { %>
+  <div class="cartPage">
+    <!-- Cart Items -->
+    <div class="cartItems">
+    <% let subtotal = 0; %>
+    <% let totalDiscount = 0; %> 
+    <% let totalAmount = 0; %>
+    <% let quantity = 0; %>
+    <% cart.forEach(item => { %>
+    <% const itemDiscountPerUnit = item.mrp - item.salePrice;
+    const itemMRPPrice = item.mrp * item.qty;
+    const itemSalePrice = item.salePrice * item.qty;
+    const itemTotalDiscount = itemDiscountPerUnit * item.qty;
+    subtotal += itemMRPPrice; // Total MRP
+    totalDiscount += itemTotalDiscount; // Total savings
+    totalAmount += itemSalePrice; // Total final price (Sum of all salePrices * qty)
+    quantity += item.qty; 
+    %> 
+
+        <div class="cartItem">
+          <a href="/show/<%= item._id %>">
+        <img src="<%= item.image && item.image !== '' ? item.image : '/images/placeholder.png' %>" alt="<%= item.name %>">
+          </a>
+          <div class="itemDetails">
+            <h3><%= item.name %></h3>
+      <div class="price">
+      <span class="sale-price">₹<%= item.salePrice %></span>
+         <% if(item.mrp && item.mrp > item.salePrice){ 
+           let discount = Math.round(((item.mrp - item.salePrice) / item.mrp) * 100);
+      %>
+        <span class="mrp">₹<%= item.mrp %></span>
+        <span class="discount">(<%= discount %>% OFF)</span>
+      <% } %>
+      </div>          
+            <p>Size: <%= item.size || '—' %></p>
+            <div class="qtyRow">
+              <button class="qtyBtn dec" data-id="<%= item._id %>" data-size="<%= item.size %>" >-</button>
+              <span><%= item.qty %></span>
+              <button class="qtyBtn inc" data-id="<%= item._id %>" data-size="<%= item.size %>">+</button>
+            </div>
+       
+            <div class="actionBtns">
+              <button class="editBtn"data-id="<%= item._id %>">Edit Size</button>
+              <button class="btnBuy" data-id="<%= item._id %>">Buy Now</button>
+            </div>
+          </div>
+          <button class="removeBtn" data-id="<%= item._id %>" data-size="<%= item.size %>">×</button>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="cartSummary">
+      <h3>Order Summary</h3>
+      <div class="summaryRow "><span>Subtotal (<%= quantity %> items)</span><span>₹<%= subtotal %></span></div>
+      <div class="summaryRow "><span>Discount</span><span class="Discount">- ₹<%= totalDiscount %></span></div>
+      <div class="summaryRow "><span>Shipping</span><span class="Shipping">Free</span></div>
+      <hr>
+      <div class="summaryRow total"><span>Total</span><span>₹<%= totalAmount %></span></div>
+      <button class=" btn btn-success checkoutBtn">Place Order</button>
+    </div>
+  </div>
+<% } %>
+
+
+    <!-- Login/Signup Modal  -->
+    <div class="login-modal" id="loginModal">
+      <div class="modal-container">
+        <button class="close-btn" id="closeModal">×</button>
+        <div class="modal-left">
+          <h2 class="name">Shiv Shakti</h2>
+          <p class="name-subtitle">S&nbsp;U&nbsp;I&nbsp;T&nbsp;S</p>
+          <div class="offer-box">
+            <span>EXTRA 10% OFF on Prepaid</span>
+          </div>
+        </div>
+        <div class="modal-right">
+          <h3 class="login-heading">Login/Signup</h3>
+          <p class="login-subtext"> Please enter mobile number to continue</p>
+          <div class="input-container">
+            <div class="phone-input">
+              <span class="country-code">+91</span>
+              <input type="tel" placeholder="Enter Mobile Number" maxlength="10">
+            </div>
+            <div class="notification-option">
+              <input type="checkbox" id="notifyCheckbox" checked>
+              <label for="notifyCheckbox">Notify me for any updates & offers</label>
+            </div>
+            <button id="sendOtpBtn"  class="submit-button">Send OTP</button>
+            <p class="terms-text">I accept that I have read & understood Shiv Shakti's <a href="#">Privacy Policy</a> and <a href="#">T&C's</a></p>
+          </div>
+        </div>
+    <div id="otpStep" class="modal-verify" style="display:none;">
+      <h3 class="verify-heading">Enter the 6-digit OTP</h3>
+      <form id="otpForm" action="/verify-otp" method="POST">
+    <div class="otp-container">
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+    </div>
+
+    <!-- Hidden field that holds the joined OTP -->
+    <input type="hidden" name="otp" id="otpHidden">
+
+    <button type="submit" id="verifyOtpBtn" class="submit-button">Verify OTP</button>
+   </form>
+  <p class="terms-text">
+    I accept that I have read & understood Shiv Shakti's 
+    <a href="#">Privacy Policy</a> and <a href="#">T&C's</a>
+  </p>
+</div>
+
+    </div>
+    </div>
+
+<%- include("includes/footer") %>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<style>
+/* Toast container */
+#toast-container {
+  position: fixed;
+  bottom: 30px; /* distance from bottom */
+  left: 50%;    /* center horizontally */
+  transform: translateX(-50%); /* center by shifting left */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;   /* spacing between multiple toasts if stacked */
+  z-index: 9999;
+}
+
+/* Toast */
+.toast {
+  min-width: 200px;
+  max-width: 90%; /* responsive on small screens */
+  padding: 12px 18px;
+  border-radius: 24px;
+  color: #fff;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+@media  (max-width: 480px) {
+  .toast {
+    font-size: 14px;
+    padding: 10px 14px;
+    max-width: 150px;
+  }
+}
+
+/* Show toast */
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Success toast */
+.toast.success {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+/* Error toast */
+.toast.error {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+</style>
+
+
+<style>
+.no-item {
+  text-align: center;
+  font-size: 48px;
+  color: #555;
+  margin-top: 50px;
+}
+.no-item i{
+  font-size: 48px;
+}
+h1{
+  margin-left: 120px;
+}
+.cartPage {
+  display: flex;
+  gap: 40px; /* more gap between items and summary */
+  padding: 20px;
+  margin-left: 100px;
+  flex-wrap: wrap;
+}
+
+/* Cart Items */
+.cartItems {
+  flex: 2;
+   /* fit within screen */
+  overflow-y: hidden;                 /* scrollable */
+  padding-right: 10px;   
+}
+
+.cartItem {
+  display: flex;
+  gap: 20px;
+  height: 250px;       /* fixed height */
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 20px;
+  position: relative;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.cartItem img {
+  width: 280px; 
+  height: 100%;  
+  object-fit: cover;    /* crop proportionally */
+  border-radius: 10px;
+}
+
+.itemDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Price styling */
+.price {
+  font-size: 18px;
+  font-weight: 500;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.price .mrp {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 14px;
+}
+
+.price .discount {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; 
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Quantity row */
+.qtyRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qtyBtn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #aaa;
+  background: #fff;
+  cursor: pointer;
+  border-radius: 50%; /* round buttons */
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.qtyBtn:hover {
+  background: #f5f5f5;
+}
+
+
+/* Action buttons */
+.actionBtns {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.editBtn,
+.btnBuy {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.editBtn {
+background:#515254;
+color: #fff;
+}
+
+.editBtn:hover{
+    background: #171717;
+}
+
+.btnBuy {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+.btnBuy:hover{
+background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%);
+
+}
+
+/* Remove button */
+.removeBtn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  position: absolute;
+  top: 1px;
+  right: 12px;
+  cursor: pointer;
+  color: #4c4c4c;
+}
+.removeBtn:hover{
+  color: #000;
+}
+
+/* Order Summary */
+.cartSummary {
+  flex: 1;
+  position: sticky;
+  top: 20px;                        /* keep some gap from top */
+  align-self: flex-start;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 20px;
+  background: #fafafa;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  height: fit-content;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  font-weight: 500;
+  color: #000;
+}
+
+.summaryRow.total {
+  font-weight: 600;
+  color: #000;
+  font-size: 18px;
+}
+
+.summaryRow span.Discount{
+  font-weight: 600;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.summaryRow span.Shipping{
+  color:green;
+}
+
+.checkoutBtn {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  margin-top: 16px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* 📱 Mobile Cart Styles */
+@media (max-width: 768px) {
+  h1{
+    margin-top: 40px;
+    margin-left: 22px;
+  }
+  .cartPage {
+    flex-direction: column;   /* stack items + summary */
+    padding: 12px;
+    gap: 15px;
+    margin-left: 10px;
+  }
+
+  .cartItems {
+    flex: 1 1 100%;
+    max-height: none;        /* no scroll */
+    overflow: visible;
+  }
+
+  .cartItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 10px;
+    height: 200px;
+    margin-bottom: 12px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .cartItem img {
+    width: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  .itemDetails {
+    flex: 1;
+  }
+
+  .itemDetails h3 {
+    font-size: 14px;
+    margin: 0 0 10px 0;
+  }
+
+  .price {
+    font-size: 14px;
+    font-weight: bold;
+    color: #000;
+  }
+
+  .mrp {
+    font-size: 11px;
+    text-decoration: line-through;
+    color: #888;
+  }
+
+  .discount {
+    font-size: 11px;
+  }
+
+  .qtyRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 6px 0;
+  }
+
+  .qtyBtn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .subtotal {
+    font-size: 12px;
+    color: #555;
+  }
+
+  .actionBtns {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .editBtn,
+  .btnBuy {
+    flex: 1;
+    padding: 6px 8px;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+
+
+  .removeBtn {
+    font-size: 28px;
+    position: absolute;
+    top: -5px;
+    right: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #4a4949;
+  }
+
+  .cartSummary {
+    position: static;    /* no sticky */
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    background: #fafafa;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .checkoutBtn {
+    width: 100%;
+    font-size: 18px;
+    padding: 10px;
+    border-radius: 6px;
+  }
+}
+
+
+
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    
+    // --- 1. Decrease Quantity (–) FIX ---
+    document.querySelectorAll(".qtyBtn.dec").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.id;
+        const size = btn.dataset.size; // <-- CRITICAL: Get size
+        
+        fetch(`/cart/update/${id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          // CRITICAL: Send size in the request body
+          body: JSON.stringify({ change: -1, size: size }) 
+        }).then(res => location.reload());
+        showToast("Qty decreased by 1" , "success");
+      });
+    });
+
+    // --- 2. Increase Quantity (+) FIX ---
+    document.querySelectorAll(".qtyBtn.inc").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.id;
+        const size = btn.dataset.size; // <-- CRITICAL: Get size
+        
+        fetch(`/cart/update/${id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          // CRITICAL: Send size in the request body
+          body: JSON.stringify({ change: 1, size: size })
+        }).then(res => location.reload());
+        showToast("Qty increased by 1" , "success");
+      });
+    });
+    
+
+    // --- 3. Remove Item (×) FIX ---
+    document.querySelectorAll(".removeBtn").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        
+        const productId = btn.dataset.id;
+        const size = btn.dataset.size; // <-- CRITICAL: Get size
+        
+        if (!productId || !size) {
+            alert("⚠️ Cannot remove item: Product ID or Size is missing!");
+            return;
+        }
+
+        try {
+          const res = await fetch(`/cart/remove/${productId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            // CRITICAL: Send size in the request body
+            body: JSON.stringify({ size: size }) 
+          });
+
+          const data = await res.json();
+
+          if (data.success) {
+            showToast("Removed from cart" , "success");
+            setTimeout(() => {
+            location.reload();
+            }, 500); // .5 seconds delay 
+          } 
+        } catch (err) {
+          console.error("Remove from cart error:", err);
+          showToast("Something went wrong during removal, please try again." , "error");
+        }
+      });
+    });
+
+    // --- Other Handlers (Keep as is) ---
+    document.querySelectorAll(".editBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.id;
+        alert("Edit product " + id + " (you can open a modal here)");
+      });
+    });
+
+    // Checkout All (entire cart)
+    document.querySelector(".checkoutBtn")?.addEventListener("click", async function() {
+        try {
+            const res = await fetch("/checkout/all", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            });
+            const data = await res.json();
+            if (data.success) {
+                window.location.href = data.redirect; 
+            } else {
+                alert(data.message || "Something went wrong!");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error in Checkout All.");
+        }
+    });
+
+    // Buy Now for a single cart item
+    document.querySelectorAll(".btnBuy").forEach(btn => {
+        btn.addEventListener("click", async function() {
+            const productId = this.getAttribute("data-id");
+            try {
+                const res = await fetch(`/buy/cart/${productId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = data.redirect; 
+                } else {
+                    alert(data.message || "Something went wrong!");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error in Buy Now from cart.");
+            }
+        });
+    });
+});
+
+</script>

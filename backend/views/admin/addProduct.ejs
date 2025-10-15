@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Product - Admin Dashboard</title>
+
+  <!-- Bootstrap + FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: #eef1f6;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 600;
+      padding: 15px 20px;
+    }
+    .form-section-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 1.8rem 0 1rem;
+      color: #495057;
+    }
+    .form-control {
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .btn {
+      border-radius: 10px;
+    }
+    .variant-group {
+      display: flex;
+      gap: .5rem;
+      margin-bottom: .6rem;
+    }
+    .btn-outline-primary {
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+    .remove-variant {
+      border-radius: 50%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5 mb-5">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Add New Product</h5>
+        <a href="/admin/products" class="btn btn-light btn-sm">
+          <i class="fa fa-arrow-left"></i> Back
+        </a>
+      </div>
+
+      <div class="card-body px-4 py-4 bg-white">
+        <form id="productForm" action="/api/products/add" method="POST" enctype="multipart/form-data">
+
+          <!-- BASIC INFO -->
+          <div class="form-section-title">Basic Information</div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Product Name</label>
+              <input type="text" name="name" class="form-control" required>
+            </div>
+
+            <div class="col-md-3 mb-3">
+              <label class="form-label">MRP (₹)</label>
+              <input type="number" name="mrp" class="form-control" min="0" required>
+            </div>
+
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Sale Price (₹)</label>
+              <input type="number" name="salePrice" class="form-control" min="0" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Category</label>
+              <input type="text" name="category" class="form-control" placeholder="e.g. Punjabi,Modern" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Tags (comma-separated)</label>
+              <input type="text" id="tagsInput" class="form-control" placeholder="e.g. Trending,Festival-Special">
+              <input type="hidden" name="tags" id="tagsJson">
+            </div>
+
+            <div class="col-12 mb-3">
+              <label class="form-label">Description</label>
+              <textarea name="description" rows="3" class="form-control" placeholder="Enter product details..."></textarea>
+            </div>
+          </div>
+
+          <!-- VARIANTS -->
+          <div class="form-section-title">Variants (Size + Stock)</div>
+          <div id="variantsContainer">
+            <div class="variant-group">
+              <input type="text" placeholder="Size (e.g. M)" class="form-control size">
+              <input type="number" placeholder="Stock (e.g. 10)" class="form-control stock">
+            </div>
+          </div>
+          <button type="button" class="btn btn-outline-primary btn-sm mb-3" id="addVariantBtn">
+            <i class="fa fa-plus"></i> Add Variant
+          </button>
+          <input type="hidden" name="variants" id="variantsJson">
+
+          <!-- DETAILS -->
+          <div class="form-section-title">Product Details</div>
+          <div class="row">
+            <div class="col-md-4 mb-3"><label>Top Type</label><input type="text" name="details[topType]" class="form-control"></div>
+            <div class="col-md-4 mb-3"><label>Neckline</label><input type="text" name="details[neckline]" class="form-control"></div>
+            <div class="col-md-4 mb-3"><label>Top Pattern</label><input type="text" name="details[topPattern]" class="form-control"></div>
+            <div class="col-md-4 mb-3"><label>Sleeve Type</label><input type="text" name="details[sleeveType]" class="form-control"></div>
+            <div class="col-md-4 mb-3"><label>Bottom Type</label><input type="text" name="details[bottomType]" class="form-control"></div>
+            <div class="col-md-4 mb-3"><label>Dupatta/Stole</label><input type="text" name="details[dupattaStole]" class="form-control"></div>
+            <div class="col-md-4 mb-3"><label>Fit</label><input type="text" name="details[fit]" class="form-control"></div>
+            <div class="col-md-4 mb-3"><label>Fabric</label><input type="text" name="details[fabric]" class="form-control"></div>
+          </div>
+
+          <!-- IMAGES -->
+          <div class="form-section-title">Product Images</div>
+          <div class="mb-3">
+            <label class="form-label">Upload up to 5 images</label>
+            <input type="file" id="imageInput" name="images" class="form-control" multiple accept="image/*">
+          </div>
+
+          <!-- SUBMIT -->
+          <div class="mt-4 text-end">
+            <button type="submit" class="btn btn-success px-4">
+              <i class="fa fa-save"></i> Save Product
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // -------------------------------
+  // ➕ Add Dynamic Variant Fields
+  // -------------------------------
+  const addVariantBtn = document.getElementById("addVariantBtn");
+  const variantsContainer = document.getElementById("variantsContainer");
+
+  addVariantBtn.addEventListener("click", () => {
+    const div = document.createElement("div");
+    div.classList.add("variant-group", "mb-2", "d-flex", "gap-2");
+
+    div.innerHTML = `
+      <input type="text" placeholder="Size (e.g. L)" class="form-control size" required>
+      <input type="number" placeholder="Stock (e.g. 5)" class="form-control stock" min="0" required>
+      <button type="button" class="btn btn-danger btn-sm remove-variant"><i class="fa fa-trash"></i></button>
+    `;
+
+    // Remove variant on clicking trash
+    div.querySelector(".remove-variant").addEventListener("click", () => div.remove());
+
+    variantsContainer.appendChild(div);
+  });
+
+  // -------------------------------
+  // 📝 Handle Product Form Submission
+  // -------------------------------
+  const productForm = document.getElementById("productForm");
+
+  productForm.addEventListener("submit", async (e) => {
+    e.preventDefault(); // prevent default form submission
+
+   const formData = new FormData();
+
+// ✅ Manually add all form fields
+const formElements = productForm.elements;
+for (let i = 0; i < formElements.length; i++) {
+  const el = formElements[i];
+  if (el.name && el.type !== "file") {
+    formData.append(el.name, el.value);
+  }
+}
+
+// ✅ Add all selected images manually
+const imageInput = document.getElementById("imageInput");
+Array.from(imageInput.files).forEach(file => {
+  formData.append("images", file);
+});
+
+
+    // -------------------------------
+    // 1️⃣ Collect Variants
+    // -------------------------------
+    const variants = Array.from(variantsContainer.querySelectorAll(".variant-group"))
+      .map(v => {
+        const size = v.querySelector(".size").value.trim();
+        const stock = parseInt(v.querySelector(".stock").value || 0);
+        return size ? { size, stock } : null;
+      })
+      .filter(Boolean); // remove nulls
+    formData.set("variants", JSON.stringify(variants));
+
+    // -------------------------------
+    // 2️⃣ Collect Tags
+    // -------------------------------
+    const tagsInput = document.getElementById("tagsInput").value;
+    const tags = tagsInput
+      .split(",")
+      .map(t => t.trim())
+      .filter(Boolean);
+    formData.set("tags", JSON.stringify(tags));
+
+    // -------------------------------
+    // 3️⃣ Collect Details (Optional)
+    // -------------------------------
+    const detailsInputs = document.querySelectorAll("#detailsContainer input, #detailsContainer select");
+    const details = {};
+    detailsInputs.forEach(input => {
+      if (input.name && input.value.trim()) details[input.name] = input.value.trim();
+    });
+    formData.set("details", JSON.stringify(details));
+
+    // -------------------------------
+    // 4️⃣ Send FormData to Server
+    // -------------------------------
+    try {
+      const response = await fetch("/api/products/add", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert("✅ Product added successfully!");
+        productForm.reset();
+        variantsContainer.innerHTML = ""; // clear dynamic variants
+      } else {
+        alert("❌ Error: " + (data.error || "Unknown error"));
+      }
+    } catch (err) {
+      console.error("Error adding product:", err);
+      alert("❌ Failed to add product. See console for details.");
+    }
+  });
+</script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

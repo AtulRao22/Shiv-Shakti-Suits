@@ -1,0 +1,252 @@
+<!-- Sliding Navbar -->
+<div class="slidingNavbar">
+  <div class="sliding-container">
+    <div class="sliding-message">
+      <i class="fa-solid fa-truck-fast"></i>
+      <span>Free Shipping within India</span>
+    </div>
+    <div class="sliding-message">
+      <i class="fa-solid fa-award"></i>
+      <span>Assured Quality Check</span>
+    </div>
+    <div class="sliding-message">
+      <i class="fa-solid fa-flag"></i>
+      <span>Made in India</span>
+    </div>
+    <div class="sliding-message">
+      <i class="fa-solid fa-fist-raised"></i>
+      <span>Women Empowerment</span>
+    </div>
+  </div>
+</div>
+<!-- Mobile Menu Dropdown -->
+    <div class="mobile-menu" id="mobileMenu">
+      <div class="menu-content">
+        <div class="menu-header">
+          <h3>Menu</h3>
+          <button class="close-menu">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+        <div class="menu-sections">
+          <div class="menu-section">
+            <h4>All Products</h4>
+            <ul>
+              <li><a href="/category/Punjabi">Punjabi Collection</a></li>
+              <li><a href="/category/Festival">Festival Collection</a></li>
+              <li><a href="/category/Wedding">Wedding Collection</a></li>
+              <li><a href="/category/Casual">Casual Wear</a></li>
+              <li><a href="/category/Formal">Formal Wear</a></li>
+              <li><a href="/category/Modern">Modern</a></li>
+              <li><a href="/category/Designer">Designer</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <h4>Featured</h4>
+            <ul>
+              <li><a href="/category/bestseller">Best Sellers</a></li>
+              <li><a href="/category/Newarrival">New Arrivals</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- Main Navbar -->
+<div class="mainNavbar">
+  <div class="left-section">
+    <div class="menu-button">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+    <div class="brand-section">
+      <a href="/" class="brand-name" style="text-decoration:none;color:inherit;">Shiv Shakti</a>
+      <p class="brand-subtitle">S&nbsp;U&nbsp;I&nbsp;T&nbsp;S</p>
+    </div>
+  </div>
+  <div class="search-section">
+    <div class="search-container">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input type="text" placeholder="Search for designer suits" class="search-input">
+    </div>
+  </div>
+  <div class="nav-icons">
+  <div class="nav-icon profile" id="profileIcon">
+  <i class="fa-solid fa-circle-user"></i>
+  
+  <!-- Hidden dropdown -->
+  <div class="profile-menu" id="profileMenu">
+    <ul>
+      <li><a href="#" id="ordersLink">My Orders</a></li>
+      <li><a href="#" id="accountLink">Account Details</a></li>
+      <li><a href="#" id="shippingLink">Shipping Address</a></li>
+      <% if (user && user.isAdmin) { %>
+  <!-- Admin only option -->
+  <li>
+    <a href="/admin/dashboard" class="dropdown-item fw-bold text-danger">
+      ⚡ Admin Dashboard
+    </a>
+  </li>
+<% } %>
+
+      <li><a href="#" id="logoutBtn">Logout</a></li>
+    </ul>
+   </div>
+   </div>
+
+   <div class="nav-icon cart">
+  <a href="/cart">
+    <i class="fa-solid fa-cart-shopping"></i>
+    <span id="cartCount" class="icon-count">0</span>
+  </a>
+</div>
+
+<div class="nav-icon wishlist">
+  <a href="/wishlist">
+    <i class="fa-regular fa-heart"></i>
+    <span id="wishlistCount" class="icon-count">0</span>
+  </a>
+</div>
+  </div>
+  </div>
+
+
+<div class="login-modal" id="loginModal">
+      <div class="modal-container">
+        <button class="close-btn" id="closeModal">×</button>
+        <div class="modal-left">
+          <h2 class="name">Shiv Shakti</h2>
+          <p class="name-subtitle">S&nbsp;U&nbsp;I&nbsp;T&nbsp;S</p>
+          <div class="offer-box">
+            <span>EXTRA 10% OFF on Prepaid</span>
+          </div>
+        </div>
+        <div class="modal-right">
+          <h3 class="login-heading">Login/Signup</h3>
+          <p class="login-subtext"> Please enter mobile number to continue</p>
+          <div class="input-container">
+            <div class="phone-input">
+              <span class="country-code">+91</span>
+              <input type="tel" placeholder="Enter Mobile Number" maxlength="10">
+            </div>
+            <div class="notification-option">
+              <input type="checkbox" id="notifyCheckbox" checked>
+              <label for="notifyCheckbox">Notify me for any updates & offers</label>
+            </div>
+            <button id="sendOtpBtn"  class="submit-button">Send OTP</button>
+            <p class="terms-text">I accept that I have read & understood Shiv Shakti's <a href="#">Privacy Policy</a> and <a href="#">T&C's</a></p>
+          </div>
+        </div>
+    <div id="otpStep" class="modal-verify" style="display:none;">
+      <h3 class="verify-heading">Enter the 6-digit OTP</h3>
+      <form id="otpForm" action="/verify-otp" method="POST">
+    <div class="otp-container">
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+    </div>
+
+    <!-- Hidden field that holds the joined OTP -->
+    <input type="hidden" name="otp" id="otpHidden">
+
+    <button type="submit" id="verifyOtpBtn" class="submit-button">Verify OTP</button>
+   </form>
+  <p class="terms-text">
+    I accept that I have read & understood Shiv Shakti's 
+    <a href="#">Privacy Policy</a> and <a href="#">T&C's</a>
+  </p>
+</div>
+
+    </div>
+    </div>
+
+    <!-- <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        #addProductForm { display: grid; gap: 10px; margin-bottom: 20px; border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+        #productList { display: grid; gap: 20px; }
+        .product-card { border: 1px solid #eee; padding: 15px; border-radius: 8px; }
+    </style>
+
+
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <h2>Add New Product</h2>
+        <form id="addProductForm">
+            <input type="text" id="name" placeholder="Product Name" required>
+            <input type="number" id="mrp" placeholder="MRP" required>
+            <input type="number" id="salePrice" placeholder="Sale Price" required>
+            <input type="text" id="category" placeholder="Category" required>
+            <textarea id="description" placeholder="Description"></textarea>
+            <button type="submit">Add Product</button>
+        </form>
+
+        <h2>All Products</h2>
+        <div id="productList">
+            </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api'; // Replace with your backend URL
+        const token = localStorage.getItem('token'); // Get the stored JWT
+
+        // Function to fetch and display all products
+        async function fetchProducts() {
+            try {
+                const response = await fetch(`${API_URL}/products`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const products = await response.json();
+                const productList = document.getElementById('productList');
+                productList.innerHTML = ''; // Clear previous products
+
+                products.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.innerHTML = `
+                        <h3>${product.name}</h3>
+                        <p>Price: ${product.salePrice}</p>
+                        <p>Category: ${product.category}</p>
+                    `;
+                    productList.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        }
+
+        // Function to handle adding a new product
+        document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const newProduct = {
+                name: document.getElementById('name').value,
+                mrp: document.getElementById('mrp').value,
+                salePrice: document.getElementById('salePrice').value,
+                category: document.getElementById('category').value,
+                description: document.getElementById('description').value,
+            };
+
+            try {
+                await fetch(`${API_URL}/products/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(newProduct)
+                });
+
+                alert('Product added successfully!');
+                document.getElementById('addProductForm').reset();
+                fetchProducts(); // Refresh the list
+            } catch (error) {
+                console.error('Error adding product:', error);
+                alert('Failed to add product.');
+            }
+        });
+
+        // Fetch products when the page loads
+        fetchProducts();
+    </script> -->

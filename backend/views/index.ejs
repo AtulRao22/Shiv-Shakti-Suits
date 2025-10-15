@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('includes/head') %>
+  </head>
+  <body>
+    <%- include('includes/navbar') %>
+
+    <!-- Mobile Menu Dropdown -->
+    <div class="mobile-menu" id="mobileMenu">
+      <div class="menu-content">
+        <div class="menu-header">
+          <h3>Menu</h3>
+          <button class="close-menu">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+        <div class="menu-sections">
+          <div class="menu-section">
+            <h4>All Products</h4>
+            <ul>
+              <li><a href="category/punjabi">Punjabi Collection</a></li>
+              <li><a href="category/festival">Festival Collection</a></li>
+              <li><a href="category/wedding">Wedding Collection</a></li>
+              <li><a href="category/casual">Casual Wear</a></li>
+              <li><a href="category/formal">Formal Wear</a></li>
+            </ul>
+          </div>
+          <div class="menu-section">
+            <h4>Featured</h4>
+            <ul>
+              <li><a href="/category/">New Arrivals</a></li>
+              <li><a href="category/bestseller">Best Sellers</a></li>
+              <li><a href="/category/newarrival">New Arrivals</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Tabs Section -->
+    <div class="category-tabs-container">
+      <div class="category-tabs">
+        <a href="/category/all" class="category-tab-link">
+          <div class="category-tab">
+            <div class="circle-img">
+              <img src="\assets\Bestseller.webp" alt="Best Seller">
+            </div>
+            <span>All Products</span>
+          </div>
+        </a>
+        <a href="/category/newarrival" class="category-tab-link">
+          <div class="category-tab">
+            <div class="circle-img">
+              <img src="/assets/NewArrival.webp" alt="New Arrival">
+            </div>
+            <span>New Arrival</span>
+          </div>
+        </a>
+        <a href="/category/festival" class="category-tab-link">
+          <div class="category-tab">
+            <div class="circle-img">
+              <img src="/assets/Formal.webp" alt="Festival">
+            </div>
+            <span>Festival</span>
+          </div>
+        </a>
+        <a href="/category/Wedding" class="category-tab-link">
+          <div class="category-tab">
+            <div class="circle-img">
+              <img src="/assets/Wedding.webp" alt="Wedding">
+            </div>
+            <span>Wedding</span>
+          </div>
+        </a>
+        <a href="/category/formal" class="category-tab-link">
+  <div class="category-tab">
+    <div class="circle-img"><img src="/assets/Formal.webp" alt="Formal"></div>
+    <span>Formal</span>
+  </div>
+</a>
+
+<a href="/category/casual" class="category-tab-link">
+  <div class="category-tab">
+    <div class="circle-img"><img src="/assets/casual.webp" alt="Casual"></div>
+    <span>Casual</span>
+  </div>
+</a>
+
+<a href="/category/punjabi" class="category-tab-link">
+  <div class="category-tab">
+    <div class="circle-img"><img src="/assets/Punjabi.webp" alt="Punjabi"></div>
+    <span>Punjabi</span>
+  </div>
+</a>
+
+<a href="/category/designer" class="category-tab-link">
+  <div class="category-tab">
+    <div class="circle-img"><img src="/assets/NewArrival.webp" alt="Designer"></div>
+    <span>Designer</span>
+  </div>
+</a>
+
+<a href="/category/modren" class="category-tab-link">
+  <div class="category-tab">
+    <div class="circle-img"><img src="/assets/Modren.webp" alt="Modren"></div>
+    <span>Modren</span>
+  </div>
+</a>
+
+      </div>
+    </div>
+
+    <!-- Photo Carousel Section -->
+    <div class="photo-carousel-container">
+      <div class="photo-carousel">
+        <div class="carousel-slide active" onclick="window.location.href='/bestseller'">
+          <img src="/assets/NewArrival.webp" alt="Fashion Collection 1">
+          <div class="slide-overlay">
+            <h3>Latest Fashion Collection</h3>
+            <p>Discover our exclusive designer wear</p>
+          </div>
+        </div>
+        <div class="carousel-slide" onclick="window.location.href='/newarrival'">
+          <img src="/assets/Modren.webp" alt="Fashion Collection 2">
+          <div class="slide-overlay">
+            <h2>New Arrivals</h2>
+            <p>Fresh styles for the modern woman</p>
+          </div>
+        </div>
+        <div class="carousel-slide" onclick="window.location.href='/festival'">
+          <img src="/assets/Bestseller.webp" alt="Fashion Collection 3">
+          <div class="slide-overlay">
+            <h2>Festival Collection</h2>
+            <p>Perfect for every celebration</p>
+          </div>
+        </div>
+        <div class="carousel-slide" onclick="window.location.href='/wedding'">
+          <img src="/assets/Formal.webp" alt="Fashion Collection 4">
+          <div class="slide-overlay">
+            <h2>Wedding Collection</h2>
+            <p>Embrace your special day</p>
+          </div>
+        </div>
+        <button class="carousel-btn prev-btn" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="carousel-btn next-btn" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        <div class="carousel-dots">
+          <span class="dot active" onclick="currentSlide(1)"></span>
+          <span class="dot" onclick="currentSlide(2)"></span>
+          <span class="dot" onclick="currentSlide(3)"></span>
+          <span class="dot" onclick="currentSlide(4)"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suits Info Section -->
+<div class="suits-info-container">
+  <div class="container py-3">
+    <h2>Elegant Suits for Every Occasion</h2>
+    <p>From timeless classics to contemporary cuts, our suits are tailored to enhance your style and comfort.</p>
+    <p>Explore premium fabrics, impeccable fits, and versatile designs perfect for weddings, work, and celebrations.</p>
+    <span>Explore premium fabrics, impeccable fits, and versatile designs perfect for weddings, work, and celebrations.</span>
+  </div>
+</div>
+
+
+<!--Suits Listing Section (Grouped by Tags, 4 per tag with "View More")-->
+ <div class="container py-0 position-relative features-container">
+  <% for (let tag in groupedProducts) { %>
+<div class="section-header d-flex align-items-center justify-content-between mb-3">
+  <h2 class="section-title"><%= tag %></h2>
+</div>
+    <div id="productsGrid-<%= tag.replace(/[^a-z]+/gi,'-') %>" class="row g-3">
+      <% groupedProducts[tag].forEach(function(p, idx){ %>
+        <div class="col-6 col-sm-6 col-md-4 col-lg-4 product-item <%= idx >= 6 ? 'd-none' : '' %>">
+          <a class="product-link" href="/show/<%= p._id %>">
+            <div class="product-card">
+  <div class="product-image">
+    <%
+  let isInWishlist = (wishlist || []).some(
+    w => w._id.toString() === p._id.toString()
+  );
+%>
+    <!-- Wishlist Icon -->
+<button class="wishlist-btn" data-id="<%= p._id %>">
+      <i class="<%= isInWishlist ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart' %>"></i>
+    </button>
+
+    <!-- Product Image -->
+    <img src="<%= p.imageUrls && p.imageUrls.length ? p.imageUrls[0] : '/images/placeholder.png' %>" 
+                     alt="<%= p.name %>">
+
+     <!-- Tags  -->
+    <div class="product-tags">
+      <span class="product-tag <%= tag.toLowerCase().replace(/[^a-z]+/g,'-') %>"><%= tag %></span>
+    </div>
+  </div>
+
+  <div class="product-info">
+    <!-- Product Name -->
+    <h3 class="product-name"><%= p.name %></h3>
+
+    <!-- Price Section (Sale, MRP, Discount in same line) -->
+    <div class="product-price">
+      <span class="sale-price">₹<%= p.salePrice %></span>
+      <% if(p.mrp && p.mrp > p.salePrice){ 
+           let discount = Math.round(((p.mrp - p.salePrice) / p.mrp) * 100);
+      %>
+        <span class="mrp">₹<%= p.mrp %></span>
+        <span class="discount">(<%= discount %>% OFF)</span>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+          </a>
+        </div>
+      <% }) %>
+    </div>
+
+    <% if(groupedProducts[tag].length > 4) { %>
+      <div class="text-center">
+        <a class="view-more-btn" data-tag="<%= tag.replace(/[^a-z]+/gi,'-') %>">View More</a>
+      </div>
+    <% } %>
+  <% } %>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+
+<script>
+ // Wishlist Button Functionality
+  (function () {
+  document.querySelectorAll(".wishlist-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+       e.preventDefault();    // stop <a href> navigation
+      e.stopPropagation();   // stop bubbling to parent <a>
+      const productId = btn.dataset.id;
+      try {
+        const res = await fetch(`/wishlist/toggle/${productId}`, { method: "POST" });
+        const data = await res.json();
+
+        if (data.success) {
+          const icon = btn.querySelector("i");
+          if (data.inWishlist) {
+            icon.classList.remove("fa-regular");
+            icon.classList.add("fa-solid", "text-danger"); // filled red
+            if (window.updateCounts) window.updateCounts(); // ✅ instant update
+          } else {
+            icon.classList.remove("fa-solid", "text-danger");
+            icon.classList.add("fa-regular"); // empty
+             if (window.updateCounts) window.updateCounts(); // ✅ instant update
+          }
+        }
+      } catch (err) {
+        console.error("Wishlist error:", err);
+      }
+    });
+  });
+})();
+  // "View More" button functionality
+  document.querySelectorAll('.view-more-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.tag;
+      document.querySelectorAll(`#productsGrid-${tag} .product-item.d-none`).forEach(el => {
+        el.classList.remove('d-none');
+      });
+      btn.style.display = 'none'; // hide button after click
+    });
+  });
+</script>
+
+    <!--Login/Signup Modal -->
+    <div class="login-modal" id="loginModal">
+      <div class="modal-container">
+        <button class="close-btn" id="closeModal">×</button>
+        <div class="modal-left">
+          <h2 class="name">Shiv Shakti</h2>
+          <p class="name-subtitle">F&nbsp;A&nbsp;S&nbsp;H&nbsp;I&nbsp;O&nbsp;N</p>
+          <div class="offer-box">
+            <span>EXTRA 10% OFF on Prepaid</span>
+          </div>
+        </div>
+        <div class="modal-right">
+          <h3 class="login-heading">Login/Signup</h3>
+          <p class="login-subtext"> Please enter mobile number to continue</p>
+          <div class="input-container">
+            <div class="phone-input">
+              <span class="country-code">+91</span>
+              <input type="tel" placeholder="Enter Mobile Number" maxlength="10">
+            </div>
+            <div class="notification-option">
+              <input type="checkbox" id="notifyCheckbox" checked>
+              <label for="notifyCheckbox">Notify me for any updates & offers</label>
+            </div>
+            <button id="sendOtpBtn"  class="submit-button">Send OTP</button>
+            <p class="terms-text">I accept that I have read & understood Shiv Shakti's <a href="#">Privacy Policy</a> and <a href="#">T&C's</a></p>
+          </div>
+        </div>
+    <div id="otpStep" class="modal-verify" style="display:none;">
+      <h3 class="verify-heading">Enter the 6-digit OTP</h3>
+      <form id="otpForm" action="/verify-otp" method="POST">
+    <div class="otp-container">
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+      <input type="text" name="otp[]" maxlength="1" required>
+    </div>
+
+    <!-- Hidden field that holds the joined OTP -->
+    <input type="hidden" name="otp" id="otpHidden">
+
+    <button type="submit" id="verifyOtpBtn" class="submit-button">Verify OTP</button>
+   </form>
+  <p class="terms-text">
+    I accept that I have read & understood Shiv Shakti's 
+    <a href="#">Privacy Policy</a> and <a href="#">T&C's</a>
+  </p>
+</div>
+
+    </div>
+    </div>
+    <script src="/js/main.js"></script>
+    <%- include('includes/footer') %>
+  </body>
+  </html>
+
