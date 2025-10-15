@@ -131,29 +131,28 @@ router.post("/remove/:id", async (req, res) => {
 });
 
 
-// Count route (GET /wishlist/count)
-router.get('/count', async (req, res) => {
+// Wishlist Count (works for both logged-in and guest users)
+router.get("/count", async (req, res) => {
   try {
-    let dbCount = 0;
+    let count = 0;
 
-    // 1️⃣ If user is logged in, get wishlist from DB
-    if (req.session?.user_id) {
-      const user = await User.findOne({ user_id: req.session.user_id }).populate('wishlist.product');
-      dbCount = Array.isArray(user?.wishlist) ? user.wishlist.length : 0;
+    // Logged-in user
+    if (req.session.user && req.session.user._id) {
+      const user = await User.findById(req.session.user._id).populate("wishlist.product");
+      count = Array.isArray(user?.wishlist) ? user.wishlist.length : 0;
+    } 
+    // Guest user
+    else {
+      count = Array.isArray(req.session.wishlist) ? req.session.wishlist.length : 0;
     }
 
-    // 2️⃣ If wishlist stored in session (guest user), read it
-    const sessionCount = Array.isArray(req.session?.wishlist) ? req.session.wishlist.length : 0;
-
-    // 3️⃣ Total count
-    const totalCount = dbCount + sessionCount;
-
-    return res.json({ count: totalCount });
+    return res.json({ count });
   } catch (err) {
-    console.error('Error in /wishlist/count:', err);
-    return res.status(500).json({ count: 0, error: 'server_error' });
+    console.error("Error in /wishlist/count:", err);
+    return res.status(500).json({ count: 0 });
   }
 });
+
 
 
 module.exports = router;

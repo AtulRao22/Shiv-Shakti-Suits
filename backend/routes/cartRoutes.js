@@ -190,24 +190,28 @@ router.get("/", async (req, res) => {
   res.render("cart", { cart: cartProducts });
 });
 
-// Count route (GET /cart/count)
-router.get('/count', async (req, res) => {
+// Cart Count Route
+router.get("/count", async (req, res) => {
   try {
-    let dbCount = 0;
-    if (req.session?.user_id) {
-      const user = await User.findOne({ user_id: req.session.user_id }).populate('cart.product');
-      dbCount = Array.isArray(user?.cart) ? user.cart.length : 0;
+    let count = 0;
+
+    // Logged-in user
+    if (req.session.user && req.session.user._id) {
+      const user = await User.findById(req.session.user._id).populate("cart.product");
+      count = Array.isArray(user?.cart) ? user.cart.length : 0;
+    } 
+    // Guest user
+    else {
+      count = Array.isArray(req.session.cart) ? req.session.cart.length : 0;
     }
 
-    const sessionCount = Array.isArray(req.session?.cart) ? req.session.cart.length : 0;
-    const totalCount = dbCount + sessionCount;
-
-    return res.json({ count: totalCount });
+    return res.json({ count });
   } catch (err) {
-    console.error('Error in /cart/count:', err);
+    console.error("Error in /cart/count:", err);
     return res.status(500).json({ count: 0 });
   }
 });
+
 
 
 
