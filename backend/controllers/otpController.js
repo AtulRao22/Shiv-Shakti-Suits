@@ -46,7 +46,7 @@ const verifyOtp = async (req, res) => {
     }
 
     // Optionally, mark a specific number as admin
-    const adminNumbers = ["6367087570"]; // List of admin numbers
+    const adminNumbers = process.env.adminNumbers; // List of admin numbers
     if (adminNumbers.includes(mobile)) {
       user.isAdmin = true;
       await user.save();
