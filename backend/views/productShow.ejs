@@ -1046,14 +1046,14 @@
 }
 
 
-@media (max-width: 480px) {
+@media (max-width: 430px) {
 
   /* single column layout */
   .layout {
     grid-template-columns: 1fr !important;
     gap: 12px !important;
-    margin-left: 12px !important;
-    margin-right: 12px !important;
+    margin-left: 6px !important;
+    margin-right: 6px !important;
   }
 
   /* hide desktop thumbnails */
@@ -1112,7 +1112,7 @@
 .ctaRow .btnPrimary,
 .ctaRow .btnBuy {
   flex: 1;              /* ✅ equal width */
-  max-width: 60px;         /* allow shrinking */
+  max-width: 40px;         /* allow shrinking */
   padding: 12px;
   text-align: center;   /* center text inside */
   box-sizing: border-box;
@@ -1167,12 +1167,92 @@
     font-weight: 600;
   }
   
+}
+@media (max-width: 360px) {
+
+  /* single column layout */
+  .layout {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    margin-left: 4px !important;
+    margin-right: 4px !important;
+  }
+
+  /* hide desktop thumbnails */
+  .thumbCol { display: none !important; }
+
+  /* compact main image area */
+  .mainImageBox {
+    height: 300px;
+    border-radius: 8px;
+    padding: 0;
+  }
+  .mainImageBox img { object-fit: cover; }
+
+  /* Mobile carousel */
+  .mobile-carousel { display: block; position: relative; width: 100%; height: 100%; overflow: hidden; }
+  .mobile-carousel .carousel-slide { display: none; width: 100%; height: 100%; }
+  .mobile-carousel .carousel-slide.active { display: block; }
+  .mobile-carousel .carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .carousel-dots {
+    bottom: 6px;
+    gap: 6px;
+  }
+  .carousel-dots .dot {
+    width: 6px;
+    height: 6px;
+  }
+  .carousel-dots .dot.active { background: #111; }
+
+  /* Product details */
+  .product-name-ps { font-size: 18px; margin: 10px 0 4px; }
+  .prices { margin: 4px 0 8px; }
+  .sectionTitle { margin-top: 10px; }
+
+  /* CTA buttons in single row */
+  .ctaRow {
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .ctaRow .btnPrimary,
+  .ctaRow .btnBuy {
+    flex: 1;
+    max-width: 35px;
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  /* Chips */
+  .chipRow { gap: 6px; }
+  .chip { padding: 6px 10px; font-size: 12px; }
+  .sizeGuide { font-size: 11px; }
+
+  /* Delivery box */
+  .deliveryBox { padding: 0 0 10px; }
+  .deliveryHeader { font-size: 13px; margin-top: 10px; }
+  .pinGroup { max-width: 100%; }
+
+  /* Badges */
+  .badges { grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+
+  /* Product details collapsible */
+  .prodBox .prodBody { display: none; }
+  .prodBox.active .prodBody { display: block; padding-top: 6px; }
+  .prodHeader::after { font-weight: 700; }
+  
+  /* Product card images */
+  .product-card .product-image { height: 150px; }
+  .product-card .product-image img { object-fit: cover; }
+
+  /* Smaller text */
+  .product-name, .product-price .sale-price { font-size: 0.95rem; }
+  .m-0 { font-size: 1.2rem; font-weight: 600; }
 
 }
 
 
-
-  </style>
+</style>
 
 <!-- JS Handlers -->
 <script>
