@@ -659,7 +659,7 @@ body {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 430px) {
   .category-tabs-container {
     overflow-x: auto;
     width: 100vw;
@@ -909,7 +909,7 @@ body {
 
 }
 
-@media (max-width: 480px) {
+@media (max-width: 430px) {
   .photo-carousel-container {
   width: 100vw;
   overflow-x: auto
