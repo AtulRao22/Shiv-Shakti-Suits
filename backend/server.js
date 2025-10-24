@@ -19,8 +19,7 @@ const wishlistRoutes = require("./routes/wishlistRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const checkoutRoutes = require("./routes/checkoutRoutes");
 const adminRoutes = require("./routes/adminRoutes");
-const cors = require("cors");
-app.use(cors({ origin: "*" })); // Later restrict to Netlify domain
+
 
 
 dotenv.config();
