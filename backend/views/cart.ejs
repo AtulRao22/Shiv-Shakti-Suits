@@ -453,9 +453,7 @@ background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%);
     color: #888;
   }
 
-  .discount {
-    font-size: 11px;
-  }
+  
 
   .qtyRow {
     display: flex;
@@ -523,6 +521,45 @@ background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%);
     padding: 10px;
     border-radius: 6px;
   }
+}
+
+@media(max-width: 390px) {
+  .actionBtns {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .editBtn,
+  .btnBuy {
+    flex: 1;
+    padding: 4px 6px;
+    font-size: 10px;
+    border-radius: 4px;
+  }
+
+  .itemDetails h3 {
+    font-size: 14px;
+    margin: 0 0 10px 0;
+  }
+
+  .price {
+    font-size: 14px;
+    font-weight: bold;
+    color: #000;
+  }
+
+  .mrp {
+    font-size: 10px;
+    text-decoration: line-through;
+    color: #888;
+  }
+
+  
+  
+
+
+
 }
 
 
