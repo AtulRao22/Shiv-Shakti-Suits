@@ -71,11 +71,11 @@
     <div class="detailsPanel">
       <div class="product-name-ps"><%= product.name %></div>
       <div class="prices">
-      <span class="sale-price-ps">₹<%= product.salePrice %></span>
+      <span class="sale-price-ps">₹<%= product.salePrice.toLocaleString('en-IN') %></span>
          <% if(product.mrp && product.mrp > product.salePrice){ 
            let discount = Math.round(((product.mrp - product.salePrice) / product.mrp) * 100);
       %>
-        <span class="mrp-ps">₹<%= product.mrp %></span>
+        <span class="mrp-ps">₹<%= product.mrp.toLocaleString('en-IN') %></span>
         <span class="discount-ps">(<%= discount %>% OFF)</span>
       <% } %>
       </div>
@@ -201,11 +201,11 @@
               <div class="product-info">
                 <h3 class="product-name"><%= rp.name %></h3>
                 <div class="product-price">
-                  <span class="sale-price">₹<%= rp.salePrice %></span>
+                  <span class="sale-price">₹<%= rp.salePrice.toLocaleString('en-IN') %></span>
                   <% if(rp.mrp && rp.mrp > rp.salePrice){ 
                        let discount = Math.round(((rp.mrp - rp.salePrice) / rp.mrp) * 100);
                   %>
-                    <span class="mrp">₹<%= rp.mrp %></span>
+                    <span class="mrp">₹<%= rp.mrp.toLocaleString('en-IN') %></span>
                     <span class="discount">(<%= discount %>% OFF)</span>
                   <% } %>
                 </div>
@@ -247,11 +247,11 @@
               <div class="product-info">
                 <h3 class="product-name"><%= sp.name %></h3>
                  <div class="product-price">
-      <span class="sale-price">₹<%= sp.salePrice %></span>
+      <span class="sale-price">₹<%= sp.salePrice.toLocaleString('en-IN') %></span>
          <% if(sp.mrp && sp.mrp > sp.salePrice){ 
            let discount = Math.round(((sp.mrp - sp.salePrice) / sp.mrp) * 100);
       %>
-        <span class="mrp">₹<%= sp.mrp %></span>
+        <span class="mrp">₹<%= sp.mrp.toLocaleString('en-IN') %></span>
         <span class="discount">(<%= discount %>% OFF)</span>
       <% } %>
       </div>
@@ -486,6 +486,7 @@ body {
   grid-template-columns: 60% 36%;
   gap: 60px;
   align-items: start;
+  margin-left: 100px;
 }
 
 /* ========== IMAGES ========== */
@@ -864,6 +865,12 @@ body {
   font-size: 1.1rem;
   margin: 0 0 6px 0;
   color: #111827;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;      /* show up to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
 }
 
 
@@ -964,6 +971,16 @@ body {
   .product-card .product-info {
     padding: 12px 14px;
   }
+  .product-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;      /* show up to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+
   
    .m-0{
     font-size: 1.4rem;
@@ -1033,6 +1050,15 @@ body {
   .product-card .product-info {
     padding: 12px 14px;
   }
+  .product-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;      /* show up to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
   
    .m-0{
     font-size: 1.4rem;
@@ -1098,7 +1124,15 @@ body {
   .product-card .product-info {
     padding: 12px 14px;
   }
-  
+  .product-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;      /* show up to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
    .m-0{
     font-size: 1.4rem;
     font-weight: 600;

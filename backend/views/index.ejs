@@ -202,11 +202,11 @@
 
     <!-- Price Section (Sale, MRP, Discount in same line) -->
     <div class="product-price">
-      <span class="sale-price">₹<%= p.salePrice %></span>
+      <span class="sale-price">₹<%= p.salePrice.toLocaleString('en-IN') %></span>
       <% if(p.mrp && p.mrp > p.salePrice){ 
            let discount = Math.round(((p.mrp - p.salePrice) / p.mrp) * 100);
       %>
-        <span class="mrp">₹<%= p.mrp %></span>
+        <span class="mrp">₹<%= p.mrp.toLocaleString('en-IN') %></span>
         <span class="discount">(<%= discount %>% OFF)</span>
       <% } %>
     </div>

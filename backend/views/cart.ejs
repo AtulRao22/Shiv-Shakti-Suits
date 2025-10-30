@@ -31,11 +31,11 @@
           <div class="itemDetails">
             <h3><%= item.name %></h3>
       <div class="price">
-      <span class="sale-price">₹<%= item.salePrice %></span>
+      <span class="sale-price">₹<%= item.salePrice.toLocaleString('en-IN') %></span>
          <% if(item.mrp && item.mrp > item.salePrice){ 
            let discount = Math.round(((item.mrp - item.salePrice) / item.mrp) * 100);
       %>
-        <span class="mrp">₹<%= item.mrp %></span>
+        <span class="mrp">₹<%= item.mrp.toLocaleString('en-IN') %></span>
         <span class="discount">(<%= discount %>% OFF)</span>
       <% } %>
       </div>          
@@ -59,11 +59,11 @@
     <!-- Order Summary -->
     <div class="cartSummary">
       <h3>Order Summary</h3>
-      <div class="summaryRow "><span>Subtotal (<%= quantity %> items)</span><span>₹<%= subtotal %></span></div>
-      <div class="summaryRow "><span>Discount</span><span class="Discount">- ₹<%= totalDiscount %></span></div>
+      <div class="summaryRow "><span>Subtotal (<%= quantity %> items)</span><span>₹<%= subtotal.toLocaleString('en-IN') %></span></div>
+      <div class="summaryRow "><span>Discount</span><span class="Discount">- ₹<%= totalDiscount.toLocaleString('en-IN') %></span></div>
       <div class="summaryRow "><span>Shipping</span><span class="Shipping">Free</span></div>
       <hr>
-      <div class="summaryRow total"><span>Total</span><span>₹<%= totalAmount %></span></div>
+      <div class="summaryRow total"><span>Total</span><span>₹<%= totalAmount.toLocaleString('en-IN') %></span></div>
       <button class=" btn btn-success checkoutBtn">Place Order</button>
     </div>
   </div>
@@ -239,6 +239,7 @@ h1{
   justify-content: space-between;
 }
 
+
 /* Price styling */
 .price {
   font-size: 18px;
@@ -370,7 +371,7 @@ background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%);
   font-size: 18px;
 }
 
-.summaryRow span.Discount{
+.summaryRow .Discount{
   font-weight: 600;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
@@ -439,6 +440,13 @@ background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%);
   .itemDetails h3 {
     font-size: 14px;
     margin: 0 0 10px 0;
+     white-space: nowrap;           /* keep in one line */
+  overflow: hidden;              /* hide overflowing text */
+  text-overflow: ellipsis;       /* show ... */
+  display: block;                /* ensure block-level */
+  max-width: 200px;               /* or a specific width, e.g. 240px */
+  font-weight: 600;
+  color: #111827;
   }
 
   .price {
@@ -447,10 +455,8 @@ background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%);
     color: #000;
   }
 
-  .mrp {
+  .discount {
     font-size: 11px;
-    text-decoration: line-through;
-    color: #888;
   }
 
   
@@ -521,6 +527,13 @@ background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%);
     padding: 10px;
     border-radius: 6px;
   }
+  .summaryRow .Discount{
+    font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 }
 
 @media(max-width: 390px) {
@@ -541,18 +554,29 @@ background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%);
   .itemDetails h3 {
     font-size: 14px;
     margin: 0 0 10px 0;
+    white-space: nowrap;           /* keep in one line */
+    overflow: hidden;              /* hide overflowing text */
+    text-overflow: ellipsis;       /* show ... */
+    display: block;                /* ensure block-level */
+    max-width: 150px;               /* or a specific width, e.g. 240px */
+    font-weight: 600;
+    color: #111827;
   }
 
   .price {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
     color: #000;
   }
 
-  .mrp {
-    font-size: 10px;
+  .price .mrp {
+    font-size: 12px;
     text-decoration: line-through;
     color: #888;
+  }
+
+  .price .discount {
+    font-size: 11px;
   }
 
 }
