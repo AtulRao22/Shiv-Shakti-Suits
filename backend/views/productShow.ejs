@@ -75,8 +75,8 @@
          <% if(product.mrp && product.mrp > product.salePrice){ 
            let discount = Math.round(((product.mrp - product.salePrice) / product.mrp) * 100);
       %>
-        <span class="mrp">₹<%= product.mrp %></span>
-        <span class="discount">(<%= discount %>% OFF)</span>
+        <span class="mrp-ps">₹<%= product.mrp %></span>
+        <span class="discount-ps">(<%= discount %>% OFF)</span>
       <% } %>
       </div>
       <div class="tax">Inclusive of all taxes</div>
@@ -456,34 +456,41 @@
 </style>
 
 <style>
-  .contentWrap {
+/* ========== BASE RESET ========== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  color: #111;
+  margin: 0;
+  background: #fff;
+}
+
+.contentWrap {
   margin: 0 auto;
   padding: 16px 12px;
+  max-width: 1200px;
 }
 
 .crumbs {
   font-size: 16px;
   color: #141313;
-  margin-left: 100px;
+  margin: 0 0 16px 100px;
 }
 
+/* ========== PRODUCT LAYOUT ========== */
 .layout {
   display: grid;
   grid-template-columns: 60% 36%;
   gap: 60px;
   align-items: start;
-  margin-left: 100px;
 }
 
-.detailsPanel {
-  padding: 0;
-  margin-top: 0;
-}
-
-/*
-  Product Image & Button
-*/
-
+/* ========== IMAGES ========== */
 .product-images {
   display: flex;
   gap: 30px;
@@ -494,22 +501,22 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 10px;
   width: 150px;
-  flex-shrink: 0;
+  margin-top: 10px;
 }
 
 .thumbCol img {
   width: 100%;
   height: 100px;
   object-fit: cover;
+  border: 2px solid transparent;
+  border-radius: 8px;
   cursor: pointer;
   transition: border 0.3s;
-  border: 2px solid transparent;
 }
 
-.thumbCol img:hover,
-.thumbCol img.active {
+.thumbCol img.active,
+.thumbCol img:hover {
   border-color: #73a9e2;
 }
 
@@ -530,69 +537,42 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  border-radius: 10px;
 }
 
-.icon {
- position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(255,255,255,0.9);
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  z-index: 10;
-}
-
- .wishlist-btn-ps {
+/* Buttons on image */
+.icon,
+.wishlist-btn-ps {
   position: absolute;
-  top: 60px;
   right: 12px;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255, 255, 255, 0.9);
   border: none;
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  cursor: pointer;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
   transition: all 0.3s ease;
   z-index: 10;
 }
+.icon { top: 12px; }
+.wishlist-btn-ps { top: 60px; }
 
-.icon:hover{
-  background: #f3f3f3;
-}
+.icon:hover,
 .wishlist-btn-ps:hover {
   background: #f3f3f3;
 }
 
-.wishlist-btn-ps i {
-  transition: color 0.3s ease;
-}
-
-.wishlist-btn-ps.active i,
-.wishlist-btn-ps .fa-solid.fa-heart.text-danger {
+.wishlist-btn-ps.active i {
   color: red;
-  font-weight: bold;
 }
 
-/*
-  Product Information & Buttons
-*/
-
+/* ========== PRODUCT INFO ========== */
 .product-name-ps {
   font-size: 22px;
   font-weight: 650;
-  margin-top: 0;
 }
 
 .prices {
@@ -603,23 +583,24 @@
 }
 
 .sale-price-ps {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 500;
   color: #111;
 }
 
-.mrp {
+.mrp-ps {
   text-decoration: line-through;
   color: #777;
+  font-size: 22px;
+  font-weight: 500;
 }
 
-.discount {
+.discount-ps {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent; 
+  -webkit-text-fill-color: transparent;
   font-weight: 700;
   font-size: 18px;
-  padding: 2px 6px;
 }
 
 .tax {
@@ -916,112 +897,60 @@
     font-weight: 700;
   }
 
-/* ----------------------------
-   Mobile-only layout adjustments
-   ---------------------------- */
+
+/* ========== RESPONSIVE STYLES ========== */
+
+/* Tablets */
 @media (max-width: 780px) {
-
-  /* single column layout */
   .layout {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-    margin-left: 12px !important;
-    margin-right: 12px !important;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 0 12px;
   }
 
-  /* hide desktop thumbnails */
   .thumbCol { display: none !important; }
 
-  /* compact main image area */
   .mainImageBox {
-    height: 360px;
+    height: 420px;
     border-radius: 10px;
-    padding: 0;
+    margin: 0 auto;
   }
-  .mainImageBox img { object-fit: cover; }
 
-  /* Mobile carousel styles (slides + dots) */
-  .mobile-carousel { display: block; position: relative; width: 100%; height: 100%; overflow: hidden; }
-  .mobile-carousel .carousel-slide { display: none; width: 100%; height: 100%; }
-  .mobile-carousel .carousel-slide.active { display: block; }
-  .mobile-carousel .carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-  .carousel-dots {
-    position: absolute;
-    bottom: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 8px;
-    z-index: 15;
+  .product-name-ps {
+    font-size: 20px;
+    margin: 12px 0 6px;
   }
-  .carousel-dots .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.7);
-    border: 1px solid rgba(0,0,0,0.12);
+
+   .pinGroup {
+    max-width: 100%;
   }
-  .carousel-dots .dot.active { background: #111; }
 
-  /* move wishlist button to top-right on mobile */
-  
+  .badges {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
 
-  /* Product details ordering / spacing on mobile */
-  .product-name-ps { font-size: 20px; margin: 12px 0 6px; }
-  .prices { margin: 6px 0 10px; }
-  .sectionTitle { margin-top: 12px; }
-
-  /* CTA buttons in single row, compact */
   .ctaRow {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
-  margin-top: 16px;
-  flex-wrap: nowrap;   /* keep them in one row */
-}
-
-.ctaRow .btnPrimary,
-.ctaRow .btnBuy {
-  flex: 1;              /* ✅ equal width */
-  max-width: 60px;         /* allow shrinking */
-  padding: 12px;
-  text-align: center;   /* center text inside */
-  box-sizing: border-box;
-  font-size: 14px;
-}
-
-  .ctaRow .btnPrimary { font-size: 14px; }
-  .ctaRow .btnBuy { font-size: 14px; }
-
-  .chipRow {
-    gap: 8px;
+    flex-wrap: wrap;
   }
+
+  .btnPrimary,
+  .btnBuy {
+    flex: 1;
+    min-width: 120px;
+    padding: 12px;
+    font-size: 14px;
+  }
+
   .chip {
     padding: 8px 12px;
     font-size: 14px;
   }
-  .sizeGuide { font-size: 12px; }
 
-  /* Delivery box */
-  .deliveryBox {
-    padding: 0 0 12px;
-    border-top: 1px solid #eee;
-  }
-  .deliveryHeader {
+  .prodDesc {
     font-size: 14px;
-    margin-top: 12px;
   }
-  .pinGroup { max-width: 100%; }
-
-  .badges {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 8px;
-  }
-
-  /* Product details collapsible on mobile */
+   /* Product details collapsible on mobile */
   .prodBox .prodBody { display: none; }
   .prodBox.active .prodBody { display: block; padding-top: 8px; }
   .prodHeader { cursor: pointer; display: flex;justify-content: space-between; align-items: center; }
@@ -1034,223 +963,149 @@
 
   /* smaller text for small screens */
   .product-name, .product-price .sale-price { font-size: 1.05rem; }
-   .row.g-3 {
-    display: flex;
-    justify-content: left;
-    width: 100%; /* This is the key. It centers the items inside. */
+  .product-card .product-info {
+    padding: 12px 14px;
   }
-  .m-0{
-    font-size: 1.4rem;
-    font-weight: 600;
-  }
-}
-
-
-@media (max-width: 430px) {
-
-  /* single column layout */
-  .layout {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-    margin-left: 12px !important;
-    margin-right: 12px !important;
-  }
-
-  /* hide desktop thumbnails */
-  .thumbCol { display: none !important; }
-
-  /* compact main image area */
-  .mainImageBox {
-    height: 360px;
-    border-radius: 10px;
-    padding: 0;
-  }
-  .mainImageBox img { object-fit: cover; }
-
-  /* Mobile carousel styles (slides + dots) */
-  .mobile-carousel { display: block; position: relative; width: 100%; height: 100%; overflow: hidden; }
-  .mobile-carousel .carousel-slide { display: none; width: 100%; height: 100%; }
-  .mobile-carousel .carousel-slide.active { display: block; }
-  .mobile-carousel .carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-  .carousel-dots {
-    position: absolute;
-    bottom: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 8px;
-    z-index: 15;
-  }
-  .carousel-dots .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.7);
-    border: 1px solid rgba(0,0,0,0.12);
-  }
-  .carousel-dots .dot.active { background: #111; }
-
-  /* move wishlist button to top-right on mobile */
-  
-
-  /* Product details ordering / spacing on mobile */
-  .product-name-ps { font-size: 20px; margin: 12px 0 6px; }
-  .prices { margin: 6px 0 10px; }
-  .sectionTitle { margin-top: 12px; }
-
-  /* CTA buttons in single row, compact */
-  .ctaRow {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
-  margin-top: 16px;
-  flex-wrap: nowrap;   /* keep them in one row */
-}
-
-.ctaRow .btnPrimary,
-.ctaRow .btnBuy {
-  flex: 1;              /* ✅ equal width */
-  max-width: 40px;         /* allow shrinking */
-  padding: 12px;
-  text-align: center;   /* center text inside */
-  box-sizing: border-box;
-  font-size: 14px;
-}
-
-  .ctaRow .btnPrimary { font-size: 14px; }
-  .ctaRow .btnBuy { font-size: 14px; }
-
-  .chipRow {
-    gap: 8px;
-  }
-  .chip {
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-  .sizeGuide { font-size: 12px; }
-
-  /* Delivery box */
-  .deliveryBox {
-    padding: 0 0 12px;
-    border-top: 1px solid #eee;
-  }
-  .deliveryHeader {
-    font-size: 14px;
-    margin-top: 12px;
-  }
-  .pinGroup { max-width: 100%; }
-
-  .badges {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 8px;
-  }
-
-  /* Product details collapsible on mobile */
-  .prodBox .prodBody { display: none; }
-  .prodBox.active .prodBody { display: block; padding-top: 8px; }
-  .prodHeader { cursor: pointer; display: flex;justify-content: space-between; align-items: center; }
-  .prodHeader::after { content: "+"; font-weight: 700; }
-  .prodBox.active .prodHeader::after { content: "-"; }
-
-  /* reduce card image height */
-  .product-card .product-image { height: 180px; }
-  .product-card .product-image img { object-fit: cover; }
-
-  /* smaller text for small screens */
-  .product-name, .product-price .sale-price { font-size: 1.05rem; }
   
    .m-0{
     font-size: 1.4rem;
     font-weight: 600;
   }
-  
 }
-@media (max-width: 360px) {
 
-  /* single column layout */
+
+/* Phones (≤430px) */
+@media (max-width: 430px) {
   .layout {
-    grid-template-columns: 1fr !important;
-    gap: 8px !important;
-    margin-left: 4px !important;
-    margin-right: 4px !important;
+    margin: 0 10px;
+    gap: 12px;
   }
-   
-  /* hide desktop thumbnails */
-  .thumbCol { display: none !important; }
 
-  /* compact main image area */
   .mainImageBox {
-    height: 300px;
-    border-radius: 8px;
-    padding: 0;
+    height: 380px;
+    border-radius: 10px;
+    object-fit: cover;
   }
-  .mainImageBox img { object-fit: cover; }
 
-  /* Mobile carousel */
-  .mobile-carousel { display: block; position: relative; width: 100%; height: 100%; overflow: hidden; }
-  .mobile-carousel .carousel-slide { display: none; width: 100%; height: 100%; }
-  .mobile-carousel .carousel-slide.active { display: block; }
-  .mobile-carousel .carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .product-name-ps { font-size: 19px; }
+  .sale-price-ps { font-size: 22px; }
 
-  .carousel-dots {
-    bottom: 6px;
-    gap: 6px;
+   .pinGroup {
+    max-width: 100%;
   }
-  .carousel-dots .dot {
-    width: 6px;
-    height: 6px;
+
+  .badges {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
-  .carousel-dots .dot.active { background: #111; }
 
-  /* Product details */
-  .product-name-ps { font-size: 18px; margin: 10px 12px 4px; }
-  .prices { margin: 4px 0 8px; }
-  .sectionTitle { margin-top: 10px; }
-
-  /* CTA buttons in single row */
   .ctaRow {
-    gap: 6px;
-    margin-top: 12px;
+    flex-wrap: wrap;
   }
-  .ctaRow .btnPrimary,
-  .ctaRow .btnBuy {
+
+  .btnPrimary,
+  .btnBuy {
     flex: 1;
-    max-width: 35px;
-    padding: 10px;
-    font-size: 12px;
+    min-width: 120px;
+    padding: 12px;
+    font-size: 14px;
   }
 
-  /* Chips */
-  .chipRow { gap: 6px; }
-  .chip { padding: 6px 10px; font-size: 12px; }
-  .sizeGuide { font-size: 11px; }
+  .chip {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
 
-  /* Delivery box */
-  .deliveryBox { padding: 0 0 10px; }
-  .deliveryHeader { font-size: 13px; margin-top: 10px; }
-  .pinGroup { max-width: 100%; }
-
-  /* Badges */
-  .badges { grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
-
-  /* Product details collapsible */
+  .prodDesc {
+    font-size: 14px;
+  }
+   /* Product details collapsible on mobile */
   .prodBox .prodBody { display: none; }
-  .prodBox.active .prodBody { display: block; padding-top: 6px; }
-  .prodHeader::after { font-weight: 700; }
-  
-  /* Product card images */
-  .product-card .product-image { height: 150px; }
+  .prodBox.active .prodBody { display: block; padding-top: 8px; }
+  .prodHeader { cursor: pointer; display: flex;justify-content: space-between; align-items: center; }
+  .prodHeader::after { content: "+"; font-weight: 700; }
+  .prodBox.active .prodHeader::after { content: "-"; }
+
+  /* reduce card image height */
+  .product-card .product-image { height: 180px; }
   .product-card .product-image img { object-fit: cover; }
 
-  /* Smaller text */
-  .product-name, .product-price .sale-price { font-size: 0.95rem; }
-  .m-0 { font-size: 1.2rem; font-weight: 600; }
-
+  /* smaller text for small screens */
+  .product-name, .product-price .sale-price { font-size: 1.05rem; }
+  .product-card .product-info {
+    padding: 12px 14px;
+  }
+  
+   .m-0{
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
 }
 
+/* Small Phones (≤390px) */
+@media (max-width: 390px) {
+  .layout {
+    margin: 0 8px;
+    gap: 10px;
+  }
+
+  .mainImageBox {
+    height: 350px;
+    margin: 0 auto;
+    width: calc(100% - 16px); /* ✅ proper left-right margin for image */
+  }
+
+ .pinGroup {
+    max-width: 100%;
+  }
+
+  .badges {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .ctaRow {
+    flex-wrap: wrap;
+  }
+
+  .btnPrimary,
+  .btnBuy {
+    flex: 1;
+    min-width: 120px;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .chip {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .prodDesc {
+    font-size: 14px;
+  }
+   /* Product details collapsible on mobile */
+  .prodBox .prodBody { display: none; }
+  .prodBox.active .prodBody { display: block; padding-top: 8px; }
+  .prodHeader { cursor: pointer; display: flex;justify-content: space-between; align-items: center; }
+  .prodHeader::after { content: "+"; font-weight: 700; }
+  .prodBox.active .prodHeader::after { content: "-"; }
+
+  /* reduce card image height */
+  .product-card .product-image { height: 180px; }
+  .product-card .product-image img { object-fit: cover; }
+
+  /* smaller text for small screens */
+  .product-name, .product-price .sale-price { font-size: 1.05rem; }
+  .product-card .product-info {
+    padding: 12px 14px;
+  }
+  
+   .m-0{
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+}
 
 </style>
 
