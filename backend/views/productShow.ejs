@@ -109,9 +109,19 @@
         <div class="deliveryHeader">DELIVERY</div>
         <div class="deliveryBody">
           <div class="pinGroup">
-            <input type="text" placeholder="Enter pincode" maxlength="6" pattern="\\d*" />
-            <button type="button">CHECK</button>
-          </div>
+       <input
+        type="text"
+        id="pincode"
+        placeholder="Enter pincode"
+        maxlength="6"
+        pattern="\d*"
+        />
+       <button type="button" id="checkPincode">CHECK</button>
+       </div>
+
+       <div id="loader" class="loader hidden"></div>
+      <p id="pinMessage" style="margin-top: 6px; font-weight: 500;"></p>
+
           <div class="badges">
             <div class="badge"><i class="fa-solid fa-truck-fast fa-xl"></i><span>Free Shipping</span></div>
             <div class="badge"><i class="fa-solid fa-rotate-left fa-xl"></i><span>7 Days Easy Return</span></div>
@@ -698,6 +708,7 @@ body {
   padding: 0 0 12px;
 }
 
+
 .pinGroup {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -724,6 +735,33 @@ body {
   cursor: pointer;
   border: none;
 }
+.pinGroup button:hover {
+   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+   color: #fff;
+   -webkit-text-fill-color:white;
+   
+  }
+
+/* Soft Loader */
+  .loader {
+    margin-top: 10px;
+    width: 22px;
+    height: 22px;
+    border: 3px solid #ddd;
+    border-top: 3px solid #111;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 
 .badges {
   display: grid;
@@ -1425,6 +1463,54 @@ document.getElementById("btnBuy").addEventListener("click", async function() {
     }
   })();
 </script>
+
+<script>
+  document.getElementById("checkPincode").addEventListener("click", async () => {
+    const pincode = document.getElementById("pincode").value.trim();
+    const pinMessage = document.getElementById("pinMessage");
+    const loader = document.getElementById("loader");
+
+    // Reset previous messages
+    pinMessage.textContent = "";
+    pinMessage.style.color = "black";
+
+    // Show loader
+    loader.classList.remove("hidden");
+
+    // Validate pincode
+    if (!pincode || pincode.length !== 6) {
+      loader.classList.add("hidden");
+      pinMessage.textContent = "⚠️ Please enter a valid 6-digit pincode.";
+      pinMessage.style.color = "red";
+      return;
+    }
+
+    try {
+      // Send request to backend
+      const res = await fetch("/api/pincode/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pincode }),
+      });
+
+      const data = await res.json();
+
+      // Hide loader after response
+      loader.classList.add("hidden");
+
+      // Show message
+      pinMessage.textContent = data.message;
+      pinMessage.style.color = data.success ? "green" : "red";
+
+    } catch (err) {
+      loader.classList.add("hidden");
+      pinMessage.textContent = "⚠️ Something went wrong. Please try again.";
+      pinMessage.style.color = "red";
+      console.error("Error:", err);
+    }
+  });
+</script>
+
 
 
 <script src="/js/main.js"></script>

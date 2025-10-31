@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const axios = require("axios");
 
 const connectDB = require("./config/db");
 
@@ -19,6 +20,7 @@ const wishlistRoutes = require("./routes/wishlistRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const checkoutRoutes = require("./routes/checkoutRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const pincodeRoutes = require("./routes/pincodeRoutes");
 
 
 
@@ -70,6 +72,7 @@ app.use("/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/", checkoutRoutes);
 app.use("/admin", adminRoutes);
+app.use("/api/pincode", pincodeRoutes);
 
 // Checkout page route
 app.get("/checkout", (req, res) => {
