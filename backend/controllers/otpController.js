@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const nodemailer = require("nodemailer");
-
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 let otpStore = {}; // Temporary storage (use Redis or DB in production)
 
 // Generate JWT token
