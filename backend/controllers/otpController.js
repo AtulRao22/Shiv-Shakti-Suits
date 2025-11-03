@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const SibApiV3Sdk = require("sib-api-v3-sdk");
+const nodemailer = require("nodemailer");
 let otpStore = {}; // Temporary storage (use Redis or DB in production)
 
 // Generate JWT token
@@ -8,14 +8,14 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
-// Configure Brevo client
-const brevoClient = SibApiV3Sdk.ApiClient.instance;
-brevoClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
-
-// Create email API instance
-const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
-
-
+ // Setup Gmail transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
+      },
+    });
 
 // Send OTP to email
 const sendOtp = async (req, res) => {
@@ -35,13 +35,13 @@ const sendOtp = async (req, res) => {
       delete otpStore[email];
       console.log(`🕒 OTP for ${email} expired and removed.`);
     }, 10 * 60 * 1000);
-
-     // Send via Brevo
-    await emailApi.sendTransacEmail({
-      sender: { name: "Shiv Shakti Suits", email: "002atulrao@gmail.com" },
-      to: [{ email }],
+  
+    // Send email
+    await transporter.sendMail({
+      from: `"Shiv Shakti Suits" <${process.env.GMAIL_USER}>`,
+      to: email,
       subject: "Your OTP for Login",
-      textContent: `Your login OTP is ${otp}. It will expire in 10 minutes.`,
+      text: `Your OTP is ${otp}. It expires in 10 minutes.`,
     });
 
     console.log(`✅ OTP sent to ${email}: ${otp}`);
