@@ -9,9 +9,12 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
-// server for sending otp
-const { Resend } = require("resend");
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Configure Brevo client
+const brevoClient = SibApiV3Sdk.ApiClient.instance;
+brevoClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
+
+// Create email API instance
+const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
 
 
@@ -34,12 +37,12 @@ const sendOtp = async (req, res) => {
       console.log(`🕒 OTP for ${email} expired and removed.`);
     }, 10 * 60 * 1000);
 
-    // Send OTP via email
-    await resend.emails.send({
-    from: "Shiv Shakti Suits <no-reply@resend.dev>", 
-    to: email,
-    subject: "Your OTP for Login",
-    text: `Your login OTP is ${otp}. It will expire in 10 minutes.`,
+     // Send via Brevo
+    await emailApi.sendTransacEmail({
+      sender: { name: "Shiv Shakti Suits", email: "002atulrao@gmail.com" },
+      to: [{ email }],
+      subject: "Your OTP for Login",
+      textContent: `Your login OTP is ${otp}. It will expire in 10 minutes.`,
     });
 
     console.log(`✅ OTP sent to ${email}: ${otp}`);
