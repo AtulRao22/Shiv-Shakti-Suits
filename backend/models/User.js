@@ -2,12 +2,13 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    mobile: {
-      type: String,
-      required: true,
-      unique: true,
-      match: [/^[6-9]\d{9}$/, "Invalid Indian mobile number"]
-    },
+    email: {
+  type: String,
+  required: true,
+  unique: true,
+  match: [/^\S+@\S+\.\S+$/, "Invalid email address"],
+},
+
     isAdmin: { type: Boolean, default: false },
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     cart: [{

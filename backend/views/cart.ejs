@@ -85,10 +85,15 @@
           <h3 class="login-heading">Login/Signup</h3>
           <p class="login-subtext"> Please enter mobile number to continue</p>
           <div class="input-container">
-            <div class="phone-input">
-              <span class="country-code">+91</span>
-              <input type="tel" placeholder="Enter Mobile Number" maxlength="10">
-            </div>
+         <div class="email-input">
+         <input
+          type="email"
+          placeholder="Enter your email address"
+          autocomplete="email"
+          required
+         />
+        </div>
+        </div>
             <div class="notification-option">
               <input type="checkbox" id="notifyCheckbox" checked>
               <label for="notifyCheckbox">Notify me for any updates & offers</label>
@@ -96,7 +101,7 @@
             <button id="sendOtpBtn"  class="submit-button">Send OTP</button>
             <p class="terms-text">I accept that I have read & understood Shiv Shakti's <a href="#">Privacy Policy</a> and <a href="#">T&C's</a></p>
           </div>
-        </div>
+
     <div id="otpStep" class="modal-verify" style="display:none;">
       <h3 class="verify-heading">Enter the 6-digit OTP</h3>
       <form id="otpForm" action="/verify-otp" method="POST">

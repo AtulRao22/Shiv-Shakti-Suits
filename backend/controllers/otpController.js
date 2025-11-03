@@ -1,40 +1,59 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const axios = require("axios");
+const nodemailer = require("nodemailer");
 
-let otpStore = {}; // temporary, use Redis or DB in production
+let otpStore = {}; // Temporary storage (use Redis or DB in production)
 
-//JwT token
+// Generate JWT token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "30d", // token valid for 30 days
-  });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
 
-// Send OTP
+// Email transporter (configure with your SMTP or Gmail)
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // true for 465, false for 587
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+
+
+// Send OTP to email
 const sendOtp = async (req, res) => {
   try {
-    const { mobile } = req.body;
+    const { email } = req.body;
 
-    if (!mobile) {
-      return res.status(400).json({ message: "Mobile number required" });
+    if (!email) {
+      return res.status(400).json({ message: "Email address is required" });
     }
 
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    otpStore[mobile] = otp;
+    otpStore[email] = otp;
 
-     const response = await axios.get(
-      `https://2factor.in/API/V1/${process.env.TWOFACTOR_API_KEY}/SMS/${mobile}/${otp}/OTP_SHIVSHAKTI`
-    );
+    // Automatically delete OTP after 10 minutes (600,000 ms)
+    setTimeout(() => {
+      delete otpStore[email];
+      console.log(`🕒 OTP for ${email} expired and removed.`);
+    }, 10 * 60 * 1000);
 
-    console.log("2Factor Response:", response.data);
-    console.log(`✅ OTP sent to ${mobile}: ${otp}`);
+    // Send OTP via email
+    await transporter.sendMail({
+      from: `"Shiv Shakti Suits" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your OTP for Login",
+      text: `Your login OTP is ${otp}. It will expire in 10 minutes.`,
+    });
 
-    res.json({ success: true, message: "OTP sent successfully" });
+    console.log(`✅ OTP sent to ${email}: ${otp}`);
+    res.json({ success: true, message: "OTP sent successfully to email" });
   } catch (error) {
-    console.error("2Factor Error:", error.response?.data || error.message);
+    console.error("Email send error:", error.message);
     res.status(500).json({ success: false, message: "Failed to send OTP" });
   }
 };
@@ -43,24 +62,24 @@ const sendOtp = async (req, res) => {
 // Verify OTP
 const verifyOtp = async (req, res) => {
   try {
-    const { mobile, otp } = req.body;
+    const { email, otp } = req.body;
 
-    if (otpStore[mobile] !== otp) {
+    if (!otpStore[email] || otpStore[email] !== otp) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    // Check if user exists, else create
-    let user = await User.findOne({ mobile });
+    // Check if user exists, else create new
+    let user = await User.findOne({ email });
     if (!user) {
       user = await User.create({
-        name: "User_" + mobile,
-        mobile,
+        name: email.split("@")[0], // default name before '@'
+        email,
       });
     }
 
-    // Optionally, mark specific numbers as admin
-    const adminNumbers = process.env.adminNumbers || ""; // comma-separated list in .env
-    if (adminNumbers.includes(mobile)) {
+    // Optionally, mark specific emails as admin
+    const adminEmails = (process.env.ADMIN_EMAILS || "").split(",");
+    if (adminEmails.includes(email)) {
       user.isAdmin = true;
       await user.save();
     }
@@ -68,7 +87,7 @@ const verifyOtp = async (req, res) => {
     // Set session and cookie
     req.session.user = {
       _id: user._id,
-      mobile: user.mobile,
+      email: user.email,
       isAdmin: user.isAdmin,
     };
 
@@ -79,16 +98,16 @@ const verifyOtp = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    // Clear OTP after verification
-    delete otpStore[mobile];
+    // Clear OTP
+    delete otpStore[email];
 
     res.json({
-      message: "OTP verified, login success",
+      message: "OTP verified, login successful",
       token,
       user: {
         _id: user._id,
         name: user.name || "Guest",
-        mobile: user.mobile,
+        email: user.email,
         isAdmin: user.isAdmin || false,
       },
     });
@@ -97,6 +116,5 @@ const verifyOtp = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 module.exports = { sendOtp, verifyOtp };

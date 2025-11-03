@@ -1,7 +1,8 @@
+require("dotenv").config();
+
 const express = require("express");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-const dotenv = require("dotenv");
 const morgan = require("morgan");
 const path = require("path");
 const cookieParser = require("cookie-parser");
@@ -24,7 +25,6 @@ const pincodeRoutes = require("./routes/pincodeRoutes");
 
 
 
-dotenv.config();
 connectDB();
 
 const app = express();
