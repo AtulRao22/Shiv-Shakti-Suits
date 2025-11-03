@@ -344,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginModal = document.getElementById('loginModal');
     const closeModal = document.getElementById('closeModal');
     const modalRight = document.querySelector('.modal-right');
-    const phoneInput = modalRight.querySelector('.phone-input input');
+    const emailInput = modalRight.querySelector('.email-input input');
     const sendOtpBtn = document.getElementById('sendOtpBtn');
     const otpStep = document.getElementById('otpStep');
     // const otpInput = document.getElementById('otp');
@@ -421,7 +421,7 @@ closeModal();
     }
 
     function resetForm() {
-        phoneInput.value = '';
+        emailInput.value = '';
         document.querySelectorAll('.otp-container input[name="otp[]"]').forEach(input => input.value = '');
         sendOtpBtn.disabled = false;
         sendOtpBtn.textContent = 'Send OTP';
@@ -433,18 +433,23 @@ closeModal();
 
     // OTP send & verify logic remains mostly same
     sendOtpBtn?.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const mobile = phoneInput.value.trim();
-        if (mobile.length !== 10) return alert('Please enter a valid 10-digit mobile number');
+    e.preventDefault();
 
-        sendOtpBtn.textContent = 'Sending...';
-        sendOtpBtn.disabled = true;
+    const email = emailInput.value.trim(); // get email input value
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // basic email validation regex
+
+    if (!emailRegex.test(email)) {
+    return alert('Please enter a valid email address');
+    }
+
+    sendOtpBtn.textContent = 'Sending...';
+    sendOtpBtn.disabled = true;
 
         try {
             const res = await fetch('/api/users/send-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mobile })
+                body: JSON.stringify({ email })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || 'Error sending OTP');
@@ -460,47 +465,60 @@ closeModal();
     });
 
     verifyOtpBtn?.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const mobile = phoneInput.value.trim();
-        // collect all 6 inputs
-      const otpInputs = document.querySelectorAll('.otp-container input[name="otp[]"]');
-      let otp = '';
-      otpInputs.forEach(input => otp += input.value.trim());
+  e.preventDefault();
 
-        // validate
-      if (otp.length !== 6) return alert('Enter a valid 6-digit OTP');
+  const email = emailInput.value.trim();
 
-        verifyOtpBtn.textContent = 'Verifying...';
-        verifyOtpBtn.disabled = true;
+  // Collect all 6 OTP inputs
+  const otpInputs = document.querySelectorAll('.otp-container input[name="otp[]"]');
+  let otp = '';
+  otpInputs.forEach(input => otp += input.value.trim());
 
-        try {
-            const res = await fetch('/api/users/verify-otp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mobile, otp })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || 'OTP verification failed');
+  // Validate
+  if (otp.length !== 6) {
+    alert('Please enter a valid 6-digit OTP');
+    return;
+  }
 
-            // Save user & token
-            localStorage.setItem('authToken', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
+  verifyOtpBtn.textContent = 'Verifying...';
+  verifyOtpBtn.disabled = true;
 
-
-            // Close modal (don't redirect)
-            closeModalFunc();
-            alert('Login successful!');
-
-            updateProfileMenu(data.user);
-
-
-            // From now on, clicking profile icon goes to profile page
-        } catch (err) {
-            alert(err.message);
-            verifyOtpBtn.disabled = false;
-            verifyOtpBtn.textContent = 'Verify OTP';
-        }
+  try {
+    const res = await fetch('/api/users/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp })
     });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || 'OTP verification failed');
+
+    //  Save login details
+    localStorage.setItem('authToken', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+
+    //  Close modal (optional)
+    if (typeof closeModalFunc === 'function') {
+      closeModalFunc();
+    }
+
+    alert('Login successful!');
+    updateProfileMenu(data.user);
+
+    //  Reload after short delay (for smooth UX)
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+
+  } catch (err) {
+    alert(err.message || 'Verification failed. Please try again.');
+    //  Go back to email login step
+    verifyOtpBtn.disabled = false;
+    verifyOtpBtn.textContent = 'Verify OTP';
+  }
+});
+
 
     document.querySelectorAll('.otp-container input[name="otp[]"]').forEach((input, index, inputs) => {
   input.addEventListener("input", () => {
