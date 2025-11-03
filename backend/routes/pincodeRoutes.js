@@ -50,7 +50,7 @@ router.post("/check", async (req, res) => {
     } else {
       return res.json({
         success: false,
-        message: `❌ Sorry, delivery not available in  ${District}, ${State}.`,
+        message: `❌ Sorry, delivery not available in ${Area}  ${District}, ${State}.`,
         area: Area,
         district: District,
         state: State,
