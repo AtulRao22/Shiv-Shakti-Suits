@@ -9,17 +9,9 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
-
-// Email transporter (configure with your SMTP or Gmail)
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true, // true for 465, false for 587
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// server for sending otp
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 
 
@@ -43,11 +35,11 @@ const sendOtp = async (req, res) => {
     }, 10 * 60 * 1000);
 
     // Send OTP via email
-    await transporter.sendMail({
-      from: `"Shiv Shakti Suits" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Your OTP for Login",
-      text: `Your login OTP is ${otp}. It will expire in 10 minutes.`,
+    await resend.emails.send({
+    from: "Shiv Shakti Suits <no-reply@resend.dev>", 
+    to: email,
+    subject: "Your OTP for Login",
+    text: `Your login OTP is ${otp}. It will expire in 10 minutes.`,
     });
 
     console.log(`✅ OTP sent to ${email}: ${otp}`);
