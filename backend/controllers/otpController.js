@@ -10,11 +10,16 @@ const generateToken = (id) => {
 
  // Setup Gmail transporter
     const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS,
+       host: process.env.SMTP_HOST,
+       port: process.env.SMTP_PORT,
+       secure: false, // TLS not SSL
+       auth: {
+       user: process.env.SMTP_USER,
+       pass: process.env.SMTP_PASS,
       },
+       tls: {
+      rejectUnauthorized: false, // helps on some Railway servers
+     },
     });
 
 // Send OTP to email
@@ -38,7 +43,7 @@ const sendOtp = async (req, res) => {
   
     // Send email
     await transporter.sendMail({
-      from: `"Shiv Shakti Suits" <${process.env.GMAIL_USER}>`,
+      from: `"Shiv Shakti Suits" <22atulrao@gmail.com>`,
       to: email,
       subject: "Your OTP for Login",
       text: `Your OTP is ${otp}. It expires in 10 minutes.`,
