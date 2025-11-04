@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const nodemailer = require("nodemailer");
+
 let otpStore = {}; // Temporary storage (use Redis or DB in production)
 
 // Generate JWT token
@@ -8,19 +8,6 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
- // Setup Gmail transporter
-    const transporter = nodemailer.createTransport({
-       host: process.env.SMTP_HOST,
-       port: process.env.SMTP_PORT,
-       secure: false, // TLS not SSL
-       auth: {
-       user: process.env.SMTP_USER,
-       pass: process.env.SMTP_PASS,
-      },
-       tls: {
-      rejectUnauthorized: false, // helps on some Railway servers
-     },
-    });
 
 // Send OTP to email
 const sendOtp = async (req, res) => {
@@ -41,20 +28,21 @@ const sendOtp = async (req, res) => {
       console.log(`🕒 OTP for ${email} expired and removed.`);
     }, 10 * 60 * 1000);
   
-    // Send email
-    await transporter.sendMail({
-      from: `"Shiv Shakti Suits" <22atulrao@gmail.com>`,
-      to: email,
-      subject: "Your OTP for Login",
-      text: `Your OTP is ${otp}. It expires in 10 minutes.`,
-    });
 
     console.log(`✅ OTP sent to ${email}: ${otp}`);
     res.json({ success: true, message: "OTP sent successfully to email" });
   } catch (error) {
-    console.error("Email send error:", error.message);
-    res.status(500).json({ success: false, message: "Failed to send OTP" });
+  console.error("Email send error:");
+  if (error.response?.body) {
+    console.error(error.response.body);
+  } else if (error.response?.text) {
+    console.error(error.response.text);
+  } else {
+    console.error(error);
   }
+  res.status(500).json({ success: false, message: "Failed to send OTP" });
+}
+
 };
 
 
