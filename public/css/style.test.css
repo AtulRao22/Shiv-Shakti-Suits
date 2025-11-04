@@ -1135,7 +1135,7 @@ body {
 }
 .product-name {
   display: -webkit-box;
-  -webkit-line-clamp: 2;      /* show up to 2 lines */
+  -webkit-line-clamp: 1;      /* show up to 1 line */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
