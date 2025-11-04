@@ -38,7 +38,15 @@ router.get("/category/:name", async (req, res) => {
       categoryName === "all" ? {} : { category: categoryName }
     );
 
-    res.render("category", { categoryName, products, wishlist: req.session.wishlist || [] });
+    // Count products
+    const productCount = products.length;
+
+    res.render("category", {
+      categoryName,
+      products,
+      productCount,
+      wishlist: req.session.wishlist || []
+    });
   } catch (err) {
     console.error("Error loading category:", err);
     res.status(500).send("Server Error");
