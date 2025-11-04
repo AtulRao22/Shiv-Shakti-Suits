@@ -1,3 +1,9 @@
+html{
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+
 .slidingNavbar {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   height: 40px;
@@ -1137,7 +1143,6 @@ body {
 }
 
 
-
 .section-header {
   display: flex !important;
   justify-content: space-between !important;
@@ -1275,7 +1280,7 @@ body {
   font-weight: 700;
   color: #111827;
   margin: 2px 0 6px 0;
-  font-size: 1.05rem;
+  font-size: 0.9rem;
 }
 
 .product-price .sale-price {
@@ -1289,11 +1294,15 @@ body {
   font-weight: 500;
 }
 
+.product-price .sale-price,
+.product-price .mrp{
+  white-space: nowrap;
+}
+
 .product-price  .discount{
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent; 
-
 }
 
 /* Login/Signup Modal - Fresh Design */
