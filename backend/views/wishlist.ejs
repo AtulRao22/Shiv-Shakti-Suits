@@ -41,64 +41,6 @@
 
 
 
-<!-- //  Login/Signup Modal  -->
-    <div class="login-modal" id="loginModal">
-      <div class="modal-container">
-        <button class="close-btn" id="closeModal">×</button>
-        <div class="modal-left">
-          <h2 class="name">Shiv Shakti</h2>
-          <p class="name-subtitle">S&nbsp;U&nbsp;I&nbsp;T&nbsp;S</p>
-          <div class="offer-box">
-            <span>EXTRA 10% OFF on Prepaid</span>
-          </div>
-        </div>
-        <div class="modal-right">
-          <h3 class="login-heading">Login/Signup</h3>
-          <p class="login-subtext"> Please enter mobile number to continue</p>
-          <div class="input-container">
-         <div class="email-input">
-         <input
-          type="email"
-          placeholder="Enter your email address"
-          autocomplete="email"
-          required
-         />
-        </div>
-        </div>
-            <div class="notification-option">
-              <input type="checkbox" id="notifyCheckbox" checked>
-              <label for="notifyCheckbox">Notify me for any updates & offers</label>
-            </div>
-            <button id="sendOtpBtn"  class="submit-button">Send OTP</button>
-            <p class="terms-text">I accept that I have read & understood Shiv Shakti's <a href="#">Privacy Policy</a> and <a href="#">T&C's</a></p>
-          </div>
-        
-    <div id="otpStep" class="modal-verify" style="display:none;">
-      <h3 class="verify-heading">Enter the 6-digit OTP</h3>
-      <form id="otpForm" action="/verify-otp" method="POST">
-    <div class="otp-container">
-      <input type="text" name="otp[]" maxlength="1" required>
-      <input type="text" name="otp[]" maxlength="1" required>
-      <input type="text" name="otp[]" maxlength="1" required>
-      <input type="text" name="otp[]" maxlength="1" required>
-      <input type="text" name="otp[]" maxlength="1" required>
-      <input type="text" name="otp[]" maxlength="1" required>
-    </div>
-
-    <!-- Hidden field that holds the joined OTP -->
-    <input type="hidden" name="otp" id="otpHidden">
-
-    <button type="submit" id="verifyOtpBtn" class="submit-button">Verify OTP</button>
-   </form>
-  <p class="terms-text">
-    I accept that I have read & understood Shiv Shakti's 
-    <a href="#">Privacy Policy</a> and <a href="#">T&C's</a>
-  </p>
-</div>
-
-    </div>
-    </div>
-
 <!-- Size Selection Popup -->
 <div id="sizePopup" class="popup-overlay" style="display: none;">
   <div class="popup">
@@ -309,8 +251,8 @@ h1 {
 /* Product Image */
 .wishlist-card img {
   width: 100%;
-  height: 200px;
-  object-fit: contain;
+  height: 220px;
+   object-fit: cover;  /* show full image inside box */
   cursor: pointer;
 }
 
@@ -407,10 +349,6 @@ background:#515254;
     gap: 15px;
   }
 
-
-  .wishlist-card img {
-    height: 220px; /* optional smaller image on mobile */
-  }
 
   .product-name {
     font-size: 20px;

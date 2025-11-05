@@ -39,7 +39,7 @@
         <span class="discount">(<%= discount %>% OFF)</span>
       <% } %>
       </div>          
-            <p>Size: <%= item.size || '—' %></p>
+            <p class="size">Size: <%= item.size || '—' %></p>
             <div class="qtyRow">
               <button class="qtyBtn dec" data-id="<%= item._id %>" data-size="<%= item.size %>" >-</button>
               <span><%= item.qty %></span>
@@ -69,64 +69,6 @@
   </div>
 <% } %>
 
-
-    <!-- Login/Signup Modal  -->
-    <div class="login-modal" id="loginModal">
-      <div class="modal-container">
-        <button class="close-btn" id="closeModal">×</button>
-        <div class="modal-left">
-          <h2 class="name">Shiv Shakti</h2>
-          <p class="name-subtitle">S&nbsp;U&nbsp;I&nbsp;T&nbsp;S</p>
-          <div class="offer-box">
-            <span>EXTRA 10% OFF on Prepaid</span>
-          </div>
-        </div>
-        <div class="modal-right">
-          <h3 class="login-heading">Login/Signup</h3>
-          <p class="login-subtext"> Please enter mobile number to continue</p>
-          <div class="input-container">
-         <div class="email-input">
-         <input
-          type="email"
-          placeholder="Enter your email address"
-          autocomplete="email"
-          required
-         />
-        </div>
-        </div>
-            <div class="notification-option">
-              <input type="checkbox" id="notifyCheckbox" checked>
-              <label for="notifyCheckbox">Notify me for any updates & offers</label>
-            </div>
-            <button id="sendOtpBtn"  class="submit-button">Send OTP</button>
-            <p class="terms-text">I accept that I have read & understood Shiv Shakti's <a href="#">Privacy Policy</a> and <a href="#">T&C's</a></p>
-          </div>
-
-    <div id="otpStep" class="modal-verify" style="display:none;">
-      <h3 class="verify-heading">Enter the 6-digit OTP</h3>
-      <form id="otpForm" action="/verify-otp" method="POST">
-    <div class="otp-container">
-      <input type="text" name="otp[]" maxlength="1" required>
-      <input type="text" name="otp[]" maxlength="1" required>
-      <input type="text" name="otp[]" maxlength="1" required>
-      <input type="text" name="otp[]" maxlength="1" required>
-      <input type="text" name="otp[]" maxlength="1" required>
-      <input type="text" name="otp[]" maxlength="1" required>
-    </div>
-
-    <!-- Hidden field that holds the joined OTP -->
-    <input type="hidden" name="otp" id="otpHidden">
-
-    <button type="submit" id="verifyOtpBtn" class="submit-button">Verify OTP</button>
-   </form>
-  <p class="terms-text">
-    I accept that I have read & understood Shiv Shakti's 
-    <a href="#">Privacy Policy</a> and <a href="#">T&C's</a>
-  </p>
-</div>
-
-    </div>
-    </div>
 
 <%- include("includes/footer") %>
 
@@ -443,34 +385,63 @@ background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%);
   }
 
   .itemDetails h3 {
-    font-size: 14px;
-    margin: 0 0 10px 0;
-     white-space: nowrap;           /* keep in one line */
-  overflow: hidden;              /* hide overflowing text */
-  text-overflow: ellipsis;       /* show ... */
-  display: block;                /* ensure block-level */
-  max-width: 200px;               /* or a specific width, e.g. 240px */
-  font-weight: 600;
-  color: #111827;
+    font-size: 1rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    white-space: nowrap;           /* keep in one line */
+    overflow: hidden;              /* hide overflowing text */
+    text-overflow: ellipsis;       /* show ... */
+    display: block;                /* ensure block-level */
+    max-width: 180px;               /* or a specific width, e.g. 240px */
+    font-weight: 600;
+    color: #111827;
   }
+
 
   .price {
-    font-size: 14px;
-    font-weight: bold;
-    color: #000;
-  }
+  font-weight: 600;
+  color: #111827;
+  margin: 2px 0 6px 0;
+  font-size: 1rem;
+  display: inline-block;
+ }
 
-  .discount {
-    font-size: 11px;
-  }
+ .price .sale-price,
+ .price .mrp {
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: baseline;
+ }
 
+ .price .sale-price {
+  color: #111827;
+  margin-right: 8px;
+ }
+
+.price .mrp {
+  color: #9ca3af;
+  text-decoration: line-through;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.price .discount {
+  display: block;          /* force it below */
+  font-size: 1rem;
+  white-space: nowrap;
+}
+    
+.size{
+  margin-top: 0;
+  margin-bottom: 5px;
+  }
   
-
   .qtyRow {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin: 6px 0;
+    margin-top: 0;
+    margin-bottom: 5px;
   }
 
   .qtyBtn {
@@ -494,14 +465,14 @@ background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%);
   .actionBtns {
     display: flex;
     gap: 10px;
-    margin-top: 6px;
+    margin-top: 8px;
   }
 
   .editBtn,
   .btnBuy {
     flex: 1;
     padding: 6px 8px;
-    font-size: 14px;
+    font-size: 12px;
     border-radius: 4px;
   }
 
@@ -545,20 +516,21 @@ background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%);
   .actionBtns {
     display: flex;
     gap: 6px;
-    margin-top: 6px;
+    margin-top: 8px;
   }
 
   .editBtn,
   .btnBuy {
     flex: 1;
-    padding: 4px 6px;
-    font-size: 10px;
+    padding: 6px 8px;
+    font-size: 12px;
     border-radius: 4px;
   }
 
   .itemDetails h3 {
-    font-size: 14px;
-    margin: 0 0 10px 0;
+    font-size: 1rem;
+    margin-top: 0px;
+    margin-bottom: 0;
     white-space: nowrap;           /* keep in one line */
     overflow: hidden;              /* hide overflowing text */
     text-overflow: ellipsis;       /* show ... */
@@ -569,19 +541,40 @@ background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%);
   }
 
   .price {
-    font-size: 14px;
-    font-weight: bold;
-    color: #000;
-  }
+  font-weight: 600;
+  color: #111827;
+  margin: 2px 0 6px 0;
+  font-size: 1rem;
+  display: inline-block;
+}
 
-  .price .mrp {
-    font-size: 14px;
-    text-decoration: line-through;
-    color: #888;
-  }
+.price .sale-price,
+.price .mrp {
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: baseline;
+}
 
-  .price .discount {
-    font-size: 12px;
+.price .sale-price {
+  color: #111827;
+  margin-right: 8px;
+}
+
+.price .mrp {
+  color: #9ca3af;
+  text-decoration: line-through;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.price .discount {
+  display: block;          /* force it below */
+  font-size: 1rem;
+  white-space: nowrap;
+}
+.size{
+  margin-top: 0;
+  margin-bottom: 5px;
   }
 
 }
