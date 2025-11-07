@@ -181,6 +181,110 @@
       </div>
     </div>
   </div>
+
+  <!-- Ratings & Reviews Section -->
+  <div class="container py-5">
+    <h2 class="reviews-title">Customer reviews & rating</h2>
+    
+    <div class="rating-container">
+      <!-- Left: Rating Bars -->
+      <div class="rating-bars-section">
+        <% for(let i = 5; i >= 1; i--) { 
+          const count = ratingDistribution[i] || 0;
+          const total = product.totalRatings || 1;
+          const percentage = Math.round((count / total) * 100);
+        %>
+          <div class="rating-bar-row">
+            <span class="star-num"><%= i %> <i class="fa-solid fa-star"></i></span>
+            <div class="bar-bg">
+              <div class="bar-fill" style="width: <%= percentage %>%"></div>
+            </div>
+            <span class="rating-count-num"><%= count %></span>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Center: Average Rating -->
+      <div class="rating-center">
+        <div class="avg-rating-box">
+          <h1 class="rating-number"><%= product.averageRating ? product.averageRating.toFixed(1) : '0.0' %></h1>
+          <div class="stars-large">
+            <% 
+              const avgRating = product.averageRating || 0;
+              for(let i = 1; i <= 5; i++) { 
+                if(i <= Math.floor(avgRating)) { %>
+                  <i class="fa-solid fa-star"></i>
+                <% } else if(i === Math.ceil(avgRating) && avgRating % 1 !== 0) { %>
+                  <i class="fa-solid fa-star-half-stroke"></i>
+                <% } else { %>
+                  <i class="fa-regular fa-star"></i>
+                <% } 
+              } 
+            %>
+          </div>
+          <p class="rating-text"><%= product.totalRatings || 0 %> Ratings</p>
+        </div>
+      </div>
+
+      <!-- Right: Action Buttons -->
+      <div class="rating-actions">
+        <button class="btn-write-review" id="openReviewModal">Write A Review</button>
+        <button class="btn-see-reviews" onclick="document.getElementById('reviewsList').scrollIntoView({behavior: 'smooth'})">See All Reviews</button>
+      </div>
+    </div>
+
+    <!-- Reviews List -->
+    <div id="reviewsList" class="reviews-section">
+      <h3 class="reviews-heading">Most helpful positive review</h3>
+      
+      <% if(reviews && reviews.length > 0) { %>
+        <% reviews.forEach(function(review, index){ %>
+          <% 
+            const currentUserId = user?._id?.toString();
+            const reviewUserId = typeof review.user === 'string' ? review.user : review.user?._id?.toString();
+            const canDelete = currentUserId && reviewUserId && currentUserId === reviewUserId;
+          %>
+          <div class="review-card" data-review-id="<%= review._id %>">
+            <%# if(canDelete) { %>
+            <!-- <button class="btn-delete-review" data-review-id="<%= review._id %>" title="Delete review">
+               <i class="fa-solid fa-trash"></i>
+             </button> -->
+            <%# } %>    
+            
+            <div class="review-header">
+              <div class="review-stars-small">
+                <% for(let i = 1; i <= 5; i++) { %>
+                  <i class="fa-solid fa-star <%= i <= review.rating ? 'star-filled' : 'star-empty' %>"></i>
+                <% } %>
+              </div>
+              <div class="review-meta">
+                <span class="review-author">
+                  @<%= review.user && review.user.name 
+                  ? review.user.name 
+                  : (review.user && review.user.email 
+                    ? review.user.email.split('@')[0] 
+                    : 'customer') %>
+                </span>
+                <span class="review-date"><%= new Date(review.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) %></span>
+              </div>
+            </div>
+            <% if(review.comment) { %>
+              <p class="review-text"><%= review.comment %></p>
+            <% } %>
+          </div>
+        <% }) %>
+        
+        <div class="reviews-footer">
+          <p class="reviews-count"><%= reviews.length %> reviews</p>
+        </div>
+      <% } else { %>
+        <div class="no-reviews-card">
+          <i class="fa-regular fa-comments fa-3x"></i>
+          <p>No reviews yet. Be the first to review this product!</p>
+        </div>
+      <% } %>
+    </div>
+  </div>
   </div>
 
  <!-- Recently Viewed -->
@@ -276,6 +380,7 @@
 </div>
 
 
+
 <!-- Size Selection Popup -->
 <div id="sizePopup" class="popup-overlay">
   <div class="popup">
@@ -296,6 +401,32 @@
     <div class="popup-actions">
       <button id="popupContinue" class="btn">Continue</button>
     </div>
+  </div>
+</div>
+
+<!-- Review Modal -->
+<div id="reviewModal" class="review-modal-overlay">
+  <div class="review-modal">
+    <button id="closeReviewModal" class="modal-close">&times;</button>
+    <h3>Write a Review</h3>
+    <form id="reviewForm" class="review-form">
+      <div class="form-group">
+        <label>Your Rating *</label>
+        <div class="star-rating-input">
+          <i class="fa-regular fa-star" data-rating="1"></i>
+          <i class="fa-regular fa-star" data-rating="2"></i>
+          <i class="fa-regular fa-star" data-rating="3"></i>
+          <i class="fa-regular fa-star" data-rating="4"></i>
+          <i class="fa-regular fa-star" data-rating="5"></i>
+        </div>
+        <input type="hidden" id="ratingValue" name="rating" value="0" />
+      </div>
+      <div class="form-group">
+        <label for="reviewComment">Your Review (Optional)</label>
+        <textarea id="reviewComment" name="comment" rows="4" placeholder="Share your experience with this product..."></textarea>
+      </div>
+      <button type="submit" class="btn-submit-review">Submit Review</button>
+    </form>
   </div>
 </div>
 
@@ -462,6 +593,475 @@
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
+/* ========== RATINGS & REVIEWS STYLES ========== */
+.reviews-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #1a1a1a;
+  margin-left: 100px;
+}
+
+.rating-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  max-width: 1400px;
+  width: 100%;
+  gap: 40px;
+  padding: 40px;
+  background: #f9f9fb;
+  border-radius: 16px;
+  margin-bottom: 50px;
+  align-items: center;
+  margin-left: 100px;
+}
+
+/* Rating Bars Section (Left) */
+.rating-bars-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rating-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.star-num {
+  min-width: 45px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.star-num i {
+  color: #FFB800;
+  font-size: 14px;
+}
+
+.bar-bg {
+  flex: 1;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  transition: width 0.3s ease;
+}
+
+.rating-count-num {
+  min-width: 30px;
+  text-align: right;
+  font-weight: 600;
+  color: #666;
+}
+
+/* Center Rating Display */
+.rating-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.avg-rating-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.rating-number {
+  font-size: 72px;
+  font-weight: 700;
+  margin: 0;
+  color: #1a1a1a;
+  line-height: 1;
+}
+
+.stars-large {
+  display: flex;
+  gap: 6px;
+}
+
+.stars-large i {
+  color: #FFB800;
+  font-size: 28px;
+}
+
+.rating-text {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+/* Action Buttons (Right) */
+.rating-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: stretch;
+}
+
+.btn-write-review {
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-write-review:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+}
+
+.btn-see-reviews {
+  padding: 16px 32px;
+  background: transparent;
+  color: #6366f1;
+  border: 2px solid #6366f1;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-see-reviews:hover {
+  background: #6366f1;
+  color: white;
+}
+
+/* Reviews Section */
+.reviews-section {
+  margin-top: 40px;
+  margin-left: 100px;
+  width: 100%;
+}
+
+.reviews-heading {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #1a1a1a;
+}
+
+.review-card {
+  position: relative;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.review-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.review-stars-small {
+  display: flex;
+  gap: 4px;
+}
+
+.review-stars-small i {
+  font-size: 16px;
+}
+
+.star-filled {
+  color: #FFB800;
+}
+
+.star-empty {
+  color: #e0e0e0;
+}
+
+.review-meta {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.review-author {
+  font-weight: 600;
+  color: #6366f1;
+}
+
+.review-date {
+  color: #999;
+}
+
+/* Delete Button - Top Right Corner */
+.btn-delete-review {
+  position: absolute;
+  top: 0px;
+  right: 0;
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.btn-delete-review:hover {
+  background: #fee2e2;
+  transform: scale(1.1);
+}
+
+.btn-delete-review i {
+  font-size: 20px;
+}
+
+.review-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #4b5563;
+  margin: 12px 0;
+}
+
+.review-user {
+  font-size: 13px;
+  color: #999;
+  font-style: italic;
+  margin: 8px 0 0 0;
+}
+
+.reviews-footer {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.reviews-count {
+  font-size: 14px;
+  color: #666;
+}
+
+.no-reviews-card {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f9f9fb;
+  border-radius: 12px;
+}
+
+.no-reviews-card i {
+  color: #d1d5db;
+  margin-bottom: 20px;
+}
+
+.no-reviews-card p {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Review Modal */
+.review-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.review-modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.review-modal {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  width: 500px;
+  max-width: 90%;
+  position: relative;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.review-modal-overlay.active .review-modal {
+  transform: scale(1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.review-modal h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 30px 0;
+  color: #1a1a1a;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.star-rating-input {
+  display: flex;
+  gap: 8px;
+}
+
+.star-rating-input i {
+  font-size: 32px;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.star-rating-input i:hover,
+.star-rating-input i.hovered {
+  color: #FFB800;
+  transform: scale(1.1);
+}
+
+.star-rating-input i.selected {
+  color: #FFB800;
+}
+
+.form-group textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.btn-submit-review {
+  padding: 16px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-submit-review:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .rating-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 30px;
+    margin-left: 50px;
+  }
+  
+  .rating-number {
+    font-size: 56px;
+  }
+  
+  .reviews-title {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .review-modal {
+    padding: 30px 20px;
+  }
+.reviews-title {
+    margin-left: 0;
+  }
+  
+  .rating-container {
+    padding: 20px;
+    margin-left: 0;
+    gap: 30px;
+  }
+  
+  .rating-actions {
+    align-items: stretch;
+  }
+
+  .reviews-section{
+    margin-left: 0;
+  }
+  
+  .btn-write-review,
+  .btn-see-reviews {
+    width: 100%;
+  }
+}
 
 </style>
 
@@ -1361,7 +1961,200 @@ document.getElementById("btnBuy").addEventListener("click", async function() {
   });
 </script>
 
-
+<!-- Review Modal & Rating JavaScript -->
+<script>
+(function() {
+  const reviewModal = document.getElementById('reviewModal');
+  const openReviewBtn = document.getElementById('openReviewModal');
+  const closeReviewBtn = document.getElementById('closeReviewModal');
+  const reviewForm = document.getElementById('reviewForm');
+  const starInputs = document.querySelectorAll('.star-rating-input i');
+  const ratingValue = document.getElementById('ratingValue');
+  
+  let selectedRating = 0;
+  
+  // Open modal
+  if (openReviewBtn) {
+    openReviewBtn.addEventListener('click', () => {
+      reviewModal.classList.add('active');
+    });
+  }
+  
+  // Close modal
+  if (closeReviewBtn) {
+    closeReviewBtn.addEventListener('click', () => {
+      reviewModal.classList.remove('active');
+      resetForm();
+    });
+  }
+  
+  // Close on overlay click
+  reviewModal.addEventListener('click', (e) => {
+    if (e.target === reviewModal) {
+      reviewModal.classList.remove('active');
+      resetForm();
+    }
+  });
+  
+  // Star rating interaction
+  starInputs.forEach((star, index) => {
+    // Hover effect
+    star.addEventListener('mouseenter', () => {
+      highlightStars(index + 1);
+    });
+    
+    // Click to select
+    star.addEventListener('click', () => {
+      selectedRating = index + 1;
+      ratingValue.value = selectedRating;
+      selectStars(selectedRating);
+    });
+  });
+  
+  // Reset hover when mouse leaves star container
+  const starContainer = document.querySelector('.star-rating-input');
+  if (starContainer) {
+    starContainer.addEventListener('mouseleave', () => {
+      if (selectedRating > 0) {
+        selectStars(selectedRating);
+      } else {
+        resetStars();
+      }
+    });
+  }
+  
+  function highlightStars(rating) {
+    starInputs.forEach((star, index) => {
+      if (index < rating) {
+        star.classList.remove('fa-regular');
+        star.classList.add('fa-solid', 'hovered');
+      } else {
+        star.classList.remove('fa-solid', 'hovered');
+        star.classList.add('fa-regular');
+      }
+    });
+  }
+  
+  function selectStars(rating) {
+    starInputs.forEach((star, index) => {
+      star.classList.remove('hovered');
+      if (index < rating) {
+        star.classList.remove('fa-regular');
+        star.classList.add('fa-solid', 'selected');
+      } else {
+        star.classList.remove('fa-solid', 'selected');
+        star.classList.add('fa-regular');
+      }
+    });
+  }
+  
+  function resetStars() {
+    starInputs.forEach(star => {
+      star.classList.remove('fa-solid', 'hovered', 'selected');
+      star.classList.add('fa-regular');
+    });
+  }
+  
+  function resetForm() {
+    selectedRating = 0;
+    ratingValue.value = 0;
+    document.getElementById('reviewComment').value = '';
+    resetStars();
+  }
+  
+  // Handle form submission
+  if (reviewForm) {
+    reviewForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const rating = parseInt(ratingValue.value);
+      const comment = document.getElementById('reviewComment').value.trim();
+      
+      // Validation
+      if (rating === 0) {
+        showToast('Please select a rating', 'error');
+        return;
+      }
+      
+      const productId = '<%= product._id %>';
+      
+      try {
+        const response = await fetch(`/reviews/products/${productId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ rating, comment })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showToast('Review submitted successfully!', 'success');
+          reviewModal.classList.remove('active');
+          resetForm();
+          
+          // Reload page after 1.5 seconds to show new review
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        } else {
+          showToast(data.message || 'Failed to submit review', 'error');
+        }
+      } catch (error) {
+        console.error('Error submitting review:', error);
+        showToast('Something went wrong. Please try again.', 'error');
+      }
+    });
+  }
+  
+  // Delete Review Functionality
+  const deleteButtons = document.querySelectorAll('.btn-delete-review');
+  
+  deleteButtons.forEach(btn => {
+    btn.addEventListener('click', async function(e) {
+      e.stopPropagation();
+      
+      const reviewId = this.getAttribute('data-review-id');
+      const reviewCard = this.closest('.review-card');
+      
+      // Confirmation dialog
+      if (!confirm('Are you sure you want to delete this review?')) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/reviews/${reviewId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showToast('Review deleted successfully!', 'success');
+          
+          // Fade out and remove the review card
+          reviewCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+          reviewCard.style.opacity = '0';
+          reviewCard.style.transform = 'translateX(-20px)';
+          
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        } else {
+          showToast(data.message || 'Failed to delete review', 'error');
+        }
+      } catch (error) {
+        console.error('Error deleting review:', error);
+        showToast('Something went wrong. Please try again.', 'error');
+      }
+    });
+  });
+})();
+</script>
 
 <script src="/js/main.js"></script>
 <div class="pageFooter">

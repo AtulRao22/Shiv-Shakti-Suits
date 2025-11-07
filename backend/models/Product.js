@@ -56,6 +56,10 @@ const productSchema = new mongoose.Schema({
   // For auto bestseller detection
   totalOrders: { type: Number, default: 0 },
 
+  // Rating fields
+  averageRating: { type: Number, default: 0 },
+  totalRatings: { type: Number, default: 0 },
+
   createdAt: {
     type: Date,
     default: Date.now

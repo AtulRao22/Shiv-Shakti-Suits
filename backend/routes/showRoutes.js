@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
+const Review = require("../models/Review");
 
 // ✅ Show single product page
 router.get("/:id", async (req, res) => {
@@ -10,6 +11,8 @@ router.get("/:id", async (req, res) => {
     if (!product) {
       return res.status(404).render("404", { message: "Product not found" });
     }
+
+    
 
     // ✅ Manage Recently Viewed using cookies
   // inside your product detail route (where `product` is available)
@@ -68,13 +71,29 @@ const similarProducts = await Product.find({
 })
 .limit(6)      // hardcoded to 6
 .lean();
+
+    // ✅ Fetch reviews for this product
+    const reviews = await Review.find({ product: product._id })
+      .populate("user", "name email") // populate user details
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .lean();
+
+    // Calculate rating summary
+    const ratingDistribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    reviews.forEach(review => {
+      ratingDistribution[review.rating]++;
+    });
+
 // send to view
  res.render("productShow", {
       product,
       recentProducts,
       similarProducts,
       variants: product.variants,
-       wishlist: req.session.wishlist || [],
+      wishlist: req.session.wishlist || [],
+      reviews,
+      ratingDistribution,
     });
 
   } catch (err) {
@@ -82,6 +101,8 @@ const similarProducts = await Product.find({
     res.status(500).render("500", { message: "Server error" });
   }
 });
+
+
 
 
 
