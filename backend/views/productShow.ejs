@@ -1126,7 +1126,7 @@ body {
 
 .thumbCol img.active,
 .thumbCol img:hover {
-  border-color: #5e05f8c3;
+  border-color: #127afac3;
 }
 
 .mainImageBox {
@@ -1715,7 +1715,7 @@ body {
   }
 
   addToBag.addEventListener("click", () => handleAddClick(addToBag.dataset.id));
-  buyNow.addEventListener("click", () => handleAddClick(buyNow.dataset.id));
+  // buyNow.addEventListener("click", () => handleAddClick(buyNow.dataset.id));
 
   // Close popup (without confirming)
   popupClose.addEventListener("click", () => {
@@ -1748,8 +1748,16 @@ body {
     const selectedPageBtn = Array.from(pageSizeButtons).find(b => b.dataset.size === selectedSize);
     if (selectedPageBtn) selectedPageBtn.classList.add("selected");
 
-    // Add to cart
-    addProductToCart(addToBag.dataset.id, selectedSize);
+    // Branch: if Buy flow is active, proceed to checkout; else add to cart
+    if (window.buyFlowActive) {
+      window.buyFlowActive = false;
+      // Use global function defined in buy-now IIFE
+      if (window.buyNow) {
+        window.buyNow(addToBag.dataset.id, selectedSize);
+      }
+    } else {
+      addProductToCart(addToBag.dataset.id, selectedSize);
+    }
   });
 
   // Add product to cart
@@ -1862,32 +1870,90 @@ body {
   showSlide(currentIndex);
 })();
 
-//Buy Now button
+// Buy Now button with login + size gating
+(function(){
+  const buyBtn = document.getElementById("btnBuy");
+  if (!buyBtn) return;
 
-
-document.getElementById("btnBuy").addEventListener("click", async function() {
-  const productId = this.getAttribute("data-id");
-
-  try {
-    // Send request to backend
-    const res = await fetch(`/buy/product/${productId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" }
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      // ✅ Redirect to checkout flow
-      window.location.href = data.redirect; 
-    } else {
-      alert(data.message || "Something went wrong!");
+  async function buyNow(productId, size) {
+    try {
+      const res = await fetch(`/buy/product/${productId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ size })
+      });
+      const data = await res.json();
+      if (data.success) {
+        window.location.href = data.redirect || "/checkout";
+      } else {
+        alert(data.message || "Something went wrong!");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error in Buy Now.");
     }
-  } catch (err) {
-    console.error(err);
-    alert("Error in Buy Now.");
   }
-});
+  window.buyNow = buyNow; // make available to popupContinue branch
+
+  function openSizePopup() {
+    const popup = document.getElementById('sizePopup');
+    if (popup) popup.classList.add('active');
+  }
+
+  buyBtn.addEventListener("click", function() {
+    const productId = this.getAttribute("data-id");
+    const token = localStorage.getItem('authToken');
+
+    // Determine if a size is already chosen on page
+    const selectedPageBtn = document.querySelector('.chip.page.selected');
+    const chosenSize = selectedPageBtn ? selectedPageBtn.dataset.size : (window.selectedSize || null);
+
+    if (!token) {
+      // Not logged in: store pending buy and show login modal
+      localStorage.setItem('pendingBuy', JSON.stringify({ productId, size: chosenSize || null }));
+      if (window.showLoginModal) {
+        window.showLoginModal();
+      } else {
+        const modal = document.getElementById('loginModal');
+        if (modal) modal.classList.add('active');
+      }
+      return;
+    }
+
+    // Logged in: ensure we have a size
+    if (!chosenSize) {
+      window.buyFlowActive = true; // tell popupContinue we're in Buy path
+      openSizePopup();
+      return;
+    }
+
+    // Proceed directly if size already selected
+    buyNow(productId, chosenSize);
+  });
+
+  // Resume pending buy after login + reload
+  document.addEventListener('DOMContentLoaded', function(){
+    const token = localStorage.getItem('authToken');
+    const pending = localStorage.getItem('pendingBuy');
+    if (!token || !pending) return;
+    try {
+      const payload = JSON.parse(pending);
+      // Only resume if this page's product matches
+      const currentId = buyBtn.getAttribute('data-id');
+      if (!payload || payload.productId !== currentId) return;
+
+      if (payload.size) {
+        localStorage.removeItem('pendingBuy');
+        buyNow(payload.productId, payload.size);
+      } else {
+        // Need size: open popup and set flag; on Continue it will call buyNow
+        window.buyFlowActive = true;
+        openSizePopup();
+        // keep pendingBuy; it will be cleared after successful redirect
+      }
+    } catch(_) {}
+  });
+})();
 
  // Desktop thumbnail click to update main image and highlight
   (function() {

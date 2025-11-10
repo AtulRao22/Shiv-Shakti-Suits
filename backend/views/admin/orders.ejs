@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Orders</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body { background:#f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .card { box-shadow: 0 3px 8px rgba(0,0,0,0.08); border: none; border-radius: 14px; }
+    .card-header { background:#fff; border-bottom: 1px solid #e9ecef; }
+    .badge-status { font-weight: 600; }
+    .table td, .table th { vertical-align: middle; }
+    .order-items { font-size: 0.9rem; color:#495057; }
+    @media (max-width: 768px){ .table-responsive { font-size: 0.9rem; } }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+        <h4 class="mb-0">
+          <i class="fas fa-shopping-cart me-2"></i>
+          Orders
+        </h4>
+        <a href="/admin/dashboard" class="btn btn-outline-secondary btn-sm mt-2 mt-md-0">
+          <i class="fa fa-arrow-left"></i> Back to Dashboard
+        </a>
+      </div>
+      <div class="card-body">
+        <% if (!orders || orders.length === 0) { %>
+          <p class="text-center text-muted my-4">No orders yet.</p>
+        <% } else { %>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+              <% orders.forEach((o, i) => { %>
+                <tr data-id="<%= o._id %>">
+                  <td><%= i + 1 %></td>
+                  <td><%= new Date(o.createdAt).toLocaleString() %></td>
+                  <td>
+                    <% if (o.user) { %>
+                      <div><strong><%= o.user.name || o.user.email || o.user._id %></strong></div>
+                      <div class="text-muted small"><%= o.user.email %></div>
+                    <% } else { %>
+                      <em class="text-muted">Guest/Unknown</em>
+                    <% } %>
+                  </td>
+                  <td class="order-items">
+                    <% if (o.products && o.products.length) { %>
+                      <ul class="mb-0 ps-3">
+                        <% o.products.slice(0,3).forEach(p => { %>
+                          <li><%= p && p.name ? p.name : p %></li>
+                        <% }) %>
+                      </ul>
+                      <% if (o.products.length > 3) { %>
+                        <div class="text-muted small">+ <%= o.products.length - 3 %> more</div>
+                      <% } %>
+                    <% } else { %>
+                      <span class="text-muted">No items</span>
+                    <% } %>
+                  </td>
+                  <td>₹<%= (o.total || 0).toLocaleString('en-IN') %></td>
+                  <td>
+                    <% const statusClass = {
+                      'Paid': 'bg-success',
+                      'Placed': 'bg-primary',
+                      'Processing': 'bg-info',
+                      'Shipped': 'bg-warning text-dark',
+                      'Delivered': 'bg-success',
+                      'Cancelled': 'bg-danger'
+                    }[o.status] || 'bg-secondary'; %>
+                    <span class="badge badge-status <%= statusClass %>"><%= o.status %></span>
+                  </td>
+                  <td class="text-end">
+                    <select class="form-select form-select-sm d-inline-block w-auto me-2 status-select">
+                      <% ['Placed','Paid','Processing','Shipped','Delivered','Cancelled'].forEach(s => { %>
+                        <option value="<%= s %>" <%= o.status === s ? 'selected' : '' %>><%= s %></option>
+                      <% }) %>
+                    </select>
+                    <button class="btn btn-sm btn-outline-primary save-status">
+                      <i class="fa fa-save"></i>
+                    </button>
+                  </td>
+                </tr>
+              <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.save-status').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const row = btn.closest('tr');
+          const id = row.getAttribute('data-id');
+          const status = row.querySelector('.status-select').value;
+          try {
+            const res = await fetch(`/admin/orders/${id}/status`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status })
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message || 'Failed');
+            // Optional: visual cue
+            btn.classList.remove('btn-outline-primary');
+            btn.classList.add('btn-success');
+            setTimeout(() => {
+              btn.classList.remove('btn-success');
+              btn.classList.add('btn-outline-primary');
+            }, 800);
+          } catch (e) {
+            alert('Failed to update status: ' + (e.message || 'Unknown error'));
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

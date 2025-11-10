@@ -21,7 +21,7 @@ const upload = multer({ storage });
 
 router.post("/add", upload.array("images", 5), isAdmin, async (req, res) => {
   try {
-    const { name, mrp, salePrice, category, description } = req.body;
+    const { name, mrp, salePrice, category, description, size } = req.body;
 
     // -------------------------------
     // 1️⃣ Parse Variants
@@ -85,6 +85,7 @@ router.post("/add", upload.array("images", 5), isAdmin, async (req, res) => {
       name,
       mrp: Number(mrp),
       salePrice: Number(salePrice),
+      size,
       category,
       description,
       variants: parsedVariants,

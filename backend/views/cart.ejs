@@ -309,7 +309,7 @@ background: linear-gradient(135deg, #3a54c9 0%, #451f6b 100%);
   justify-content: space-between;
   margin: 10px 0;
   font-weight: 500;
-  color: #000;
+    color: #6c757d;
 }
 
 .summaryRow.total {
@@ -671,6 +671,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: { "Content-Type": "application/json" }
             });
             const data = await res.json();
+            if (res.status === 401 && data.redirect) {
+                // Not logged in -> go to login page
+                window.location.href = data.redirect;
+                return;
+            }
             if (data.success) {
                 window.location.href = data.redirect; 
             } else {
@@ -692,6 +697,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: { "Content-Type": "application/json" }
                 });
                 const data = await res.json();
+                if (res.status === 401 && data.redirect) {
+                    window.location.href = data.redirect;
+                    return;
+                }
                 if (data.success) {
                     window.location.href = data.redirect; 
                 } else {

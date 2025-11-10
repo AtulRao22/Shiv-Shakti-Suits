@@ -23,6 +23,7 @@ const checkoutRoutes = require("./routes/checkoutRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const pincodeRoutes = require("./routes/pincodeRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
+const addressRoutes = require("./routes/addressRoutes");
 
 
 
@@ -66,6 +67,7 @@ app.use((req, res, next) => {
 // Routes
 app.use("/", homeRoutes);
 app.use("/api/users", userRoutes);
+app.use("/addresses", addressRoutes);
 app.use("/api/products", productRoutes);
 app.use("/show", showRoutes);
 app.use("/wishlist", wishlistRoutes);
@@ -76,14 +78,6 @@ app.use("/admin", adminRoutes);
 app.use("/api/pincode", pincodeRoutes);
 app.use("/reviews", reviewRoutes);
 
-// Checkout page route
-app.get("/checkout", (req, res) => {
-  const checkoutItems = req.session.checkout?.items || [];
-  let total = 0;
-  checkoutItems.forEach(item => total += item.salePrice * item.qty);
-
-  res.render("checkout", { items: checkoutItems, total });
-});
 
 // Start server
 const PORT = process.env.PORT || 8080;
