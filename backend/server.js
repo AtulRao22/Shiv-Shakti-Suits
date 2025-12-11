@@ -82,3 +82,11 @@ app.use("/reviews", reviewRoutes);
 // Start server
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// --- Keep Render Server Awake (Self-Ping Every 5 Minutes) ---
+setInterval(() => {
+  axios.get("https://www.shivshaktisuits.shop/")
+    .then(() => console.log("🔄 Self-ping successful"))
+    .catch(err => console.log("❌ Self-ping failed:", err.message));
+}, 10 * 60 * 1000); // Every 10 minutes
+

@@ -13,7 +13,20 @@
     .badge-status { font-weight: 600; }
     .table td, .table th { vertical-align: middle; }
     .order-items { font-size: 0.9rem; color:#495057; }
-    @media (max-width: 768px){ .table-responsive { font-size: 0.9rem; } }
+
+    /* Mobile responsive table */
+    @media (max-width: 768px){
+      .table-responsive { font-size: 0.95rem; }
+      .table thead { display: none; }
+      .table tbody tr { display: block; margin-bottom: 10px; background: #fff; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+      .table tbody td { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 10px 14px; border-bottom: 1px solid #f0f0f0; }
+      .table tbody td:last-child { border-bottom: none; }
+      .table tbody td::before { content: attr(data-label); font-weight: 600; color: #6c757d; }
+      .order-items ul { padding-left: 0 !important; margin-bottom: 0; }
+      .order-items li { list-style: none; }
+      .text-end { text-align: left !important; }
+      .status-select { width: 100% !important; }
+    }
   </style>
 </head>
 <body>
@@ -48,9 +61,9 @@
               <tbody>
               <% orders.forEach((o, i) => { %>
                 <tr data-id="<%= o._id %>">
-                  <td><%= i + 1 %></td>
-                  <td><%= new Date(o.createdAt).toLocaleString() %></td>
-                  <td>
+                  <td data-label="#"><%= i + 1 %></td>
+                  <td data-label="Date"><%= new Date(o.createdAt).toLocaleString() %></td>
+                  <td data-label="Customer">
                     <% if (o.user) { %>
                       <div><strong><%= o.user.name || o.user.email || o.user._id %></strong></div>
                       <div class="text-muted small"><%= o.user.email %></div>
@@ -58,7 +71,7 @@
                       <em class="text-muted">Guest/Unknown</em>
                     <% } %>
                   </td>
-                  <td class="order-items">
+                  <td data-label="Items" class="order-items">
                     <% if (o.products && o.products.length) { %>
                       <ul class="mb-0 ps-3">
                         <% o.products.slice(0,3).forEach(p => { %>
@@ -72,8 +85,8 @@
                       <span class="text-muted">No items</span>
                     <% } %>
                   </td>
-                  <td>₹<%= (o.total || 0).toLocaleString('en-IN') %></td>
-                  <td>
+                  <td data-label="Total">₹<%= (o.total || 0).toLocaleString('en-IN') %></td>
+                  <td data-label="Status">
                     <% const statusClass = {
                       'Paid': 'bg-success',
                       'Placed': 'bg-primary',
@@ -84,7 +97,7 @@
                     }[o.status] || 'bg-secondary'; %>
                     <span class="badge badge-status <%= statusClass %>"><%= o.status %></span>
                   </td>
-                  <td class="text-end">
+                  <td data-label="Actions" class="text-end">
                     <select class="form-select form-select-sm d-inline-block w-auto me-2 status-select">
                       <% ['Placed','Paid','Processing','Shipped','Delivered','Cancelled'].forEach(s => { %>
                         <option value="<%= s %>" <%= o.status === s ? 'selected' : '' %>><%= s %></option>

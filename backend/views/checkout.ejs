@@ -143,10 +143,10 @@
                                     <h4><%= item.name %></h4>
                                     <p class="item-qty">Quantity: <%= item.qty %></p>
                                     <p class="item-size">Size: <%= item.size %></p>
-                                    <p class="item-price">₹<%= item.salePrice %> × <%= item.qty %></p>
+                                    <p class="item-price">₹<%= item.salePrice.toLocaleString('en-IN') %> × <%= item.qty %></p>
                                 </div>
                                 <div class="item-total">
-                                    ₹<%= item.salePrice * item.qty %>
+                                    ₹<%= item.salePrice.toLocaleString('en-IN') * item.qty %>
                                 </div>
                             </div>
                             <% }) %>
