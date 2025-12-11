@@ -10,7 +10,7 @@ const generateToken = (id) => {
 
 
 // Send OTP to email
-import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+const { MailerSend, EmailParams, Sender, Recipient } = require("mailersend");
 
 const mailerSend = new MailerSend({
   apiKey: process.env.MAILERSEND_API_KEY, // store in .env
