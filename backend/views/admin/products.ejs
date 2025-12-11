@@ -99,6 +99,7 @@
                     <td><%= p.category %></td>
                     <td>₹<%= p.salePrice || p.mrp %></td>
                     <td>
+                    <td><%= p.tags %> </td>
                       <% if (totalStock === 0) { %>
                         <span class="stock-out"><%= totalStock %></span>
                       <% } else if (totalStock < 2) { %>

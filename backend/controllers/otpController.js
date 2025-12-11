@@ -43,7 +43,7 @@ const sendOtp = async (req, res) => {
     const emailParams = new EmailParams()
       .setFrom(sentFrom)
       .setTo(recipients)
-      .setSubject("Your OTP Code")
+      .setSubject("Your OTP Code to login to Shiv Shakti Suits")
       .setText(`Your OTP is ${otp}. It expires in 10 minutes.`);
 
     // Send email
