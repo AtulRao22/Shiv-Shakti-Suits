@@ -36,7 +36,7 @@ const sendOtp = async (req, res) => {
     }, 10 * 60 * 1000);
 
     // Prepare email
-    const sentFrom = new Sender("shivshaktisuits.shop", "Shiv Shakti Suits");
+    const sentFrom = new Sender("noreplay@shivshaktisuits.shop", "Shiv Shakti Suits");
 
     const recipients = [new Recipient(email)];
 
