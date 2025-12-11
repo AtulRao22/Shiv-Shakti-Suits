@@ -10,6 +10,13 @@ const generateToken = (id) => {
 
 
 // Send OTP to email
+import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+
+const mailerSend = new MailerSend({
+  apiKey: process.env.MAILERSEND_API_KEY, // store in .env
+});
+
+// Send OTP to email
 const sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
@@ -22,28 +29,38 @@ const sendOtp = async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     otpStore[email] = otp;
 
-    // Automatically delete OTP after 10 minutes (600,000 ms)
+    // Auto-expire OTP after 10 minutes
     setTimeout(() => {
       delete otpStore[email];
       console.log(`🕒 OTP for ${email} expired and removed.`);
     }, 10 * 60 * 1000);
-  
 
-    console.log(`✅ OTP sent to ${email}: ${otp}`);
+    // Prepare email
+    const sentFrom = new Sender("shivshaktisuits.shop", "Shiv Shakti Suits");
+
+    const recipients = [new Recipient(email)];
+
+    const emailParams = new EmailParams()
+      .setFrom(sentFrom)
+      .setTo(recipients)
+      .setSubject("Your OTP Code")
+      .setText(`Your OTP is ${otp}. It expires in 10 minutes.`);
+
+    // Send email
+    await mailerSend.email.send(emailParams);
+
+    console.log(`📧 OTP email sent to ${email}: ${otp}`);
     res.json({ success: true, message: "OTP sent successfully to email" });
-  } catch (error) {
-  console.error("Email send error:");
-  if (error.response?.body) {
-    console.error(error.response.body);
-  } else if (error.response?.text) {
-    console.error(error.response.text);
-  } else {
-    console.error(error);
-  }
-  res.status(500).json({ success: false, message: "Failed to send OTP" });
-}
 
+  } catch (error) {
+    console.error("Email send error:");
+    if (error.response?.body) console.error(error.response.body);
+    else console.error(error);
+
+    res.status(500).json({ success: false, message: "Failed to send OTP" });
+  }
 };
+
 
 
 // Verify OTP
