@@ -230,7 +230,7 @@ Distributed under the ISC License. See `LICENSE` for more information.
 📍 Location: Jaipur,Rajasthan,India 
 
 - **GitHub:** [@AtulRao22](https://github.com/AtulRao22) 
-- **LinkedIn:** [Your LinkedIn Profile](https://www.linkedin.com/in/atul-rao-44b2212b8/) 
+- **LinkedIn:** [atul-rao-44b2212b8](https://www.linkedin.com/in/atul-rao-44b2212b8/) 
 - **Portfolio / Email:** 02atulrao@gmail.com
 
 ---
