@@ -62,15 +62,15 @@
 
 
 ### 🏠 Homepage
-![Homepage](./public/screenshots/Home.png)
+![Homepage](/public/screenshots/Homepage.png)
 > *The landing page showcasing featured categories, banners, and bestselling products.*
 
 ### 🛒 Product Listing
-![Products](./public/screenshots/products.png)
+![Products](/public/screenshots/AddProduct.png)
 > *Product details page highlighting size variants, stock status, fabric details, and reviews.*
 
 ### 🛍️ Shopping Cart
-![Shopping Cart](./public/screenshots/cart.png)
+![Shopping Cart](/public/screenshots/cart.png)
 > *Dynamic cart interface showing selected variants, quantities, and order summary.*
 
 ### 💳 Secure Checkout & Razorpay
