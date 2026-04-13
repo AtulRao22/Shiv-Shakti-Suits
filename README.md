@@ -62,7 +62,7 @@
 
 
 ### 🏠 Homepage
-![Homepage](./public/screenshots/home.png)
+![Homepage](./public/screenshots/Home.png)
 > *The landing page showcasing featured categories, banners, and bestselling products.*
 
 ### 🛒 Product Listing
@@ -78,7 +78,7 @@
 > *Seamless, fast, and secure payment via Razorpay integration.*
 
 ### 🔐 Admin Dashboard
-![Admin Dashboard](./public/screenshots/admin.png)
+![Admin Dashboard](./public/screenshots/Dashboard.png)
 > *Comprehensive admin panel for managing inventory, tracking orders, and evaluating metrics.*
 
 ### 👤 User Profile & Orders
@@ -86,7 +86,7 @@
 > *Customer dashboard highlighting order history and saved delivery addresses.*
 
 ### 🦶 Footer & Navigation
-![Footer](./public/screenshots/footer.png)
+![Footer](./public/screenshots/Footer.png)
 > *Site-wide footer featuring quick links, newsletter signup, and brand information.*
 
 ---
