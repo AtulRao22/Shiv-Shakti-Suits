@@ -56,7 +56,7 @@ app.set("views", path.join(__dirname, "views"));
 
 // Static files
 app.use(express.static(path.join(__dirname, "../public")));
-app.use("/assets", express.static(path.join(__dirname, "public/assets")));
+app.use("/assets", express.static(path.join(__dirname, "uploads/assets")));
 
 // Set user globally for views
 app.use((req, res, next) => {
