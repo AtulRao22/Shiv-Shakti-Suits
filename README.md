@@ -42,7 +42,6 @@
 - **👚 Deep Product Catalog**: Supports robust product categorization, filtering, variants (sizes/stock levels), and multiple product image modeling.
 - **⭐ Reviews & Ratings**: Intelligent best-seller tracking and average user rating aggregation.
 - **🔐 Admin Dashboard**: Protected routes for administrators to manage products, update stock logic, and track user orders.
-- **✉️ Automated Emails**: Trigger transactional notifications (using tools like Brevo/Nodemailer).
 
 ---
 
