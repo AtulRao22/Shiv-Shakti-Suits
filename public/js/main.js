@@ -29,6 +29,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeMenu = document.querySelector('.close-menu');
     const slidingBar = document.querySelector('.slidingNavbar');
     const mainNavbar = document.querySelector('.mainNavbar');
+
+    // Expose login modal opener globally for other scripts
+    window.showLoginModal = function() {
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) {
+            loginModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    };
     
     // Open mobile menu
     if (menuButton) {
