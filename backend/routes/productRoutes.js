@@ -9,7 +9,7 @@ const { isAdmin } = require("../middleware/authMiddleware");
 // Storage settings
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, path.join(__dirname,  "../public/assets")); // store images in public/assets
+    cb(null, path.join(__dirname,  "../uploads/assets")); // store images in public/assets
   },
   filename: function(req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
