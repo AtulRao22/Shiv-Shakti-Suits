@@ -4,10 +4,10 @@
     A fully-featured, full-stack e-commerce platform built specifically for showcasing and purchasing ethnic fashion and suits.
     <br />
     <br />
-    <a href="#live-demo"><strong>View Demo »</strong>https://www.shivshaktisuits.shop</a>
+    <a href="#-live-demo"><strong>View Demo »</strong></a>
     <br />
     <br />
-    <a href="#features">Features</a> · <a href="#tech-stack">Tech Stack</a> · <a href="#api-endpoints">API</a>
+    <a href="#-features">Features</a> · <a href="#-tech-stack">Tech Stack</a> · <a href="#-selected-api-endpoints">API</a>
   </p>
 
   <!-- Badges -->
