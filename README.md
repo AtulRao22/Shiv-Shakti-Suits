@@ -54,7 +54,7 @@
 | **Database** | MongoDB (coupled with Mongoose ODM), Connect-Mongo (Session Store) |
 | **Payments** | Razorpay SDK |
 | **Auth/Security** | `express-session`, `bcryptjs`, `jsonwebtoken` |
-| **Mailing** | `nodemailer`, `@getbrevo/brevo`, `mailersend`, `resend` |
+| **Mailing** | `nodemailer`,`mailersend`,  |
 
 ---
 
