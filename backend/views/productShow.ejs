@@ -1,1663 +1,1766 @@
 <%- include('includes/head') %>
-<%- include('includes/navbar') %>
-<body>
-<div class="contentWrap">
-  <div class="layout py-4">
-    <!-- Gallery -->
-   <!-- Product Images -->
-<div class="product-images">
-  <!-- Desktop Thumbnails -->
-  <div class="thumbCol d-none d-md-flex">
-    <% if (product.imageUrls && product.imageUrls.length > 0) { %>
-      <% product.imageUrls.forEach(function(imgUrl, idx){ %>
-        <button class="thumbBtn border-0 p-0 bg-transparent" data-src="<%= imgUrl %>">
-          <img src="<%= imgUrl %>" alt="thumb" class="thumb-img img-thumbnail"/>
-        </button>
-      <% }) %>
-    <% } %>
-  </div>
+  <%- include('includes/navbar') %>
 
-  <!-- Main Image -->
-  <div class="mainImageBox flex-grow-1 text-center">
-    <%
-  let isInWishlist = (wishlist || []).some(
-    p => p._id.toString() === product._id.toString()
-  );
-%>
-
-    <!-- Mobile carousel wrapper -->
-    <div class="mobile-carousel d-md-none">
-      <% if (product.imageUrls && product.imageUrls.length > 0) { %>
-        <% product.imageUrls.forEach(function(imgUrl, idx){ %>
-          <div class="carousel-slide <%= idx === 0 ? 'active' : '' %>">
-            <img src="<%= imgUrl %>" alt="<%= product.name %>" />
-          </div>
-        <% }) %>
-      <% } else { %>
-        <div class="carousel-slide active">
-          <img src="/images/no-image.jpg" alt="No Image"/>
-        </div>
-      <% } %>
-      <div class="carousel-icons">
-    <span class="icon share-icon"><i class="fa-solid fa-share-nodes"></i></span>
-    <button class="wishlist-btn-ps" data-id="<%= product._id %>">
-      <i class="<%= isInWishlist ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart' %>"></i>
-    </button>
-  </div>
-      <!-- Dots -->
-      <div class="carousel-dots">
-        <% (product.imageUrls || ['/images/no-image.jpg']).forEach((_, idx) => { %>
-          <span class="dot <%= idx === 0 ? 'active' : '' %>" data-slide="<%= idx %>"></span>
-        <% }) %>
-      </div>
-    </div>
-
-    <!-- Desktop main image -->
-    <img id="mainImage" 
-         src="<%= (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : '/images/no-image.jpg' %>" 
-         alt="<%= product.name %>" 
-         class="main-img d-none d-md-block"/>
-    <div class="icons d-none d-md-flex">
-      <span class="icon"><i class="fa-solid fa-share-nodes"></i></span>
-      <button class="wishlist-btn-ps" data-id="<%= product._id %>">
-        <i class="<%= isInWishlist ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart' %>"></i>
-      </button>
-    </div>
-  </div>
-</div>
-
-
-    <!-- Details -->
-    <div class="detailsPanel">
-      <div class="product-name-ps"><%= product.name %></div>
-      <div class="prices">
-      <span class="sale-price-ps">₹<%= product.salePrice.toLocaleString('en-IN') %></span>
-         <% if(product.mrp && product.mrp > product.salePrice){ 
-           let discount = Math.round(((product.mrp - product.salePrice) / product.mrp) * 100);
-      %>
-        <span class="mrp-ps">₹<%= product.mrp.toLocaleString('en-IN') %></span>
-        <span class="discount-ps">(<%= discount %>% OFF)</span>
-      <% } %>
-      </div>
-      <div class="tax">Inclusive of all taxes</div>
-
-      
-
-      <!-- Sizes -->
-      <div class="sectionTitle">SELECT SIZE&nbsp;&nbsp;<a class="sizeGuide" href="#">Size Guide</a></div>
-      <div class="chipRow">
-  <% (product.variants || []).forEach(function(v){ %>
-    <button 
-      class="chip page <%= v.stock <= 0 ? 'outOfStock' : '' %>" 
-      data-size="<%= v.size %>" 
-      <%= v.stock <= 0 ? 'disabled' : '' %>>
-      <%= v.size %> 
-      <% if(v.stock <= 0) { %> × <% } %>
-    </button>
-  <% }) %>
-</div>
-
-
-      <!-- CTA -->
-      <div class="ctaRow" id="ctaRow">
-        <button class="btnPrimary" data-id="<%= product._id %>">ADD TO BAG</button>
-        <button id="btnBuy" class="btnBuy" data-id="<%= product._id %>">BUY NOW</button>
-      </div>
-
-      <!-- Delivery -->
-      <div class="deliveryBox">
-        <div class="deliveryHeader">DELIVERY</div>
-        <div class="deliveryBody">
-          <div class="pinGroup">
-       <input
-        type="text"
-        id="pincode"
-        placeholder="Enter pincode"
-        maxlength="6"
-        pattern="\d*"
-        />
-       <button type="button" id="checkPincode">CHECK</button>
-       </div>
-
-       <div id="loader" class="loader hidden"></div>
-      <p id="pinMessage" style="margin-top: 6px; font-weight: 500;"></p>
-
-          <div class="badges">
-            <div class="badge"><i class="fa-solid fa-truck-fast fa-xl"></i><span>Free Shipping</span></div>
-            <div class="badge"><i class="fa-solid fa-rotate-left fa-xl"></i><span>7 Days Easy Return</span></div>
-            <div class="badge"><i class="fa-solid fa-award fa-xl"></i><span>Assured Quality</span></div>
-            <div class="badge"><i class="fa-solid fa-money-bill-wave fa-xl"></i><span>COD Available</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Product Details -->
-      <div class="prodBox">
-        <div class="prodHeader">PRODUCT DETAILS</div>
-        <div class="prodBody">
-          <p class="prodDesc"><%= product.description || "No description available." %></p>
-          <!-- Your spec grid stays -->
-          <div class="specGrid">
-  <div>
-    <div class="specItem">
-      <span class="specKey">Top Type</span>
-      <span class="specVal"><%= product.details?.topType || '—' %></span>
-    </div>
-    <div class="specItem">
-      <span class="specKey">Neck / Neckline</span>
-      <span class="specVal"><%= product.details?.neckline || '—' %></span>
-    </div>
-    <div class="specItem">
-      <span class="specKey">Sleeve Type</span>
-      <span class="specVal"><%= product.details?.sleeveType || '—' %></span>
-    </div>
-    <div class="specItem">
-      <span class="specKey">Fit</span>
-      <span class="specVal"><%= product.details?.fit || '—' %></span>
-    </div>
-  </div>
-
-  <div>
-    <div class="specItem">
-      <span class="specKey">Top Pattern</span>
-      <span class="specVal"><%= product.details?.topPattern || '—' %></span>
-    </div>
-    <div class="specItem">
-      <span class="specKey">Bottom Type</span>
-      <span class="specVal"><%= product.details?.bottomType || '—' %></span>
-    </div>
-    <div class="specItem">
-      <span class="specKey">Dupatta / Stole</span>
-      <span class="specVal"><%= product.details?.dupattaStole || '—' %></span>
-    </div>
-    <div class="specItem">
-      <span class="specKey">Fabric</span>
-      <span class="specVal"><%= product.details?.fabric || '—' %></span>
-    </div>
-  </div>
-</div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Ratings & Reviews Section -->
-  <div class="container py-5">
-    <h2 class="reviews-title">Customer reviews & rating</h2>
-    
-    <div class="rating-container">
-      <!-- Left: Rating Bars -->
-      <div class="rating-bars-section">
-        <% for(let i = 5; i >= 1; i--) { 
-          const count = ratingDistribution[i] || 0;
-          const total = product.totalRatings || 1;
-          const percentage = Math.round((count / total) * 100);
-        %>
-          <div class="rating-bar-row">
-            <span class="star-num"><%= i %> <i class="fa-solid fa-star"></i></span>
-            <div class="bar-bg">
-              <div class="bar-fill" style="width: <%= percentage %>%"></div>
+    <body>
+      <div class="contentWrap">
+        <div class="layout py-4">
+          <!-- Gallery -->
+          <!-- Product Images -->
+          <div class="product-images">
+            <!-- Desktop Thumbnails -->
+            <div class="thumbCol d-none d-md-flex">
+              <% if (product.imageUrls && product.imageUrls.length> 0) { %>
+                <% product.imageUrls.forEach(function(imgUrl, idx){ %>
+                  <button class="thumbBtn border-0 p-0 bg-transparent" data-src="<%= imgUrl %>">
+                    <img src="<%= imgUrl %>" alt="thumb" class="thumb-img img-thumbnail" />
+                  </button>
+                  <% }) %>
+                    <% } %>
             </div>
-            <span class="rating-count-num"><%= count %></span>
+
+            <!-- Main Image -->
+            <div class="mainImageBox flex-grow-1 text-center">
+              <% let isInWishlist=(wishlist || []).some( p=> p._id.toString() === product._id.toString()
+                );
+                %>
+
+                <!-- Mobile carousel wrapper -->
+                <div class="mobile-carousel d-md-none">
+                  <% if (product.imageUrls && product.imageUrls.length> 0) { %>
+                    <% product.imageUrls.forEach(function(imgUrl, idx){ %>
+                      <div class="carousel-slide <%= idx === 0 ? 'active' : '' %>">
+                        <img src="<%= imgUrl %>" alt="<%= product.name %>" />
+                      </div>
+                      <% }) %>
+                        <% } else { %>
+                          <div class="carousel-slide active">
+                            <img src="/images/no-image.jpg" alt="No Image" />
+                          </div>
+                          <% } %>
+                            <div class="carousel-icons">
+                              <span class="icon share-icon"><i class="fa-solid fa-share-nodes"></i></span>
+                              <button class="wishlist-btn-ps" data-id="<%= product._id %>">
+                                <i
+                                  class="<%= isInWishlist ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart' %>"></i>
+                              </button>
+                            </div>
+                            <!-- Dots -->
+                            <div class="carousel-dots">
+                              <% (product.imageUrls || ['/images/no-image.jpg']).forEach((_, idx)=> { %>
+                                <span class="dot <%= idx === 0 ? 'active' : '' %>" data-slide="<%= idx %>"></span>
+                                <% }) %>
+                            </div>
+                </div>
+
+                <!-- Desktop main image -->
+                <img id="mainImage"
+                  src="<%= (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : '/images/no-image.jpg' %>"
+                  alt="<%= product.name %>" class="main-img d-none d-md-block" />
+                <div class="icons d-none d-md-flex">
+                  <span class="icon"><i class="fa-solid fa-share-nodes"></i></span>
+                  <button class="wishlist-btn-ps" data-id="<%= product._id %>">
+                    <i class="<%= isInWishlist ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart' %>"></i>
+                  </button>
+                </div>
+            </div>
           </div>
-        <% } %>
-      </div>
 
-      <!-- Center: Average Rating -->
-      <div class="rating-center">
-        <div class="avg-rating-box">
-          <h1 class="rating-number"><%= product.averageRating ? product.averageRating.toFixed(1) : '0.0' %></h1>
-          <div class="stars-large">
-            <% 
-              const avgRating = product.averageRating || 0;
-              for(let i = 1; i <= 5; i++) { 
-                if(i <= Math.floor(avgRating)) { %>
-                  <i class="fa-solid fa-star"></i>
-                <% } else if(i === Math.ceil(avgRating) && avgRating % 1 !== 0) { %>
-                  <i class="fa-solid fa-star-half-stroke"></i>
-                <% } else { %>
-                  <i class="fa-regular fa-star"></i>
-                <% } 
-              } 
-            %>
-          </div>
-          <p class="rating-text"><%= product.totalRatings || 0 %> Ratings</p>
-        </div>
-      </div>
 
-      <!-- Right: Action Buttons -->
-      <div class="rating-actions">
-        <button class="btn-write-review" id="openReviewModal">Write A Review</button>
-        <button class="btn-see-reviews" onclick="document.getElementById('reviewsList').scrollIntoView({behavior: 'smooth'})">See All Reviews</button>
-      </div>
-    </div>
-
-    <!-- Reviews List -->
-    <div id="reviewsList" class="reviews-section">
-      <h3 class="reviews-heading">Most helpful positive review</h3>
-      
-      <% if(reviews && reviews.length > 0) { %>
-        <% reviews.forEach(function(review, index){ %>
-          <% 
-            const currentUserId = user?._id?.toString();
-            const reviewUserId = typeof review.user === 'string' ? review.user : review.user?._id?.toString();
-            const canDelete = currentUserId && reviewUserId && currentUserId === reviewUserId;
-          %>
-          <div class="review-card" data-review-id="<%= review._id %>">
-
-            
-            <div class="review-header">
-              <div class="review-stars-small">
-                <% for(let i = 1; i <= 5; i++) { %>
-                  <i class="fa-solid fa-star <%= i <= review.rating ? 'star-filled' : 'star-empty' %>"></i>
+          <!-- Details -->
+          <div class="detailsPanel">
+            <div class="product-name-ps">
+              <%= product.name %>
+            </div>
+            <div class="prices">
+              <span class="sale-price-ps">₹<%= product.salePrice.toLocaleString('en-IN') %></span>
+              <% if(product.mrp && product.mrp> product.salePrice){
+                let discount = Math.round(((product.mrp - product.salePrice) / product.mrp) * 100);
+                %>
+                <span class="mrp-ps">₹<%= product.mrp.toLocaleString('en-IN') %></span>
+                <span class="discount-ps">(<%= discount %>% OFF)</span>
                 <% } %>
-              </div>
-              <div class="review-meta">
-                <span class="review-author">
-                  @<%= review.user && review.user.name 
-                  ? review.user.name 
-                  : (review.user && review.user.email 
-                    ? review.user.email.split('@')[0] 
-                    : 'customer') %>
-                </span>
-                <span class="review-date"><%= new Date(review.createdAt).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) %></span>
-              </div>
             </div>
-            <% if(review.comment) { %>
-              <p class="review-text"><%= review.comment %></p>
-            <% } %>
-          </div>
-        <% }) %>
-        
-        <div class="reviews-footer">
-          <p class="reviews-count"><%= reviews.length %> reviews</p>
-        </div>
-      <% } else { %>
-        <div class="no-reviews-card">
-          <i class="fa-regular fa-comments fa-3x"></i>
-          <p>No reviews yet. Be the first to review this product!</p>
-        </div>
-      <% } %>
-    </div>
-  </div>
-  </div>
+            <div class="tax">Inclusive of all taxes</div>
 
- <!-- Recently Viewed -->
-<% if (recentProducts && recentProducts.length > 0) { %>
-  <div class="container py-4 position-relative features-container">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <h2 class="m-0">Recently Viewed</h2>
-    </div>
-    <div class="row g-3">
-      <% recentProducts.forEach(function(rp){ %>
-        <div class="col-6 col-md-6 col-lg-4 product-item">
-          <a class="product-link" href="/show/<%= rp._id %>">
-            <div class="product-card">
-              <div class="product-image">
-                 <%
-                  let isInWishlist = (wishlist || []).some(
-                   w => w._id.toString() === rp._id.toString()
-                 );
-                 %>
 
-                <button class="wishlist-btn" data-id="<%= rp._id %>">
-      <i class="<%= isInWishlist ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart' %>"></i>
-    </button>
-            <!-- Product Image -->
-    <img src="<%= rp.imageUrls && rp.imageUrls.length ? rp.imageUrls[0] : '/images/placeholder.png' %>" 
-                     alt="<%= rp.name %>">
-              </div>
-              <div class="product-info">
-                <h3 class="product-name"><%= rp.name %></h3>
-                <div class="product-price">
-                  <span class="sale-price">₹<%= rp.salePrice.toLocaleString('en-IN') %></span>
-                  <% if(rp.mrp && rp.mrp > rp.salePrice){ 
-                       let discount = Math.round(((rp.mrp - rp.salePrice) / rp.mrp) * 100);
-                  %>
-                    <span class="mrp">₹<%= rp.mrp.toLocaleString('en-IN') %></span>
-                    <span class="discount">(<%= discount %>% OFF)</span>
-                  <% } %>
+
+            <!-- Sizes -->
+            <div class="sectionTitle">SELECT SIZE&nbsp;&nbsp;<a class="sizeGuide" href="#">Size Guide</a></div>
+            <div class="chipRow">
+              <% (product.variants || []).forEach(function(v){ %>
+                <button class="chip page <%= v.stock <= 0 ? 'outOfStock' : '' %>" data-size="<%= v.size %>" <%=v.stock
+                  <=0 ? 'disabled' : '' %>>
+                  <%= v.size %>
+                    <% if(v.stock <=0) { %> × <% } %>
+                </button>
+                <% }) %>
+            </div>
+
+
+            <!-- CTA -->
+            <div class="ctaRow" id="ctaRow">
+              <button class="btnPrimary" data-id="<%= product._id %>">ADD TO BAG</button>
+              <button id="btnBuy" class="btnBuy" data-id="<%= product._id %>">BUY NOW</button>
+            </div>
+
+            <!-- Delivery -->
+            <div class="deliveryBox">
+              <div class="deliveryHeader">DELIVERY</div>
+              <div class="deliveryBody">
+                <div class="pinGroup">
+                  <input type="text" id="pincode" placeholder="Enter pincode" maxlength="6" pattern="\d*" />
+                  <button type="button" id="checkPincode">CHECK</button>
+                </div>
+
+                <div id="loader" class="loader hidden"></div>
+                <p id="pinMessage" style="margin-top: 6px; font-weight: 500;"></p>
+
+                <div class="badges">
+                  <div class="badge"><i class="fa-solid fa-truck-fast fa-xl"></i><span>Free Shipping</span></div>
+                  <div class="badge"><i class="fa-solid fa-rotate-left fa-xl"></i><span>7 Days Easy Return</span></div>
+                  <div class="badge"><i class="fa-solid fa-award fa-xl"></i><span>Assured Quality</span></div>
+                  <div class="badge"><i class="fa-solid fa-money-bill-wave fa-xl"></i><span>COD Available</span></div>
                 </div>
               </div>
             </div>
-          </a>
-        </div>
-      <% }) %>
-    </div>
-  </div>
-<% } %>
 
+            <!-- Product Details -->
+            <div class="prodBox">
+              <div class="prodHeader">PRODUCT DETAILS</div>
+              <div class="prodBody">
+                <p class="prodDesc">
+                  <%= product.description || "No description available." %>
+                </p>
+                <!-- Your spec grid stays -->
+                <div class="specGrid">
+                  <div>
+                    <div class="specItem">
+                      <span class="specKey">Top Type</span>
+                      <span class="specVal">
+                        <%= product.details?.topType || '—' %>
+                      </span>
+                    </div>
+                    <div class="specItem">
+                      <span class="specKey">Neck / Neckline</span>
+                      <span class="specVal">
+                        <%= product.details?.neckline || '—' %>
+                      </span>
+                    </div>
+                    <div class="specItem">
+                      <span class="specKey">Sleeve Type</span>
+                      <span class="specVal">
+                        <%= product.details?.sleeveType || '—' %>
+                      </span>
+                    </div>
+                    <div class="specItem">
+                      <span class="specKey">Fit</span>
+                      <span class="specVal">
+                        <%= product.details?.fit || '—' %>
+                      </span>
+                    </div>
+                  </div>
 
-  <!-- Similar Products -->
-  <% if (similarProducts && similarProducts.length > 0) { %>
-  <div class="container py-4 position-relative features-container">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <h2 class="m-0">Similar Products</h2>
-    </div>
-    <div class="row g-3">
-      <% similarProducts.forEach(function(sp){ %>
-        <div class="col-6 col-md-6 col-lg-4 product-item">
-          <a class="product-link" href="/show/<%= sp._id %>">
-            <div class="product-card">
-              <div class="product-image">
-                <%
-                  let isInWishlist = (wishlist || []).some(
-                   w => w._id.toString() === sp._id.toString()
-                 );
-                 %>
+                  <div>
+                    <div class="specItem">
+                      <span class="specKey">Top Pattern</span>
+                      <span class="specVal">
+                        <%= product.details?.topPattern || '—' %>
+                      </span>
+                    </div>
+                    <div class="specItem">
+                      <span class="specKey">Bottom Type</span>
+                      <span class="specVal">
+                        <%= product.details?.bottomType || '—' %>
+                      </span>
+                    </div>
+                    <div class="specItem">
+                      <span class="specKey">Dupatta / Stole</span>
+                      <span class="specVal">
+                        <%= product.details?.dupattaStole || '—' %>
+                      </span>
+                    </div>
+                    <div class="specItem">
+                      <span class="specKey">Fabric</span>
+                      <span class="specVal">
+                        <%= product.details?.fabric || '—' %>
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
-                <button class="wishlist-btn" data-id="<%= sp._id %>">
-      <i class="<%= isInWishlist ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart' %>"></i>
-    </button>
-            <!-- Product Image -->
-    <img src="<%= sp.imageUrls && sp.imageUrls.length ? sp.imageUrls[0] : '/images/placeholder.png' %>" 
-                     alt="<%= sp.name %>">
-              </div>
-              <div class="product-info">
-                <h3 class="product-name"><%= sp.name %></h3>
-                 <div class="product-price">
-      <span class="sale-price">₹<%= sp.salePrice.toLocaleString('en-IN') %></span>
-         <% if(sp.mrp && sp.mrp > sp.salePrice){ 
-           let discount = Math.round(((sp.mrp - sp.salePrice) / sp.mrp) * 100);
-      %>
-        <span class="mrp">₹<%= sp.mrp.toLocaleString('en-IN') %></span>
-        <span class="discount">(<%= discount %>% OFF)</span>
-      <% } %>
-      </div>
               </div>
             </div>
-          </a>
+          </div>
         </div>
-      <% }) %>
-    </div>
-  </div>
-  <% } %>
-</div>
+
+        <!-- Ratings & Reviews Section -->
+        <div class="container py-5">
+          <h2 class="reviews-title">Customer reviews & rating</h2>
+
+          <div class="rating-container">
+            <!-- Left: Rating Bars -->
+            <div class="rating-bars-section">
+              <% for(let i=5; i>= 1; i--) {
+                const count = ratingDistribution[i] || 0;
+                const total = product.totalRatings || 1;
+                const percentage = Math.round((count / total) * 100);
+                %>
+                <div class="rating-bar-row">
+                  <span class="star-num">
+                    <%= i %> <i class="fa-solid fa-star"></i>
+                  </span>
+                  <div class="bar-bg">
+                    <div class="bar-fill" style="width: <%= percentage %>%"></div>
+                  </div>
+                  <span class="rating-count-num">
+                    <%= count %>
+                  </span>
+                </div>
+                <% } %>
+            </div>
+
+            <!-- Center: Average Rating -->
+            <div class="rating-center">
+              <div class="avg-rating-box">
+                <h1 class="rating-number">
+                  <%= product.averageRating ? product.averageRating.toFixed(1) : '0.0' %>
+                </h1>
+                <div class="stars-large">
+                  <% const avgRating=product.averageRating || 0; for(let i=1; i <=5; i++) { if(i
+                    <=Math.floor(avgRating)) { %>
+                    <i class="fa-solid fa-star"></i>
+                    <% } else if(i===Math.ceil(avgRating) && avgRating % 1 !==0) { %>
+                      <i class="fa-solid fa-star-half-stroke"></i>
+                      <% } else { %>
+                        <i class="fa-regular fa-star"></i>
+                        <% } } %>
+                </div>
+                <p class="rating-text">
+                  <%= product.totalRatings || 0 %> Ratings
+                </p>
+              </div>
+            </div>
+
+            <!-- Right: Action Buttons -->
+            <div class="rating-actions">
+              <button class="btn-write-review" id="openReviewModal">Write A Review</button>
+              <button class="btn-see-reviews"
+                onclick="document.getElementById('reviewsList').scrollIntoView({behavior: 'smooth'})">See All
+                Reviews</button>
+            </div>
+          </div>
+
+          <!-- Reviews List -->
+          <div id="reviewsList" class="reviews-section">
+            <h3 class="reviews-heading">Most helpful positive review</h3>
+
+            <% if(reviews && reviews.length> 0) { %>
+              <% reviews.forEach(function(review, index){ %>
+                <% const currentUserId=user?._id?.toString(); const reviewUserId=typeof review.user==='string' ?
+                  review.user : review.user?._id?.toString(); const canDelete=currentUserId && reviewUserId &&
+                  currentUserId===reviewUserId; %>
+                  <div class="review-card" data-review-id="<%= review._id %>">
 
 
+                    <div class="review-header">
+                      <div class="review-stars-small">
+                        <% for(let i=1; i <=5; i++) { %>
+                          <i class="fa-solid fa-star <%= i <= review.rating ? 'star-filled' : 'star-empty' %>"></i>
+                          <% } %>
+                      </div>
+                      <div class="review-meta">
+                        <span class="review-author">
+                          @<%= review.user && review.user.name ? review.user.name : (review.user && review.user.email ?
+                            review.user.email.split('@')[0] : 'customer' ) %>
+                        </span>
+                        <span class="review-date">
+                          <%= new Date(review.createdAt).toLocaleDateString('en-US', { month: 'short' , day: '2-digit' ,
+                            year: 'numeric' }) %>
+                        </span>
+                      </div>
+                    </div>
+                    <% if(review.comment) { %>
+                      <p class="review-text">
+                        <%= review.comment %>
+                      </p>
+                      <% } %>
+                  </div>
+                  <% }) %>
 
-<!-- Size Selection Popup -->
-<div id="sizePopup" class="popup-overlay">
-  <div class="popup">
-    <button id="popupClose" class="popup-close">&times;</button>
-    <h5>Select Size</h5>
-    <div id="popupSizes" class="popup-sizes">
-      <% (product.variants || []).forEach(function(v){ %>
-        <% if(v.stock > 0) { %>
-          <button 
-            class="chip popup" 
-            data-size="<%= v.size %>" 
-            data-color="<%= v.color || '#667eea' %>">
-            <%= v.size %>
-          </button>
+                    <div class="reviews-footer">
+                      <p class="reviews-count">
+                        <%= reviews.length %> reviews
+                      </p>
+                    </div>
+                    <% } else { %>
+                      <div class="no-reviews-card">
+                        <i class="fa-regular fa-comments fa-3x"></i>
+                        <p>No reviews yet. Be the first to review this product!</p>
+                      </div>
+                      <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recently Viewed -->
+      <% if (recentProducts && recentProducts.length> 0) { %>
+        <div class="container py-4 position-relative features-container">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="m-0">Recently Viewed</h2>
+          </div>
+          <div class="row g-3">
+            <% recentProducts.forEach(function(rp){ %>
+              <div class="col-6 col-md-6 col-lg-4 product-item">
+                <a class="product-link" href="/show/<%= rp._id %>">
+                  <div class="product-card">
+                    <div class="product-image">
+                      <% let isInWishlist=(wishlist || []).some( w=> w._id.toString() === rp._id.toString()
+                        );
+                        %>
+
+                        <button class="wishlist-btn" data-id="<%= rp._id %>">
+                          <i class="<%= isInWishlist ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart' %>"></i>
+                        </button>
+                        <!-- Product Image -->
+                        <img
+                          src="<%= rp.imageUrls && rp.imageUrls.length ? rp.imageUrls[0] : '/images/placeholder.png' %>"
+                          alt="<%= rp.name %>">
+                    </div>
+                    <div class="product-info">
+                      <h3 class="product-name">
+                        <%= rp.name %>
+                      </h3>
+                      <div class="product-price">
+                        <span class="sale-price">₹<%= rp.salePrice.toLocaleString('en-IN') %></span>
+                        <% if(rp.mrp && rp.mrp> rp.salePrice){
+                          let discount = Math.round(((rp.mrp - rp.salePrice) / rp.mrp) * 100);
+                          %>
+                          <span class="mrp">₹<%= rp.mrp.toLocaleString('en-IN') %></span>
+                          <span class="discount">(<%= discount %>% OFF)</span>
+                          <% } %>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <% }) %>
+          </div>
+        </div>
         <% } %>
-      <% }) %>
-    </div>
-    <div class="popup-actions">
-      <button id="popupContinue" class="btn">Continue</button>
-    </div>
-  </div>
-</div>
-
-<!-- Review Modal -->
-<div id="reviewModal" class="review-modal-overlay">
-  <div class="review-modal">
-    <button id="closeReviewModal" class="modal-close">&times;</button>
-    <h3>Write a Review</h3>
-    <form id="reviewForm" class="review-form">
-      <div class="form-group">
-        <label>Your Rating *</label>
-        <div class="star-rating-input">
-          <i class="fa-regular fa-star" data-rating="1"></i>
-          <i class="fa-regular fa-star" data-rating="2"></i>
-          <i class="fa-regular fa-star" data-rating="3"></i>
-          <i class="fa-regular fa-star" data-rating="4"></i>
-          <i class="fa-regular fa-star" data-rating="5"></i>
-        </div>
-        <input type="hidden" id="ratingValue" name="rating" value="0" />
-      </div>
-      <div class="form-group">
-        <label for="reviewComment">Your Review (Optional)</label>
-        <textarea id="reviewComment" name="comment" rows="4" placeholder="Share your experience with this product..."></textarea>
-      </div>
-      <button type="submit" class="btn-submit-review">Submit Review</button>
-    </form>
-  </div>
-</div>
-
-<!-- Toast Container -->
-<div id="toast-container"></div>
-
-<style>
-/* Toast container */
-#toast-container {
-  position: fixed;
-  bottom: 30px; /* distance from bottom */
-  left: 50%;    /* center horizontally */
-  transform: translateX(-50%); /* center by shifting left */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;   /* spacing between multiple toasts if stacked */
-  z-index: 9999;
-}
-
-/* Toast */
-.toast {
-  min-width: 200px;
-  max-width: 90%; /* responsive on small screens */
-  padding: 12px 18px;
-  border-radius: 24px;
-  color: #fff;
-  font-weight: 600;
-  opacity: 0;
-  transform: translateY(50px);
-  transition: all 0.3s ease;
-  text-align: center;
-}
-
-@media  (max-width: 480px) {
-  .toast {
-    font-size: 14px;
-    padding: 10px 14px;
-    max-width: 150px;
-  }
-}
-
-/* Show toast */
-.toast.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Success toast */
-.toast.success {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-}
-
-/* Error toast */
-.toast.error {
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
-}
-
-</style>
-
-
-<style>
-/* Overlay */
-.popup-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;   /* horizontal center */
-  align-items: center;       /* vertical center */
-  z-index: 1000;
-  backdrop-filter: blur(1px);
-  opacity: 0;                  /* fully visible */
-  pointer-events: none;           /* disable clicks */
-  transition: opacity 0.3s ease;
-}
-
-.popup-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Popup box */
-.popup {
-  position: relative;
-  background: #fff;
-  border-radius: 16px;
-  padding: 25px 20px 20px;
-  width: 320px;
-  max-width: 90%;            /* responsive on small screens */
-  text-align: center;
-}
-
-/* Heading */
-.popup h5 {
-  margin: 0 0 20px 0;
-  font-weight: 700;
-  font-size: 18px;
-}
-
-/* Close button */
-.popup-close {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  border: none;
-  background: none;
-  font-size: 24px;
-  color: #555;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-.popup-close:hover {
-  color: #000;
-}
-
-/* Sizes */
-.popup-sizes {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin: 15px 0;
-}
-
-.popup-sizes .chip.popup {
-  width: 50px;            /* fixed width for circle */
-  height: 50px;           /* fixed height for circle */
-  border-radius: 50%;     /* circular */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #c3c0c0;
-  background: #fff;
-  cursor: pointer;
-  font-weight: 600;
-  flex-shrink: 0;         /* prevent shrinking in horizontal row */
-
-}
-
-.popup-sizes .chip:hover {
-  transform: scale(1.1);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-/* Selected size */
-.popup-sizes .chip.selected {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: #fff;
-}
-
-/* Continue button */
-.popup-actions .btn {
-  margin-top: 15px;
-  padding: 10px 25px;
-  font-weight: 700;
-  border: none;
-  border-radius: 30px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  cursor: pointer;
-}
-
-.popup-actions .btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-/* ========== RATINGS & REVIEWS STYLES ========== */
-.reviews-title {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 30px;
-  color: #1a1a1a;
-  margin-left: 100px;
-}
-
-.rating-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  max-width: 1400px;
-  width: 100%;
-  gap: 40px;
-  padding: 40px;
-  background: #f9f9fb;
-  border-radius: 16px;
-  margin-bottom: 50px;
-  align-items: center;
-  margin-left: 100px;
-}
-
-/* Rating Bars Section (Left) */
-.rating-bars-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.rating-bar-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-}
-
-.star-num {
-  min-width: 45px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.star-num i {
-  color: #FFB800;
-  font-size: 14px;
-}
-
-.bar-bg {
-  flex: 1;
-  height: 8px;
-  background: #e0e0e0;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
-  transition: width 0.3s ease;
-}
-
-.rating-count-num {
-  min-width: 30px;
-  text-align: right;
-  font-weight: 600;
-  color: #666;
-}
-
-/* Center Rating Display */
-.rating-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.avg-rating-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.rating-number {
-  font-size: 72px;
-  font-weight: 700;
-  margin: 0;
-  color: #1a1a1a;
-  line-height: 1;
-}
-
-.stars-large {
-  display: flex;
-  gap: 6px;
-}
-
-.stars-large i {
-  color: #FFB800;
-  font-size: 28px;
-}
-
-.rating-text {
-  font-size: 16px;
-  color: #666;
-  margin: 0;
-}
-
-/* Action Buttons (Right) */
-.rating-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  align-items: stretch;
-}
-
-.btn-write-review {
-  padding: 16px 32px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-write-review:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
-}
-
-.btn-see-reviews {
-  padding: 16px 32px;
-  background: transparent;
-  color: #6366f1;
-  border: 2px solid #6366f1;
-  border-radius: 50px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-see-reviews:hover {
-  background: #6366f1;
-  color: white;
-}
-
-/* Reviews Section */
-.reviews-section {
-  margin-top: 40px;
-  margin-left: 100px;
-  width: 100%;
-}
-
-.reviews-heading {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 25px;
-  color: #1a1a1a;
-}
-
-.review-card {
-  position: relative;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
-}
-
-.review-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  transform: translateY(-2px);
-}
-
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.review-stars-small {
-  display: flex;
-  gap: 4px;
-}
-
-.review-stars-small i {
-  font-size: 16px;
-}
-
-.star-filled {
-  color: #FFB800;
-}
-
-.star-empty {
-  color: #e0e0e0;
-}
-
-.review-meta {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-  font-size: 14px;
-  color: #666;
-}
-
-.review-author {
-  font-weight: 600;
-  color: #6366f1;
-}
-
-.review-date {
-  color: #999;
-}
-
-/* Delete Button - Top Right Corner */
-.btn-delete-review {
-  position: absolute;
-  top: 0px;
-  right: 0;
-  background: transparent;
-  border: none;
-  color: #ef4444;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.btn-delete-review:hover {
-  background: #fee2e2;
-  transform: scale(1.1);
-}
-
-.btn-delete-review i {
-  font-size: 20px;
-}
-
-.review-text {
-  font-size: 15px;
-  line-height: 1.6;
-  color: #4b5563;
-  margin: 12px 0;
-}
-
-.review-user {
-  font-size: 13px;
-  color: #999;
-  font-style: italic;
-  margin: 8px 0 0 0;
-}
-
-.reviews-footer {
-  text-align: center;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.reviews-count {
-  font-size: 14px;
-  color: #666;
-}
-
-.no-reviews-card {
-  text-align: center;
-  padding: 60px 20px;
-  background: #f9f9fb;
-  border-radius: 12px;
-}
-
-.no-reviews-card i {
-  color: #d1d5db;
-  margin-bottom: 20px;
-}
-
-.no-reviews-card p {
-  font-size: 16px;
-  color: #6b7280;
-  margin: 0;
-}
-
-/* Review Modal */
-.review-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.review-modal-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.review-modal {
-  background: white;
-  border-radius: 20px;
-  padding: 40px;
-  width: 500px;
-  max-width: 90%;
-  position: relative;
-  transform: scale(0.9);
-  transition: transform 0.3s ease;
-}
-
-.review-modal-overlay.active .review-modal {
-  transform: scale(1);
-}
-
-.modal-close {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  background: none;
-  border: none;
-  font-size: 32px;
-  color: #999;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.modal-close:hover {
-  color: #333;
-}
-
-.review-modal h3 {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0 0 30px 0;
-  color: #1a1a1a;
-}
-
-.review-form {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.form-group label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.star-rating-input {
-  display: flex;
-  gap: 8px;
-}
-
-.star-rating-input i {
-  font-size: 32px;
-  color: #e0e0e0;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.star-rating-input i:hover,
-.star-rating-input i.hovered {
-  color: #FFB800;
-  transform: scale(1.1);
-}
-
-.star-rating-input i.selected {
-  color: #FFB800;
-}
-
-.form-group textarea {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: 14px;
-  resize: vertical;
-  transition: border-color 0.3s ease;
-}
-
-.form-group textarea:focus {
-  outline: none;
-  border-color: #6366f1;
-}
-
-.btn-submit-review {
-  padding: 16px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-submit-review:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
-}
-
-/* Responsive Design */
-@media (max-width: 992px) {
-  .rating-container {
-    grid-template-columns: 1fr;
-    gap: 30px;
-    padding: 30px;
-    margin-left: 50px;
-  }
-  
-  .rating-number {
-    font-size: 56px;
-  }
-  
-  .reviews-title {
-    font-size: 24px;
-  }
-}
-
-@media (max-width: 768px) {
-  .review-modal {
-    padding: 30px 20px;
-  }
-.reviews-title {
-    margin-left: 0;
-  }
-  
-  .rating-container {
-    padding: 20px;
-    margin-left: 0;
-    gap: 30px;
-  }
-  
-  .rating-actions {
-    align-items: stretch;
-  }
-
-  .reviews-section{
-    margin-left: 0;
-  }
-  
-  .btn-write-review,
-  .btn-see-reviews {
-    width: 100%;
-  }
-}
-
-</style>
-
-<style>
-/* ========== BASE RESET ========== */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Poppins", sans-serif;
-  color: #111;
-  margin: 0;
-  background: #fff;
-}
-
-.contentWrap {
-  max-width: 1200px;
-}
-
-.crumbs {
-  font-size: 16px;
-  color: #141313;
-  margin: 0 0 16px 100px;
-}
-
-/* ========== PRODUCT LAYOUT ========== */
-.layout {
-  display: grid;
-  grid-template-columns: 68% 37%;
-  gap: 60px;
-  align-items: start;
-  margin-left: 100px;
-}
-
-/* ========== IMAGES ========== */
-.product-images {
-  display: flex;
-  gap: 30px;
-  width: 100%;
-}
-
-.thumbCol {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 150px;
-  margin-top: 10px;
-}
-
-.thumbCol img {
-  width: 100%;
-  height: 82px;
-  object-fit: cover;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: border 0.3s;
-}
-
-.thumbCol img.active,
-.thumbCol img:hover {
-  border-color: #127afac3;
-}
-
-.mainImageBox {
-  position: relative;
-  height: 480px;
-  width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.mainImageBox img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  border-radius: 10px;
-}
-
-/* Buttons on image */
-.icon,
-.wishlist-btn-ps {
-  position: absolute;
-  right: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  z-index: 10;
-}
-.icon { top: 12px; }
-.wishlist-btn-ps { top: 60px; }
-
-.icon:hover,
-.wishlist-btn-ps:hover {
-  background: #f3f3f3;
-}
-
-.wishlist-btn-ps.active i {
-  color: red;
-}
-
-/* ========== PRODUCT INFO ========== */
-.product-name-ps {
-  font-size: 22px;
-  font-weight: 650;
-}
-
-.prices {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin: 8px 0;
-}
-
-.sale-price-ps {
-  font-size: 22px;
-  font-weight: 500;
-  color: #111;
-}
-
-.mrp-ps {
-  text-decoration: line-through;
-  color: #777;
-  font-size: 22px;
-  font-weight: 500;
-}
-
-.discount-ps {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 700;
-  font-size: 18px;
-}
-
-.tax {
-  margin-top: -10px;
-  color: #4a4a4a;
-  font-size: 12px;
-}
-
-.sectionTitle {
-  font-size: 14px;
-  font-weight: 550;
-  margin: 12px 0 6px;
-}
-
-.chipRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.chip.outOfStock {
-  color: #aaa;
-  border: 1px solid #ccc;
-  text-decoration: line-through;
-  cursor: not-allowed;
-  background: #f5f5f5;
-}
-
-.chip {
-  border: 1px solid #c3c0c0;
-  background: rgb(245, 245, 245);
-  border-radius: 999px;
-  padding: 10px 14px;
-  cursor: pointer;
-  min-width: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.chip.selected {
-  background: linear-gradient(135deg,#667eea,#764ba2);
-  color: #fff;
-}
-
-.sizeGuide {
-  color: #0066cc;
-  text-decoration: none;
-  font-size: 12px;
-  margin-left: 8px;
-}
-
-.ctaRow {
-  display: flex;
-  gap: 12px;
-  margin: 16px 0;
-}
-
-.btnPrimary, .btnBuy {
-  border: none;
-  border-radius: 6px;
-  padding: 14px 18px;
-  min-width: 180px;
-  cursor: pointer;
-}
-
-.btnPrimary {
-  background: #9aa0a6;
-  color: #fff;
-}
-
-.btnPrimary.active {
-  background: #171616;
-}
-
-.btnBuy {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-}
-
-.deliveryBox {
-  margin: 16px 0;
-  border-bottom: 1px solid #eee;
-  background: transparent;
-}
-
-.deliveryHeader {
-  padding: 12px 0;
-  font-size: 14px;
-  font-weight: 550;
-  color: #333;
-  letter-spacing: .02em;
-}
-
-.deliveryBody {
-  padding: 0 0 12px;
-}
-
-
-.pinGroup {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  border: 1px solid #e2e2e2;
-  border-radius: 6px;
-  overflow: hidden;
-  max-width: 420px;
-}
-
-.pinGroup input {
-  border: none;
-  padding: 12px 14px;
-  outline: none;
-}
-
-.pinGroup button {
-  background: #fff;
-  padding: 12px 16px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  cursor: pointer;
-  border: none;
-}
-.pinGroup button:hover {
-   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-   color: #fff;
-   -webkit-text-fill-color:white;
-   
-  }
-
-/* Soft Loader */
-  .loader {
-    margin-top: 10px;
-    width: 22px;
-    height: 22px;
-    border: 3px solid #ddd;
-    border-top: 3px solid #111;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  .hidden {
-    display: none;
-  }
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-.badges {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(220px, 1fr));
-  gap: 12px;
-  margin-top: 10px;
-  max-width: 520px;
-}
-
-.badge {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.badge i {
-  color: #ffd700;
-}
-
-.badge span {
-  font-size: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.prodBox {
-  border-bottom: 1px solid #eee;
-  margin-right: 15px;
-}
-
-.prodHeader {
-  display: block;
-  padding: 0 0 8px;
-  font-weight: 550;
-  font-size: 14px;
-}
- /* Product details collapsible on mobile */
-  .prodBox .prodBody { display: none; }
-  .prodBox.active .prodBody { display: block; padding-top: 8px; }
-  .prodHeader { cursor: pointer; display: flex;justify-content: space-between; align-items: center; }
-  .prodHeader::after { content: "+"; font-weight: 700; }
-  .prodBox.active .prodHeader::after { content: "-"; }
-
-.prodDesc {
-  color: #4a4a4a;
-  line-height: 1.5;
-  font-size: 15px;
-}
-
-.specGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-.specItem {
-  display: block;
-  margin-bottom: 10px;
-}
-
-.specKey {
-  display: block;
-  color: #1f2937;
-  font-weight: 600;
-  margin: 0 0 -4px;
-  font-size: 16px;
-}
-
-.specVal {
-  display: block;
-  color: #4b5563;
-  font-size: 15px;
-}
-
-/*
+
+
+          <!-- Similar Products -->
+          <% if (similarProducts && similarProducts.length> 0) { %>
+            <div class="container py-4 position-relative features-container">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <h2 class="m-0">Similar Products</h2>
+              </div>
+              <div class="row g-3">
+                <% similarProducts.forEach(function(sp){ %>
+                  <div class="col-6 col-md-6 col-lg-4 product-item">
+                    <a class="product-link" href="/show/<%= sp._id %>">
+                      <div class="product-card">
+                        <div class="product-image">
+                          <% let isInWishlist=(wishlist || []).some( w=> w._id.toString() === sp._id.toString()
+                            );
+                            %>
+
+                            <button class="wishlist-btn" data-id="<%= sp._id %>">
+                              <i
+                                class="<%= isInWishlist ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart' %>"></i>
+                            </button>
+                            <!-- Product Image -->
+                            <img
+                              src="<%= sp.imageUrls && sp.imageUrls.length ? sp.imageUrls[0] : '/images/placeholder.png' %>"
+                              alt="<%= sp.name %>">
+                        </div>
+                        <div class="product-info">
+                          <h3 class="product-name">
+                            <%= sp.name %>
+                          </h3>
+                          <div class="product-price">
+                            <span class="sale-price">₹<%= sp.salePrice.toLocaleString('en-IN') %></span>
+                            <% if(sp.mrp && sp.mrp> sp.salePrice){
+                              let discount = Math.round(((sp.mrp - sp.salePrice) / sp.mrp) * 100);
+                              %>
+                              <span class="mrp">₹<%= sp.mrp.toLocaleString('en-IN') %></span>
+                              <span class="discount">(<%= discount %>% OFF)</span>
+                              <% } %>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                  <% }) %>
+              </div>
+            </div>
+            <% } %>
+              </div>
+
+
+
+              <!-- Size Selection Popup -->
+              <div id="sizePopup" class="popup-overlay">
+                <div class="popup">
+                  <button id="popupClose" class="popup-close">&times;</button>
+                  <h5>Select Size</h5>
+                  <div id="popupSizes" class="popup-sizes">
+                    <% (product.variants || []).forEach(function(v){ %>
+                      <% if(v.stock> 0) { %>
+                        <button class="chip popup" data-size="<%= v.size %>" data-color="<%= v.color || '#667eea' %>">
+                          <%= v.size %>
+                        </button>
+                        <% } %>
+                          <% }) %>
+                  </div>
+                  <div class="popup-actions">
+                    <button id="popupContinue" class="btn">Continue</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Review Modal -->
+              <div id="reviewModal" class="review-modal-overlay">
+                <div class="review-modal">
+                  <button id="closeReviewModal" class="modal-close">&times;</button>
+                  <h3>Write a Review</h3>
+                  <form id="reviewForm" class="review-form">
+                    <div class="form-group">
+                      <label>Your Rating *</label>
+                      <div class="star-rating-input">
+                        <i class="fa-regular fa-star" data-rating="1"></i>
+                        <i class="fa-regular fa-star" data-rating="2"></i>
+                        <i class="fa-regular fa-star" data-rating="3"></i>
+                        <i class="fa-regular fa-star" data-rating="4"></i>
+                        <i class="fa-regular fa-star" data-rating="5"></i>
+                      </div>
+                      <input type="hidden" id="ratingValue" name="rating" value="0" />
+                    </div>
+                    <div class="form-group">
+                      <label for="reviewComment">Your Review (Optional)</label>
+                      <textarea id="reviewComment" name="comment" rows="4"
+                        placeholder="Share your experience with this product..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit-review">Submit Review</button>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Toast Container -->
+              <div id="toast-container"></div>
+
+              <style>
+                /* Toast container */
+                #toast-container {
+                  position: fixed;
+                  bottom: 30px;
+                  /* distance from bottom */
+                  left: 50%;
+                  /* center horizontally */
+                  transform: translateX(-50%);
+                  /* center by shifting left */
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  gap: 10px;
+                  /* spacing between multiple toasts if stacked */
+                  z-index: 9999;
+                }
+
+                /* Toast */
+                .toast {
+                  min-width: 200px;
+                  max-width: 90%;
+                  /* responsive on small screens */
+                  padding: 12px 18px;
+                  border-radius: 24px;
+                  color: #fff;
+                  font-weight: 600;
+                  opacity: 0;
+                  transform: translateY(50px);
+                  transition: all 0.3s ease;
+                  text-align: center;
+                }
+
+                @media (max-width: 480px) {
+                  .toast {
+                    font-size: 14px;
+                    padding: 10px 14px;
+                    max-width: 150px;
+                  }
+                }
+
+                /* Show toast */
+                .toast.show {
+                  opacity: 1;
+                  transform: translateY(0);
+                }
+
+                /* Success toast */
+                .toast.success {
+                  background: linear-gradient(135deg, #667eea, #764ba2);
+                }
+
+                /* Error toast */
+                .toast.error {
+                  background: linear-gradient(135deg, #e74c3c, #c0392b);
+                }
+              </style>
+
+
+              <style>
+                /* Overlay */
+                .popup-overlay {
+                  position: fixed;
+                  inset: 0;
+                  background: rgba(0, 0, 0, 0.5);
+                  display: flex;
+                  justify-content: center;
+                  /* horizontal center */
+                  align-items: center;
+                  /* vertical center */
+                  z-index: 1000;
+                  backdrop-filter: blur(1px);
+                  opacity: 0;
+                  /* fully visible */
+                  pointer-events: none;
+                  /* disable clicks */
+                  transition: opacity 0.3s ease;
+                }
+
+                .popup-overlay.active {
+                  opacity: 1;
+                  pointer-events: auto;
+                }
+
+                /* Popup box */
+                .popup {
+                  position: relative;
+                  background: #fff;
+                  border-radius: 16px;
+                  padding: 25px 20px 20px;
+                  width: 320px;
+                  max-width: 90%;
+                  /* responsive on small screens */
+                  text-align: center;
+                }
+
+                /* Heading */
+                .popup h5 {
+                  margin: 0 0 20px 0;
+                  font-weight: 700;
+                  font-size: 18px;
+                }
+
+                /* Close button */
+                .popup-close {
+                  position: absolute;
+                  top: 10px;
+                  right: 12px;
+                  border: none;
+                  background: none;
+                  font-size: 24px;
+                  color: #555;
+                  cursor: pointer;
+                  transition: color 0.2s;
+                }
+
+                .popup-close:hover {
+                  color: #000;
+                }
+
+                /* Sizes */
+                .popup-sizes {
+                  display: flex;
+                  justify-content: center;
+                  gap: 12px;
+                  margin: 15px 0;
+                }
+
+                .popup-sizes .chip.popup {
+                  width: 50px;
+                  /* fixed width for circle */
+                  height: 50px;
+                  /* fixed height for circle */
+                  border-radius: 50%;
+                  /* circular */
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  border: 1px solid #c3c0c0;
+                  background: #fff;
+                  cursor: pointer;
+                  font-weight: 600;
+                  flex-shrink: 0;
+                  /* prevent shrinking in horizontal row */
+
+                }
+
+                .popup-sizes .chip:hover {
+                  transform: scale(1.1);
+                  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                }
+
+                /* Selected size */
+                .popup-sizes .chip.selected {
+                  background: linear-gradient(135deg, #667eea, #764ba2);
+                  color: #fff;
+                }
+
+                /* Continue button */
+                .popup-actions .btn {
+                  margin-top: 15px;
+                  padding: 10px 25px;
+                  font-weight: 700;
+                  border: none;
+                  border-radius: 30px;
+                  background: linear-gradient(135deg, #667eea, #764ba2);
+                  cursor: pointer;
+                }
+
+                .popup-actions .btn:hover {
+                  transform: scale(1.05);
+                  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+                }
+
+                /* ========== RATINGS & REVIEWS STYLES ========== */
+                .reviews-title {
+                  font-size: 32px;
+                  font-weight: 700;
+                  margin-bottom: 30px;
+                  color: #1a1a1a;
+                  margin-left: 100px;
+                }
+
+                .rating-container {
+                  display: grid;
+                  grid-template-columns: 1fr 1fr 1fr;
+                  max-width: 1400px;
+                  width: 100%;
+                  gap: 40px;
+                  padding: 40px;
+                  background: #f9f9fb;
+                  border-radius: 16px;
+                  margin-bottom: 50px;
+                  align-items: center;
+                  margin-left: 100px;
+                }
+
+                /* Rating Bars Section (Left) */
+                .rating-bars-section {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 12px;
+                }
+
+                .rating-bar-row {
+                  display: flex;
+                  align-items: center;
+                  gap: 12px;
+                  font-size: 14px;
+                }
+
+                .star-num {
+                  min-width: 45px;
+                  font-weight: 600;
+                  display: flex;
+                  align-items: center;
+                  gap: 4px;
+                }
+
+                .star-num i {
+                  color: #FFB800;
+                  font-size: 14px;
+                }
+
+                .bar-bg {
+                  flex: 1;
+                  height: 8px;
+                  background: #e0e0e0;
+                  border-radius: 4px;
+                  overflow: hidden;
+                }
+
+                .bar-fill {
+                  height: 100%;
+                  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+                  transition: width 0.3s ease;
+                }
+
+                .rating-count-num {
+                  min-width: 30px;
+                  text-align: right;
+                  font-weight: 600;
+                  color: #666;
+                }
+
+                /* Center Rating Display */
+                .rating-center {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  text-align: center;
+                }
+
+                .avg-rating-box {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  gap: 10px;
+                }
+
+                .rating-number {
+                  font-size: 72px;
+                  font-weight: 700;
+                  margin: 0;
+                  color: #1a1a1a;
+                  line-height: 1;
+                }
+
+                .stars-large {
+                  display: flex;
+                  gap: 6px;
+                }
+
+                .stars-large i {
+                  color: #FFB800;
+                  font-size: 28px;
+                }
+
+                .rating-text {
+                  font-size: 16px;
+                  color: #666;
+                  margin: 0;
+                }
+
+                /* Action Buttons (Right) */
+                .rating-actions {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 15px;
+                  align-items: stretch;
+                }
+
+                .btn-write-review {
+                  padding: 16px 32px;
+                  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                  color: white;
+                  border: none;
+                  border-radius: 50px;
+                  font-size: 16px;
+                  font-weight: 600;
+                  cursor: pointer;
+                  transition: all 0.3s ease;
+                }
+
+                .btn-write-review:hover {
+                  transform: translateY(-2px);
+                  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+                }
+
+                .btn-see-reviews {
+                  padding: 16px 32px;
+                  background: transparent;
+                  color: #6366f1;
+                  border: 2px solid #6366f1;
+                  border-radius: 50px;
+                  font-size: 16px;
+                  font-weight: 600;
+                  cursor: pointer;
+                  transition: all 0.3s ease;
+                }
+
+                .btn-see-reviews:hover {
+                  background: #6366f1;
+                  color: white;
+                }
+
+                /* Reviews Section */
+                .reviews-section {
+                  margin-top: 40px;
+                  margin-left: 100px;
+                  width: 100%;
+                }
+
+                .reviews-heading {
+                  font-size: 24px;
+                  font-weight: 600;
+                  margin-bottom: 25px;
+                  color: #1a1a1a;
+                }
+
+                .review-card {
+                  position: relative;
+                  background: white;
+                  border: 1px solid #e5e7eb;
+                  border-radius: 12px;
+                  padding: 24px;
+                  margin-bottom: 20px;
+                  transition: all 0.3s ease;
+                }
+
+                .review-card:hover {
+                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                  transform: translateY(-2px);
+                }
+
+                .review-header {
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 12px;
+                }
+
+                .review-stars-small {
+                  display: flex;
+                  gap: 4px;
+                }
+
+                .review-stars-small i {
+                  font-size: 16px;
+                }
+
+                .star-filled {
+                  color: #FFB800;
+                }
+
+                .star-empty {
+                  color: #e0e0e0;
+                }
+
+                .review-meta {
+                  display: flex;
+                  gap: 15px;
+                  align-items: center;
+                  font-size: 14px;
+                  color: #666;
+                }
+
+                .review-author {
+                  font-weight: 600;
+                  color: #6366f1;
+                }
+
+                .review-date {
+                  color: #999;
+                }
+
+                /* Delete Button - Top Right Corner */
+                .btn-delete-review {
+                  position: absolute;
+                  top: 0px;
+                  right: 0;
+                  background: transparent;
+                  border: none;
+                  color: #ef4444;
+                  width: 32px;
+                  height: 32px;
+                  border-radius: 50%;
+                  cursor: pointer;
+                  transition: all 0.3s ease;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  z-index: 10;
+                }
+
+                .btn-delete-review:hover {
+                  background: #fee2e2;
+                  transform: scale(1.1);
+                }
+
+                .btn-delete-review i {
+                  font-size: 20px;
+                }
+
+                .review-text {
+                  font-size: 15px;
+                  line-height: 1.6;
+                  color: #4b5563;
+                  margin: 12px 0;
+                }
+
+                .review-user {
+                  font-size: 13px;
+                  color: #999;
+                  font-style: italic;
+                  margin: 8px 0 0 0;
+                }
+
+                .reviews-footer {
+                  text-align: center;
+                  margin-top: 30px;
+                  padding-top: 20px;
+                  border-top: 1px solid #e5e7eb;
+                }
+
+                .reviews-count {
+                  font-size: 14px;
+                  color: #666;
+                }
+
+                .no-reviews-card {
+                  text-align: center;
+                  padding: 60px 20px;
+                  background: #f9f9fb;
+                  border-radius: 12px;
+                }
+
+                .no-reviews-card i {
+                  color: #d1d5db;
+                  margin-bottom: 20px;
+                }
+
+                .no-reviews-card p {
+                  font-size: 16px;
+                  color: #6b7280;
+                  margin: 0;
+                }
+
+                /* Review Modal */
+                .review-modal-overlay {
+                  position: fixed;
+                  inset: 0;
+                  background: rgba(0, 0, 0, 0.6);
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  z-index: 2000;
+                  opacity: 0;
+                  pointer-events: none;
+                  transition: opacity 0.3s ease;
+                }
+
+                .review-modal-overlay.active {
+                  opacity: 1;
+                  pointer-events: auto;
+                }
+
+                .review-modal {
+                  background: white;
+                  border-radius: 20px;
+                  padding: 40px;
+                  width: 500px;
+                  max-width: 90%;
+                  position: relative;
+                  transform: scale(0.9);
+                  transition: transform 0.3s ease;
+                }
+
+                .review-modal-overlay.active .review-modal {
+                  transform: scale(1);
+                }
+
+                .modal-close {
+                  position: absolute;
+                  top: 15px;
+                  right: 20px;
+                  background: none;
+                  border: none;
+                  font-size: 32px;
+                  color: #999;
+                  cursor: pointer;
+                  transition: color 0.2s;
+                }
+
+                .modal-close:hover {
+                  color: #333;
+                }
+
+                .review-modal h3 {
+                  font-size: 24px;
+                  font-weight: 700;
+                  margin: 0 0 30px 0;
+                  color: #1a1a1a;
+                }
+
+                .review-form {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 25px;
+                }
+
+                .form-group {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 10px;
+                }
+
+                .form-group label {
+                  font-size: 14px;
+                  font-weight: 600;
+                  color: #374151;
+                }
+
+                .star-rating-input {
+                  display: flex;
+                  gap: 8px;
+                }
+
+                .star-rating-input i {
+                  font-size: 32px;
+                  color: #e0e0e0;
+                  cursor: pointer;
+                  transition: all 0.2s ease;
+                }
+
+                .star-rating-input i:hover,
+                .star-rating-input i.hovered {
+                  color: #FFB800;
+                  transform: scale(1.1);
+                }
+
+                .star-rating-input i.selected {
+                  color: #FFB800;
+                }
+
+                .form-group textarea {
+                  width: 100%;
+                  padding: 12px 16px;
+                  border: 2px solid #e5e7eb;
+                  border-radius: 10px;
+                  font-family: inherit;
+                  font-size: 14px;
+                  resize: vertical;
+                  transition: border-color 0.3s ease;
+                }
+
+                .form-group textarea:focus {
+                  outline: none;
+                  border-color: #6366f1;
+                }
+
+                .btn-submit-review {
+                  padding: 16px;
+                  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                  color: white;
+                  border: none;
+                  border-radius: 50px;
+                  font-size: 16px;
+                  font-weight: 600;
+                  cursor: pointer;
+                  transition: all 0.3s ease;
+                }
+
+                .btn-submit-review:hover {
+                  transform: translateY(-2px);
+                  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+                }
+
+                /* Responsive Design */
+                @media (max-width: 992px) {
+                  .rating-container {
+                    grid-template-columns: 1fr;
+                    gap: 30px;
+                    padding: 30px;
+                    margin-left: 50px;
+                  }
+
+                  .rating-number {
+                    font-size: 56px;
+                  }
+
+                  .reviews-title {
+                    font-size: 24px;
+                  }
+                }
+
+                @media (max-width: 768px) {
+                  .review-modal {
+                    padding: 30px 20px;
+                  }
+
+                  .reviews-title {
+                    margin-left: 0;
+                  }
+
+                  .rating-container {
+                    padding: 20px;
+                    margin-left: 0;
+                    gap: 30px;
+                  }
+
+                  .rating-actions {
+                    align-items: stretch;
+                  }
+
+                  .reviews-section {
+                    margin-left: 0;
+                  }
+
+                  .btn-write-review,
+                  .btn-see-reviews {
+                    width: 100%;
+                  }
+                }
+              </style>
+
+              <style>
+                /* ========== BASE RESET ========== */
+                *,
+                *::before,
+                *::after {
+                  box-sizing: border-box;
+                }
+
+                body {
+                  font-family: "Poppins", sans-serif;
+                  color: #111;
+                  margin: 0;
+                  background: #fff;
+                }
+
+                .contentWrap {
+                  max-width: 1200px;
+                }
+
+                .crumbs {
+                  font-size: 16px;
+                  color: #141313;
+                  margin: 0 0 16px 100px;
+                }
+
+                /* ========== PRODUCT LAYOUT ========== */
+                .layout {
+                  display: grid;
+                  grid-template-columns: 68% 37%;
+                  gap: 60px;
+                  align-items: start;
+                  margin-left: 100px;
+                }
+
+                /* ========== IMAGES ========== */
+                .product-images {
+                  display: flex;
+                  gap: 30px;
+                  width: 100%;
+                }
+
+                .thumbCol {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 16px;
+                  width: 150px;
+                  margin-top: 10px;
+                }
+
+                .thumbCol img {
+                  width: 100%;
+                  height: 82px;
+                  object-fit: cover;
+                  border: 2px solid transparent;
+                  border-radius: 8px;
+                  cursor: pointer;
+                  transition: border 0.3s;
+                }
+
+                .thumbCol img.active,
+                .thumbCol img:hover {
+                  border-color: #127afac3;
+                }
+
+                .mainImageBox {
+                  position: relative;
+                  height: 480px;
+                  width: 100%;
+                  border: 1px solid #ddd;
+                  border-radius: 10px;
+                  overflow: hidden;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                }
+
+                .mainImageBox img {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                  display: block;
+                  border-radius: 10px;
+                }
+
+                /* Buttons on image */
+                .icon,
+                .wishlist-btn-ps {
+                  position: absolute;
+                  right: 12px;
+                  background: rgba(255, 255, 255, 0.9);
+                  border: none;
+                  width: 36px;
+                  height: 36px;
+                  border-radius: 50%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  cursor: pointer;
+                  transition: all 0.3s ease;
+                  z-index: 10;
+                }
+
+                .icon {
+                  top: 12px;
+                }
+
+                .wishlist-btn-ps {
+                  top: 60px;
+                }
+
+                .icon:hover,
+                .wishlist-btn-ps:hover {
+                  background: #f3f3f3;
+                }
+
+                .wishlist-btn-ps.active i {
+                  color: red;
+                }
+
+                /* ========== PRODUCT INFO ========== */
+                .product-name-ps {
+                  font-size: 22px;
+                  font-weight: 650;
+                }
+
+                .prices {
+                  display: flex;
+                  gap: 12px;
+                  align-items: center;
+                  margin: 8px 0;
+                }
+
+                .sale-price-ps {
+                  font-size: 22px;
+                  font-weight: 500;
+                  color: #111;
+                }
+
+                .mrp-ps {
+                  text-decoration: line-through;
+                  color: #777;
+                  font-size: 22px;
+                  font-weight: 500;
+                }
+
+                .discount-ps {
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                  font-weight: 700;
+                  font-size: 18px;
+                }
+
+                .tax {
+                  margin-top: -10px;
+                  color: #4a4a4a;
+                  font-size: 12px;
+                }
+
+                .sectionTitle {
+                  font-size: 14px;
+                  font-weight: 550;
+                  margin: 12px 0 6px;
+                }
+
+                .chipRow {
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: 10px;
+                }
+
+                .chip.outOfStock {
+                  color: #aaa;
+                  border: 1px solid #ccc;
+                  text-decoration: line-through;
+                  cursor: not-allowed;
+                  background: #f5f5f5;
+                }
+
+                .chip {
+                  border: 1px solid #c3c0c0;
+                  background: rgb(245, 245, 245);
+                  border-radius: 999px;
+                  padding: 10px 14px;
+                  cursor: pointer;
+                  min-width: 44px;
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                }
+
+                .chip.selected {
+                  background: linear-gradient(135deg, #667eea, #764ba2);
+                  color: #fff;
+                }
+
+                .sizeGuide {
+                  color: #0066cc;
+                  text-decoration: none;
+                  font-size: 12px;
+                  margin-left: 8px;
+                }
+
+                .ctaRow {
+                  display: flex;
+                  gap: 12px;
+                  margin: 16px 0;
+                }
+
+                .btnPrimary,
+                .btnBuy {
+                  border: none;
+                  border-radius: 6px;
+                  padding: 14px 18px;
+                  min-width: 180px;
+                  cursor: pointer;
+                }
+
+                .btnPrimary {
+                  background: #9aa0a6;
+                  color: #fff;
+                }
+
+                .btnPrimary.active {
+                  background: #171616;
+                }
+
+                .btnBuy {
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  color: #fff;
+                }
+
+                .deliveryBox {
+                  margin: 16px 0;
+                  border-bottom: 1px solid #eee;
+                  background: transparent;
+                }
+
+                .deliveryHeader {
+                  padding: 12px 0;
+                  font-size: 14px;
+                  font-weight: 550;
+                  color: #333;
+                  letter-spacing: .02em;
+                }
+
+                .deliveryBody {
+                  padding: 0 0 12px;
+                }
+
+
+                .pinGroup {
+                  display: grid;
+                  grid-template-columns: 1fr auto;
+                  align-items: center;
+                  border: 1px solid #e2e2e2;
+                  border-radius: 6px;
+                  overflow: hidden;
+                  max-width: 420px;
+                }
+
+                .pinGroup input {
+                  border: none;
+                  padding: 12px 14px;
+                  outline: none;
+                }
+
+                .pinGroup button {
+                  background: #fff;
+                  padding: 12px 16px;
+                  font-weight: 700;
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                  cursor: pointer;
+                  border: none;
+                }
+
+                .pinGroup button:hover {
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  color: #fff;
+                  -webkit-text-fill-color: white;
+
+                }
+
+                /* Soft Loader */
+                .loader {
+                  margin-top: 10px;
+                  width: 22px;
+                  height: 22px;
+                  border: 3px solid #ddd;
+                  border-top: 3px solid #111;
+                  border-radius: 50%;
+                  animation: spin 0.8s linear infinite;
+                }
+
+                .hidden {
+                  display: none;
+                }
+
+                @keyframes spin {
+                  to {
+                    transform: rotate(360deg);
+                  }
+                }
+
+                .badges {
+                  display: grid;
+                  grid-template-columns: repeat(2, minmax(220px, 1fr));
+                  gap: 12px;
+                  margin-top: 10px;
+                  max-width: 520px;
+                }
+
+                .badge {
+                  display: flex;
+                  gap: 10px;
+                  align-items: center;
+                }
+
+                .badge i {
+                  color: #ffd700;
+                }
+
+                .badge span {
+                  font-size: 14px;
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                }
+
+                .prodBox {
+                  border-bottom: 1px solid #eee;
+                  margin-right: 15px;
+                }
+
+                .prodHeader {
+                  display: block;
+                  padding: 0 0 8px;
+                  font-weight: 550;
+                  font-size: 14px;
+                }
+
+                /* Product details collapsible on mobile */
+                .prodBox .prodBody {
+                  display: none;
+                }
+
+                .prodBox.active .prodBody {
+                  display: block;
+                  padding-top: 8px;
+                }
+
+                .prodHeader {
+                  cursor: pointer;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                }
+
+                .prodHeader::after {
+                  content: "+";
+                  font-weight: 700;
+                }
+
+                .prodBox.active .prodHeader::after {
+                  content: "-";
+                }
+
+                .prodDesc {
+                  color: #4a4a4a;
+                  line-height: 1.5;
+                  font-size: 15px;
+                }
+
+                .specGrid {
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                }
+
+                .specItem {
+                  display: block;
+                  margin-bottom: 10px;
+                }
+
+                .specKey {
+                  display: block;
+                  color: #1f2937;
+                  font-weight: 600;
+                  margin: 0 0 -4px;
+                  font-size: 16px;
+                }
+
+                .specVal {
+                  display: block;
+                  color: #4b5563;
+                  font-size: 15px;
+                }
+
+                /*
   Product Card Styles (for Recently Viewed/Similar)
 */
 
-.features-container h2{
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent; 
-}
-
- .m-0 {
-        font-size: 1.4rem;
-        font-weight: 700;
-    }
-
-
-
-/* ========== RESPONSIVE STYLES ========== */
-
-/* Tablets */
-@media (max-width: 780px) {
-  .layout {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin: 0 12px;
-  }
-
-  .thumbCol { display: none !important; }
-
-  .mainImageBox {
-    height: 420px;
-    border-radius: 10px;
-    margin: 0 auto;
-  }
-
-  .product-name-ps {
-    font-size: 20px;
-    margin: 12px 0 6px;
-  }
-
-   .pinGroup {
-    max-width: 100%;
-  }
-
-  .badges {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .ctaRow {
-    flex-wrap: wrap;
-  }
-
-  .btnPrimary,
-  .btnBuy {
-    flex: 1;
-    min-width: 120px;
-    padding: 12px;
-    font-size: 14px;
-  }
-
-  .chip {
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-
-  .prodDesc {
-    font-size: 14px;
-  }
-   /* Product details collapsible on mobile */
-  .prodBox .prodBody { display: none; }
-  .prodBox.active .prodBody { display: block; padding-top: 8px; }
-  .prodHeader { cursor: pointer; display: flex;justify-content: space-between; align-items: center; }
-  .prodHeader::after { content: "+"; font-weight: 700; }
-  .prodBox.active .prodHeader::after { content: "-"; }
-  
-  /* Recently Viewed & Similar headings */
-    .m-0 {
-        font-size: 1.4rem;
-        font-weight: 600;
-    }
-
-}
-
-
-/* Phones (≤430px) */
-@media (max-width: 430px) {
-  .layout {
-    margin: 0 10px;
-    gap: 12px;
-  }
-
-  .mainImageBox {
-    height: 380px;
-    border-radius: 10px;
-    object-fit: cover;
-  }
-
-  .product-name-ps { font-size: 19px; }
-  .sale-price-ps { font-size: 22px; }
-
-   .pinGroup {
-    max-width: 100%;
-  }
-
-  .badges {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .ctaRow {
-    flex-wrap: wrap;
-  }
-
-  .btnPrimary,
-  .btnBuy {
-    flex: 1;
-    min-width: 120px;
-    padding: 12px;
-    font-size: 14px;
-  }
-
-  .chip {
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-
-  .prodDesc {
-    font-size: 14px;
-  }
-   /* Product details collapsible on mobile */
-  .prodBox .prodBody { display: none; }
-  .prodBox.active .prodBody { display: block; padding-top: 8px; }
-  .prodHeader { cursor: pointer; display: flex;justify-content: space-between; align-items: center; }
-  .prodHeader::after { content: "+"; font-weight: 700; }
-  .prodBox.active .prodHeader::after { content: "-"; }
-
- 
-}
-
-/* Small Phones (≤390px) */
-@media (max-width: 390px) {
-  .layout {
-    margin: 0 8px;
-    gap: 10px;
-  }
-
-  .mainImageBox {
-    height: 350px;
-    margin: 0 auto;
-    width: calc(100% - 16px); /* ✅ proper left-right margin for image */
-  }
-
- .pinGroup {
-    max-width: 100%;
-  }
-
-  .badges {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .ctaRow {
-    flex-wrap: wrap;
-  }
-
-  .btnPrimary,
-  .btnBuy {
-    flex: 1;
-    min-width: 120px;
-    padding: 12px;
-    font-size: 14px;
-  }
-
-  .chip {
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-
-  .prodDesc {
-    font-size: 14px;
-  }
-   /* Product details collapsible on mobile */
-  .prodBox .prodBody { display: none; }
-  .prodBox.active .prodBody { display: block; padding-top: 8px; }
-  .prodHeader { cursor: pointer; display: flex;justify-content: space-between; align-items: center; }
-  .prodHeader::after { content: "+"; font-weight: 700; }
-  .prodBox.active .prodHeader::after { content: "-"; }
-
-}
-
-</style>
-
-<!-- JS Handlers -->
-<script>
-  window.PRODUCT_ID = '<%= product._id %>';
-</script>
-<script src="/js/productShow.js"></script>
-
-<script src="/js/main.js"></script>
-<div class="pageFooter">
-  <%- include('includes/footer') %>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                .features-container h2 {
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                }
+
+                .m-0 {
+                  font-size: 1.4rem;
+                  font-weight: 700;
+                }
+
+
+
+                /* ========== RESPONSIVE STYLES ========== */
+
+                /* Tablets */
+                @media (max-width: 780px) {
+                  .layout {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                    margin: 0 12px;
+                  }
+
+                  .thumbCol {
+                    display: none !important;
+                  }
+
+                  .mainImageBox {
+                    height: 420px;
+                    border-radius: 10px;
+                    margin: 0 auto;
+                  }
+
+                  .product-name-ps {
+                    font-size: 20px;
+                    margin: 12px 0 6px;
+                  }
+
+                  .pinGroup {
+                    max-width: 100%;
+                  }
+
+                  .badges {
+                    grid-template-columns: 1fr 1fr;
+                    gap: 10px;
+                  }
+
+                  .ctaRow {
+                    flex-wrap: wrap;
+                  }
+
+                  .btnPrimary,
+                  .btnBuy {
+                    flex: 1;
+                    min-width: 120px;
+                    padding: 12px;
+                    font-size: 14px;
+                  }
+
+                  .chip {
+                    padding: 8px 12px;
+                    font-size: 14px;
+                  }
+
+                  .prodDesc {
+                    font-size: 14px;
+                  }
+
+                  /* Product details collapsible on mobile */
+                  .prodBox .prodBody {
+                    display: none;
+                  }
+
+                  .prodBox.active .prodBody {
+                    display: block;
+                    padding-top: 8px;
+                  }
+
+                  .prodHeader {
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  }
+
+                  .prodHeader::after {
+                    content: "+";
+                    font-weight: 700;
+                  }
+
+                  .prodBox.active .prodHeader::after {
+                    content: "-";
+                  }
+
+                  /* Recently Viewed & Similar headings */
+                  .m-0 {
+                    font-size: 1.4rem;
+                    font-weight: 600;
+                  }
+
+                }
+
+
+                /* Phones (≤430px) */
+                @media (max-width: 430px) {
+                  .layout {
+                    margin: 0 10px;
+                    gap: 12px;
+                  }
+
+                  .mainImageBox {
+                    height: 380px;
+                    border-radius: 10px;
+                    object-fit: cover;
+                  }
+
+                  .product-name-ps {
+                    font-size: 19px;
+                  }
+
+                  .sale-price-ps {
+                    font-size: 22px;
+                  }
+
+                  .pinGroup {
+                    max-width: 100%;
+                  }
+
+                  .badges {
+                    grid-template-columns: 1fr 1fr;
+                    gap: 10px;
+                  }
+
+                  .ctaRow {
+                    flex-wrap: wrap;
+                  }
+
+                  .btnPrimary,
+                  .btnBuy {
+                    flex: 1;
+                    min-width: 120px;
+                    padding: 12px;
+                    font-size: 14px;
+                  }
+
+                  .chip {
+                    padding: 8px 12px;
+                    font-size: 14px;
+                  }
+
+                  .prodDesc {
+                    font-size: 14px;
+                  }
+
+                  /* Product details collapsible on mobile */
+                  .prodBox .prodBody {
+                    display: none;
+                  }
+
+                  .prodBox.active .prodBody {
+                    display: block;
+                    padding-top: 8px;
+                  }
+
+                  .prodHeader {
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  }
+
+                  .prodHeader::after {
+                    content: "+";
+                    font-weight: 700;
+                  }
+
+                  .prodBox.active .prodHeader::after {
+                    content: "-";
+                  }
+
+
+                }
+
+                /* Small Phones (≤390px) */
+                @media (max-width: 390px) {
+                  .layout {
+                    margin: 0 8px;
+                    gap: 10px;
+                  }
+
+                  .mainImageBox {
+                    height: 350px;
+                    margin: 0 auto;
+                    width: calc(100% - 16px);
+                    /* ✅ proper left-right margin for image */
+                  }
+
+                  .pinGroup {
+                    max-width: 100%;
+                  }
+
+                  .badges {
+                    grid-template-columns: 1fr 1fr;
+                    gap: 10px;
+                  }
+
+                  .ctaRow {
+                    flex-wrap: wrap;
+                  }
+
+                  .btnPrimary,
+                  .btnBuy {
+                    flex: 1;
+                    min-width: 120px;
+                    padding: 12px;
+                    font-size: 14px;
+                  }
+
+                  .chip {
+                    padding: 8px 12px;
+                    font-size: 14px;
+                  }
+
+                  .prodDesc {
+                    font-size: 14px;
+                  }
+
+                  /* Product details collapsible on mobile */
+                  .prodBox .prodBody {
+                    display: none;
+                  }
+
+                  .prodBox.active .prodBody {
+                    display: block;
+                    padding-top: 8px;
+                  }
+
+                  .prodHeader {
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  }
+
+                  .prodHeader::after {
+                    content: "+";
+                    font-weight: 700;
+                  }
+
+                  .prodBox.active .prodHeader::after {
+                    content: "-";
+                  }
+
+                }
+              </style>
+
+              <!-- JS Handlers -->
+              <script>
+                window.PRODUCT_ID = '<%= product._id %>';
+              </script>
+              <script src="/js/productShow.js"></script>
+
+              <script src="/js/main.js"></script>
+              <div class="pageFooter">
+                <%- include('includes/footer') %>
+              </div>
