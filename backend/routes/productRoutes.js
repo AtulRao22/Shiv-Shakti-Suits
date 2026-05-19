@@ -13,10 +13,8 @@ const cloudinary = require("../config/cloudinary");
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-
   params: {
     folder: "shiv-shakti-products",
-    allowed_formats: ["jpg", "jpeg", "png", "webp"],
   },
 });
 
@@ -101,8 +99,8 @@ router.post("/add", upload.array("images", 5), isAdmin, async (req, res) => {
     await product.save();
     res.json({ success: true, product });
   } catch (err) {
-    console.error("Error adding product:", err);
-    res.status(500).json({ success: false, error: err.message });
+    console.error("Detailed Error in adding product:", err);
+    res.status(500).json({ success: false, error: err.message, stack: err.stack });
   }
 });
 
@@ -164,12 +162,13 @@ router.put("/:id", upload.array("images", 5), isAdmin, async (req, res) => {
     });
     res.json({ message: "Product updated successfully", product });
   } catch (err) {
-    cconsole.error("Error updating product:", {
+    console.error("Error updating product:", {
       message: err.message,
       stack: err.stack,
       body: req.body,
       files: req.files,
     });
+    res.status(400).json({ error: err.message });
   }
 });
 
