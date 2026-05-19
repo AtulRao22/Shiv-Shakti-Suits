@@ -1,29 +1,28 @@
-
 window.addEventListener("pageshow", async () => {
-  try {
-    const res = await fetch("/wishlist/json");
-    const { wishlist } = await res.json();
+    try {
+        const res = await fetch("/wishlist/json");
+        const { wishlist } = await res.json();
 
 
 
-    document.querySelectorAll(".wishlist-btn, .wishlist-btn-ps").forEach(btn => {
-      const icon = btn.querySelector("i");
-      if (wishlist.includes(btn.dataset.id)) {
-        icon.classList.remove("fa-regular");
-        icon.classList.add("fa-solid", "text-danger");
-      } else {
-        icon.classList.remove("fa-solid", "text-danger");
-        icon.classList.add("fa-regular");
-      }
-    });
-  } catch (err) {
-    console.error("Wishlist sync error:", err);
-  }
+        document.querySelectorAll(".wishlist-btn, .wishlist-btn-ps").forEach(btn => {
+            const icon = btn.querySelector("i");
+            if (wishlist.includes(btn.dataset.id)) {
+                icon.classList.remove("fa-regular");
+                icon.classList.add("fa-solid", "text-danger");
+            } else {
+                icon.classList.remove("fa-solid", "text-danger");
+                icon.classList.add("fa-regular");
+            }
+        });
+    } catch (err) {
+        console.error("Wishlist sync error:", err);
+    }
 });
 
 
 // Mobile Menu Functionality
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const menuButton = document.querySelector('.menu-button');
     const mobileMenu = document.getElementById('mobileMenu');
     const closeMenu = document.querySelector('.close-menu');
@@ -31,37 +30,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const mainNavbar = document.querySelector('.mainNavbar');
 
     // Expose login modal opener globally for other scripts
-    window.showLoginModal = function() {
+    window.showLoginModal = function () {
         const loginModal = document.getElementById('loginModal');
         if (loginModal) {
             loginModal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
     };
-    
+
     // Open mobile menu
     if (menuButton) {
-        menuButton.addEventListener('click', function() {
+        menuButton.addEventListener('click', function () {
             mobileMenu.classList.add('active');
         });
     }
-    
+
     // Close mobile menu
     if (closeMenu) {
-        closeMenu.addEventListener('click', function() {
+        closeMenu.addEventListener('click', function () {
             mobileMenu.classList.remove('active');
         });
     }
-    
+
     // Close menu when clicking outside
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (!mobileMenu.contains(e.target) && !menuButton.contains(e.target)) {
             mobileMenu.classList.remove('active');
         }
     });
-    
+
     // Close menu on escape key
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             mobileMenu.classList.remove('active');
         }
@@ -78,10 +77,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Dynamic sticky navbar behavior
     let lastScrollTop = 0;
     const scrollThreshold = 100; // Scroll distance before hiding navbars
-    
+
     function handleScroll() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
+
         // Determine scroll direction
         if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
             // Scrolling down & past threshold - hide navbars
@@ -92,14 +91,14 @@ document.addEventListener('DOMContentLoaded', function() {
             slidingBar.style.transform = 'translateY(0)';
             mainNavbar.style.transform = 'translateY(0)';
         }
-        
+
         lastScrollTop = scrollTop;
     }
 
     updateNavbarOffset();
     window.addEventListener('resize', updateNavbarOffset, { passive: true });
     window.addEventListener('orientationchange', updateNavbarOffset, { passive: true });
-    window.addEventListener('scroll', function() {
+    window.addEventListener('scroll', function () {
         updateNavbarOffset();
         handleScroll();
     }, { passive: true });
@@ -116,7 +115,7 @@ function showSlide(index) {
     // Remove active class from all slides and dots
     slides.forEach(slide => slide.classList.remove('active'));
     dots.forEach(dot => dot.classList.remove('active'));
-    
+
     // Add active class to current slide and dot
     if (slides[index]) {
         slides[index].classList.add('active');
@@ -129,7 +128,7 @@ function showSlide(index) {
 // Function to change slide (next/previous)
 function changeSlide(direction) {
     currentSlideIndex += direction;
-    
+
     // Loop back to first slide if at the end
     if (currentSlideIndex >= totalSlides) {
         currentSlideIndex = 0;
@@ -138,7 +137,7 @@ function changeSlide(direction) {
     else if (currentSlideIndex < 0) {
         currentSlideIndex = totalSlides - 1;
     }
-    
+
     showSlide(currentSlideIndex);
 }
 
@@ -157,7 +156,7 @@ function openProductSection(section) {
         'festival': 'festival.html',
         'wedding': 'wedding.html'
     };
-    
+
     // Navigate to the appropriate page if it exists in the map
     if (sectionMap[section]) {
         window.location.href = sectionMap[section];
@@ -174,43 +173,43 @@ function autoSlide() {
 }
 
 // Initialize carousel when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Show first slide initially
     if (totalSlides > 0) {
         showSlide(0);
-        
+
         // Start auto-slide every 5 seconds
         setInterval(autoSlide, 5000);
     }
-    
+
     // Add keyboard navigation
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.key === 'ArrowLeft') {
             changeSlide(-1);
         } else if (e.key === 'ArrowRight') {
             changeSlide(1);
         }
     });
-    
+
     // Add touch/swipe support for mobile
     let startX = 0;
     let endX = 0;
-    
+
     const carousel = document.querySelector('.photo-carousel');
     if (carousel) {
-        carousel.addEventListener('touchstart', function(e) {
+        carousel.addEventListener('touchstart', function (e) {
             startX = e.touches[0].clientX;
         });
-        
-        carousel.addEventListener('touchend', function(e) {
+
+        carousel.addEventListener('touchend', function (e) {
             endX = e.changedTouches[0].clientX;
             handleSwipe();
         });
-        
+
         function handleSwipe() {
             const swipeThreshold = 50;
             const diff = startX - endX;
-            
+
             if (Math.abs(diff) > swipeThreshold) {
                 if (diff > 0) {
                     // Swiped left - next slide
@@ -225,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Product Filtering (no automatic tag changes)
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const grid = document.getElementById('productsGrid');
     const filterGroup = document.getElementById('productFilters');
     if (!grid || !filterGroup) return;
@@ -255,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Wire up buttons
-    filterGroup.addEventListener('click', function(e) {
+    filterGroup.addEventListener('click', function (e) {
         const btn = e.target.closest('button[data-filter]');
         if (!btn) return;
         const filter = btn.getAttribute('data-filter');
@@ -267,11 +266,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Default to showing all products initially
     applyFilter('all');
 
-   
+
 });
 
 // Auto-slide feature icons one by one on mobile
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const featuresRow = document.querySelector('.features-row');
     if (!featuresRow) return;
     const items = Array.from(featuresRow.querySelectorAll('.feature-item'));
@@ -289,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dots = items.map((_, i) => {
             const d = document.createElement('span');
             d.className = 'dot' + (i === index ? ' active' : '');
-            d.addEventListener('click', function() {
+            d.addEventListener('click', function () {
                 if (!isMobile()) return;
                 index = i;
                 showOnly(index);
@@ -340,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
     buildDots();
     cycle();
     let timer = setInterval(cycle, 2500);
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
         clearInterval(timer);
         buildDots();
         cycle();
@@ -348,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, { passive: true });
 });
 // Login Modal with OTP (no auto-open, token-based profile access)
-    document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     const profileIcon = document.querySelector('.nav-icon.profile');
     const loginModal = document.getElementById('loginModal');
     const closeModal = document.getElementById('closeModal');
@@ -361,56 +360,41 @@ document.addEventListener('DOMContentLoaded', function() {
     const profileMenu = document.getElementById("profileMenu");
 
     // Show modal or go to profile page if already logged in
+    // Show modal or go to profile page if already logged in
     profileIcon?.addEventListener("click", (e) => {
-    e.stopPropagation(); // prevent closing immediately
-    const token = localStorage.getItem("authToken");
- 
+        e.stopPropagation();
 
-    if (!token) {
-    // No token → show login modal
-    loginModal.classList.add("active");
-    return;
-    }
-    
+        const token = localStorage.getItem("authToken");
 
-    // ✅ Only toggle dropdown, no fetch to backend
-    profileMenu.classList.toggle("active");
-    function openModal() {
-  document.getElementById("loginModal").classList.add("active");
-  document.body.style.overflow = "hidden";  // stop background scroll
-}
+        if (!token) {
+            loginModal.classList.add("active");
+            document.body.style.overflow = "hidden";
+            return;
+        }
 
-function closeModal() {
-  document.getElementById("loginModal").classList.remove("active");
-  document.body.style.overflow = "";        // restore scroll
-}
-openModal();
-closeModal();
-
-
+        profileMenu.classList.toggle("active");
     });
 
-  document.getElementById("logoutBtn")?.addEventListener("click", async () => {
-  try {
-    const response = await fetch("/api/users/logout"); // call backend logout
-    const data = await response.json();
+    document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+        try {
+            const response = await fetch("/api/users/logout"); // call backend logout
+            const data = await response.json();
 
-    if (data.success) {
-      // Clear localStorage
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("user");
+            if (data.success) {
+                // Clear localStorage
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("user");
 
-      alert("Logged out!");
-      window.location.href = "/"; // redirect to homepage
-    } else {
-      alert("Logout failed!");
-    }
-  } catch (err) {
-    console.error(err);
-    alert("Logout error!");
-  }
-});
-
+                alert("Logged out!");
+                window.location.href = "/"; // redirect to homepage
+            } else {
+                alert("Logout failed!");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Logout error!");
+        }
+    });
 
 
 
@@ -442,17 +426,17 @@ closeModal();
 
     // OTP send & verify logic remains mostly same
     sendOtpBtn?.addEventListener('click', async (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    const email = emailInput.value.trim(); // get email input value
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // basic email validation regex
+        const email = emailInput.value.trim(); // get email input value
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // basic email validation regex
 
-    if (!emailRegex.test(email)) {
-    return alert('Please enter a valid email address');
-    }
+        if (!emailRegex.test(email)) {
+            return alert('Please enter a valid email address');
+        }
 
-    sendOtpBtn.textContent = 'Sending...';
-    sendOtpBtn.disabled = true;
+        sendOtpBtn.textContent = 'Sending...';
+        sendOtpBtn.disabled = true;
 
         try {
             const res = await fetch('/api/users/send-otp', {
@@ -474,73 +458,73 @@ closeModal();
     });
 
     verifyOtpBtn?.addEventListener('click', async (e) => {
-  e.preventDefault();
+        e.preventDefault();
 
-  const email = emailInput.value.trim();
+        const email = emailInput.value.trim();
 
-  // Collect all 6 OTP inputs
-  const otpInputs = document.querySelectorAll('.otp-container input[name="otp[]"]');
-  let otp = '';
-  otpInputs.forEach(input => otp += input.value.trim());
+        // Collect all 6 OTP inputs
+        const otpInputs = document.querySelectorAll('.otp-container input[name="otp[]"]');
+        let otp = '';
+        otpInputs.forEach(input => otp += input.value.trim());
 
-  // Validate
-  if (otp.length !== 6) {
-    alert('Please enter a valid 6-digit OTP');
-    return;
-  }
+        // Validate
+        if (otp.length !== 6) {
+            alert('Please enter a valid 6-digit OTP');
+            return;
+        }
 
-  verifyOtpBtn.textContent = 'Verifying...';
-  verifyOtpBtn.disabled = true;
+        verifyOtpBtn.textContent = 'Verifying...';
+        verifyOtpBtn.disabled = true;
 
-  try {
-    const res = await fetch('/api/users/verify-otp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, otp })
+        try {
+            const res = await fetch('/api/users/verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, otp })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.message || 'OTP verification failed');
+
+            //  Save login details
+            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+
+            //  Close modal (optional)
+            if (typeof closeModalFunc === 'function') {
+                closeModalFunc();
+            }
+
+            alert('Login successful!');
+            updateProfileMenu(data.user);
+
+            //  Reload after short delay (for smooth UX)
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+
+        } catch (err) {
+            alert(err.message || 'Verification failed. Please try again.');
+            //  Go back to email login step
+            verifyOtpBtn.disabled = false;
+            verifyOtpBtn.textContent = 'Verify OTP';
+        }
     });
-
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(data.message || 'OTP verification failed');
-
-    //  Save login details
-    localStorage.setItem('authToken', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-
-    //  Close modal (optional)
-    if (typeof closeModalFunc === 'function') {
-      closeModalFunc();
-    }
-
-    alert('Login successful!');
-    updateProfileMenu(data.user);
-
-    //  Reload after short delay (for smooth UX)
-    setTimeout(() => {
-      window.location.reload();
-    }, 500);
-
-  } catch (err) {
-    alert(err.message || 'Verification failed. Please try again.');
-    //  Go back to email login step
-    verifyOtpBtn.disabled = false;
-    verifyOtpBtn.textContent = 'Verify OTP';
-  }
-});
 
 
     document.querySelectorAll('.otp-container input[name="otp[]"]').forEach((input, index, inputs) => {
-  input.addEventListener("input", () => {
-    if (input.value && index < inputs.length - 1) {
-      inputs[index + 1].focus(); // move to next box
-    }
-  });
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Backspace" && !input.value && index > 0) {
-      inputs[index - 1].focus(); // move back
-    }
-  });
-});
+        input.addEventListener("input", () => {
+            if (input.value && index < inputs.length - 1) {
+                inputs[index + 1].focus(); // move to next box
+            }
+        });
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace" && !input.value && index > 0) {
+                inputs[index - 1].focus(); // move back
+            }
+        });
+    });
 });
 
 
@@ -572,53 +556,53 @@ function updateProfileMenu(user) {
 
 
 // 🧠 Global function to update cart & wishlist counts
-window.updateCounts = async function() {
-  try {
-    const [cartRes, wishRes] = await Promise.all([
-      fetch('/cart/count'),
-      fetch('/wishlist/count')
-    ]);
+window.updateCounts = async function () {
+    try {
+        const [cartRes, wishRes] = await Promise.all([
+            fetch('/cart/count'),
+            fetch('/wishlist/count')
+        ]);
 
-    const cartData = await cartRes.json();
-    const wishData = await wishRes.json();
+        const cartData = await cartRes.json();
+        const wishData = await wishRes.json();
 
-    const cartBadge = document.getElementById('cartCount');
-    const wishBadge = document.getElementById('wishlistCount');
+        const cartBadge = document.getElementById('cartCount');
+        const wishBadge = document.getElementById('wishlistCount');
 
-    if (cartBadge) cartBadge.textContent = cartData.count > 0 ? cartData.count : '0';
-    if (wishBadge) wishBadge.textContent = wishData.count > 0 ? wishData.count : '0';
-  } catch (err) {
-    console.error('Error updating counts:', err);
-  }
+        if (cartBadge) cartBadge.textContent = cartData.count > 0 ? cartData.count : '0';
+        if (wishBadge) wishBadge.textContent = wishData.count > 0 ? wishData.count : '0';
+    } catch (err) {
+        console.error('Error updating counts:', err);
+    }
 };
 
 // Run once on page load
 document.addEventListener('DOMContentLoaded', window.updateCounts);
 
 window.addEventListener('pageshow', function (event) {
-  if (event.persisted) {
-    // If page loaded from cache, re-fetch counts
-    if (window.updateCounts) {
-      window.updateCounts();
+    if (event.persisted) {
+        // If page loaded from cache, re-fetch counts
+        if (window.updateCounts) {
+            window.updateCounts();
+        }
     }
-  }
 });
 
 function showToast(message, type = "success") {
-  const container = document.getElementById("toast-container"); // match your HTML
-  const toast = document.createElement("div");
-  toast.className = `toast ${type}`;
-  toast.textContent = message;
-  container.appendChild(toast);
+    const container = document.getElementById("toast-container"); // match your HTML
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
 
-  // Small delay to allow transition
-  setTimeout(() => toast.classList.add("show"), 10);
+    // Small delay to allow transition
+    setTimeout(() => toast.classList.add("show"), 10);
 
-  // Remove after 3 seconds
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => container.removeChild(toast), 300); // wait for animation to finish
-  }, 3000);
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove("show");
+        setTimeout(() => container.removeChild(toast), 300); // wait for animation to finish
+    }, 3000);
 }
 
 
