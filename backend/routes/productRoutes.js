@@ -155,6 +155,8 @@ router.put("/:id", upload.array("images", 5), isAdmin, async (req, res) => {
       const imageUrls = req.files.map(file => file.path);
       updateData.imageUrls = imageUrls;
     }
+    console.log("REQ BODY:", req.body);
+    console.log("REQ FILES:", req.files);
 
     const product = await Product.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
@@ -162,8 +164,12 @@ router.put("/:id", upload.array("images", 5), isAdmin, async (req, res) => {
     });
     res.json({ message: "Product updated successfully", product });
   } catch (err) {
-    console.error("Error updating product:", err);
-    res.status(400).json({ error: err.message });
+    cconsole.error("Error updating product:", {
+      message: err.message,
+      stack: err.stack,
+      body: req.body,
+      files: req.files,
+    });
   }
 });
 
