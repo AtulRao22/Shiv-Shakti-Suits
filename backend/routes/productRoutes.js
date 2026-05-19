@@ -2,7 +2,6 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
-const multer = require("multer");
 const path = require("path");
 const { isAdmin } = require("../middleware/authMiddleware");
 
