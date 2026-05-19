@@ -7,17 +7,22 @@ const path = require("path");
 const { isAdmin } = require("../middleware/authMiddleware");
 
 // Storage settings
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, path.join(__dirname,  "../../public/assets")); // store images in public/assets
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../config/cloudinary");
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+
+  params: {
+    folder: "shiv-shakti-products",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
   },
-  filename: function(req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
 });
 
 const upload = multer({ storage });
+
+
 
 router.post("/add", upload.array("images", 5), isAdmin, async (req, res) => {
   try {
@@ -76,8 +81,7 @@ router.post("/add", upload.array("images", 5), isAdmin, async (req, res) => {
     // -------------------------------
     // 4️⃣ Map Images
     // -------------------------------
-    const imageUrls = req.files.map(file => "/assets/" + file.filename);
-
+    const imageUrls = req.files.map(file => file.path);
     // -------------------------------
     // 5️⃣ Save Product
     // -------------------------------
@@ -164,7 +168,7 @@ router.put("/:id", upload.array("images", 5), isAdmin, async (req, res) => {
 });
 
 // ✅ Delete Product
-router.delete("/:id", isAdmin,async (req, res) => {
+router.delete("/:id", isAdmin, async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
     res.json({ message: "Product deleted successfully" });

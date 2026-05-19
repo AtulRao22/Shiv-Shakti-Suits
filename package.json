@@ -1,10 +1,14 @@
 {
-  "name": "xyz-fashion",
+  "name": "shiv-shakti-fashion",
   "version": "1.0.0",
   "scripts": {
     "start": "cd backend && npm start"
   },
   "engines": {
-    "node": "18.x"
+    "node": "20.11.1"
+  },
+  "dependencies": {
+    "cloudinary": "^2.10.0",
+    "multer-storage-cloudinary": "^2.2.1"
   }
 }
