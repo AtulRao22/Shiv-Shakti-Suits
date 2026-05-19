@@ -82,6 +82,16 @@ Array.from(imageInput.files).forEach(file => {
     // 4️⃣ Send FormData to Server
     // -------------------------------
     try {
+      // Show loading spinner
+      Swal.fire({
+        title: 'Creating Product...',
+        text: 'Please wait while product details and images are being uploaded.',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
       const response = await fetch("/api/products/add", {
         method: "POST",
         body: formData
@@ -90,14 +100,19 @@ Array.from(imageInput.files).forEach(file => {
       const data = await response.json();
 
       if (data.success) {
-        alert("✅ Product added successfully!");
+        Swal.fire({
+          title: 'Success!',
+          text: 'Product has been created successfully.',
+          icon: 'success',
+          confirmButtonText: 'Great'
+        });
         productForm.reset();
         variantsContainer.innerHTML = ""; // clear dynamic variants
       } else {
-        alert("❌ Error: " + (data.error || "Unknown error"));
+        Swal.fire('Error', data.error || 'Failed to create product', 'error');
       }
     } catch (err) {
       console.error("Error adding product:", err);
-      alert("❌ Failed to add product. See console for details.");
+      Swal.fire('Error', 'Failed to add product. See console for details.', 'error');
     }
   });
