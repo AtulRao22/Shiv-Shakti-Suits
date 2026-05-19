@@ -5,6 +5,7 @@ const Product = require("../models/Product");
 const path = require("path");
 const { isAdmin } = require("../middleware/authMiddleware");
 
+
 // Storage settings
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
@@ -151,7 +152,7 @@ router.put("/:id", upload.array("images", 5), isAdmin, async (req, res) => {
 
     // Handle new images
     if (req.files && req.files.length > 0) {
-      const imageUrls = req.files.map(file => "/assets/" + file.filename);
+      const imageUrls = req.files.map(file => file.path);
       updateData.imageUrls = imageUrls;
     }
 
