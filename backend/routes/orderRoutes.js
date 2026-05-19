@@ -8,19 +8,10 @@ const {
 const { isAuthenticated, isAdmin } = require("../middleware/authMiddleware");
 const router = express.Router();
 
-//Create orders
-// router.post("/", isAuthenticated, addOrderItems);
-//User check their orders
-// router.get("/myorders", isAuthenticated, getMyOrders);
-//Order details
-// router.get("/:id", isAuthenticated, getOrderById);
-
-
-
 //Mark oder as paid
-router.put("/:id/pay", isAuthenticated, async (requestAnimationFrame, res)=> {
+router.put("/:id/pay", isAuthenticated, async (req, res)=> {
     try{
-        const order = await Order.findById(requestAnimationFrame.params.id);
+        const order = await Order.findById(req.params.id);
 
         if(order) {
             order.isPaid = true;
@@ -40,7 +31,7 @@ router.put("/:id/pay", isAuthenticated, async (requestAnimationFrame, res)=> {
 // mark order as delivered only by admin
 router.put("/:id/deliver", isAuthenticated, isAdmin, async (req, res) => {
     try{
-        const order = await Order.findById(requestAnimationFrame.params.id);
+        const order = await Order.findById(req.params.id);
 
         if(order) {
             order.isDelivered = true;

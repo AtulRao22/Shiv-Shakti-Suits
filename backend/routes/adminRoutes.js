@@ -80,15 +80,6 @@ router.post('/orders/:id/status', async (req, res) => {
   }
 });
 
-// Users page
-router.get('/users', async (req, res) => {
-  try {
-    const users = await User.find();
-    res.render('admin/users', { users, user: req.session.user });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
-  }
-});
+
 
 module.exports = router;
