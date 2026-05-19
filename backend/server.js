@@ -57,10 +57,6 @@ app.set("views", path.join(__dirname, "views"));
 // Static files
 app.use(express.static(path.join(__dirname, "../public")));
 
-// Fallback for missing assets: Redirect to the live production server so that cloud database images render locally!
-app.use("/assets", (req, res, next) => {
-  res.redirect(`https://www.shivshaktisuits.shop/assets${req.url}`);
-});
 
 
 // Set user globally for views
