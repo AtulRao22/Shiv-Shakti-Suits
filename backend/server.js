@@ -58,6 +58,11 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "../public")));
 app.use("/assets", express.static(path.join(__dirname, "uploads/assets")));
 
+// Fallback for missing assets: Redirect to the live production server so that cloud database images render locally!
+app.use("/assets", (req, res, next) => {
+  res.redirect(`https://www.shivshaktisuits.shop/assets${req.url}`);
+});
+
 // Set user globally for views
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
