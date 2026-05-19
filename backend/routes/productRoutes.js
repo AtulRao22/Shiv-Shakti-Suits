@@ -125,14 +125,40 @@ router.get("/:id", async (req, res) => {
 });
 
 // ✅ Update Product
-router.put("/:id", isAdmin, async (req, res) => {
+router.put("/:id", upload.array("images", 5), isAdmin, async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    const { name, mrp, salePrice, stock, category, description, size } = req.body;
+    const updateData = {};
+
+    if (name !== undefined) updateData.name = name;
+    if (mrp !== undefined) updateData.mrp = Number(mrp);
+    if (salePrice !== undefined) updateData.salePrice = Number(salePrice);
+    if (stock !== undefined) updateData.stock = Number(stock);
+    if (category !== undefined) updateData.category = category;
+    if (description !== undefined) updateData.description = description;
+    if (size !== undefined) updateData.size = size;
+
+    if (req.body.tags !== undefined) {
+      if (typeof req.body.tags === "string") {
+        updateData.tags = req.body.tags.split(",").map(t => t.trim()).filter(Boolean);
+      } else if (Array.isArray(req.body.tags)) {
+        updateData.tags = req.body.tags;
+      }
+    }
+
+    // Handle new images
+    if (req.files && req.files.length > 0) {
+      const imageUrls = req.files.map(file => "/assets/" + file.filename);
+      updateData.imageUrls = imageUrls;
+    }
+
+    const product = await Product.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true
     });
     res.json({ message: "Product updated successfully", product });
   } catch (err) {
+    console.error("Error updating product:", err);
     res.status(400).json({ error: err.message });
   }
 });

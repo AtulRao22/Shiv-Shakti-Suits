@@ -49,6 +49,30 @@
       .card { margin: 0 5px; }
       .btn-sm i { font-size: 1rem; }
     }
+
+    /* Custom SweetAlert2 Theming to Match Website */
+    .swal2-popup {
+      border-radius: 18px !important;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+      padding: 1.5rem !important;
+    }
+    .swal2-styled.swal2-confirm {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3) !important;
+      border: none !important;
+      border-radius: 10px !important;
+      font-weight: 600 !important;
+      padding: 10px 24px !important;
+    }
+    .swal2-styled.swal2-cancel {
+      border-radius: 10px !important;
+      font-weight: 600 !important;
+      padding: 10px 24px !important;
+    }
+    .swal2-title {
+      font-weight: 700 !important;
+      color: #333 !important;
+    }
   </style>
 </head>
 
@@ -86,7 +110,7 @@
                        ? p.variants.reduce((sum, v) => sum + (v.stock || 0), 0)
                        : (p.stock || 0);
                 %>
-                  <tr>
+                  <tr data-tags="<%= p.tags ? (Array.isArray(p.tags) ? p.tags.join(',') : p.tags) : '' %>">
                     <td><%= i + 1 %></td>
                     <td>
                       <% if (p.imageUrls && p.imageUrls.length > 0) { %>
@@ -98,8 +122,8 @@
                     <td><strong><%= p.name %></strong></td>
                     <td><%= p.category %></td>
                     <td>₹<%= p.salePrice || p.mrp %></td>
+                    <td><%= Array.isArray(p.tags) ? p.tags.join(', ') : p.tags %></td>
                     <td>
-                    <td><%= p.tags %> </td>
                       <% if (totalStock === 0) { %>
                         <span class="stock-out"><%= totalStock %></span>
                       <% } else if (totalStock < 2) { %>
