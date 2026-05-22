@@ -74,8 +74,15 @@
                   <td data-label="Items" class="order-items">
                     <% if (o.products && o.products.length) { %>
                       <ul class="mb-0 ps-3">
-                        <% o.products.slice(0,3).forEach(p => { %>
-                          <li><%= p && p.name ? p.name : p %></li>
+                        <% o.products.slice(0,3).forEach(item => { %>
+                          <% if (item && item.product) { %>
+                            <li>
+                              <%= item.product.name || 'Product' %>
+                              <span class="text-muted small">(<%= item.size || 'N/A' %>, Qty: <%= item.qty || 1 %>)</span>
+                            </li>
+                          <% } else { %>
+                            <li><%= item && item.name ? item.name : item %></li>
+                          <% } %>
                         <% }) %>
                       </ul>
                       <% if (o.products.length > 3) { %>

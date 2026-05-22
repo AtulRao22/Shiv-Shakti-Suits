@@ -13,11 +13,6 @@ router.post("/check", async (req, res) => {
   }
 
   try {
-    const { pincode } = req.body;
-
-    if (!pincode || pincode.length !== 6) {
-      return res.json({ success: false, message: "Please enter a valid 6-digit pincode." });
-    }
 
     // Fetch pincode details
     const apiRes = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`);

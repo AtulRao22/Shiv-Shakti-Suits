@@ -197,7 +197,7 @@ router.get("/count", async (req, res) => {
 
     // Logged-in user
     if (req.session.user && req.session.user._id) {
-      const user = await User.findById(req.session.user._id).populate("cart.product");
+      const user = await User.findById(req.session.user._id);
       count = Array.isArray(user?.cart) ? user.cart.length : 0;
     } 
     // Guest user

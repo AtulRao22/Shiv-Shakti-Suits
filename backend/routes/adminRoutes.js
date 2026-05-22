@@ -48,7 +48,7 @@ router.get('/orders', async (req, res) => {
   try {
     const orders = await Order.find()
       .populate('user')
-      .populate('products')
+      .populate('products.product')
       .sort({ createdAt: -1 })
       .lean();
 

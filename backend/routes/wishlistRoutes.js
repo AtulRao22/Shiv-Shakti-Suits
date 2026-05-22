@@ -58,7 +58,7 @@ router.post("/toggle/:id", async (req, res) => {
         name: product.name,
         salePrice: product.salePrice,
         mrp: product.mrp,
-        image: product.images && product.images.length ? product.images[0] : "",
+        image: product.imageUrls && product.imageUrls.length ? product.imageUrls[0] : "",
         discount: product.discount,
       });
       return res.json({ success: true, message: "Added to wishlist", inWishlist: true });
@@ -138,7 +138,7 @@ router.get("/count", async (req, res) => {
 
     // Logged-in user
     if (req.session.user && req.session.user._id) {
-      const user = await User.findById(req.session.user._id).populate("wishlist.product");
+      const user = await User.findById(req.session.user._id);
       count = Array.isArray(user?.wishlist) ? user.wishlist.length : 0;
     } 
     // Guest user

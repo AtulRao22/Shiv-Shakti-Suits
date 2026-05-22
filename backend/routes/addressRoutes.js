@@ -70,7 +70,7 @@ router.delete('/:id', isLoggedIn, async (req, res) => {
     const user = await User.findById(req.session.user._id);
     const addr = user.addresses.id(req.params.id);
     if (!addr) return res.status(404).json({ success: false, message: 'Address not found' });
-    addr.remove();
+    user.addresses.pull(req.params.id);
     await user.save();
     return res.json({ success: true });
   } catch (e) {

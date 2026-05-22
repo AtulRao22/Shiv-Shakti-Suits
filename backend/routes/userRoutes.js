@@ -12,10 +12,7 @@ router.post("/verify-otp", verifyOtp);
 
 
 
-// Update user profile
-router.get("/profile", isAuthenticated, async (req, res) => {
-  res.render("profile", { user: req.user, orders: [] });
-});
+
 
 
 // routes/auth.js or wherever you handle auth

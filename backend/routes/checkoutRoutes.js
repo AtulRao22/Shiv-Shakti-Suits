@@ -170,7 +170,12 @@ router.post("/checkout/place-order", requireLogin, async (req, res) => {
 
     // Map to existing Order schema (products, user, total, status)
     const order = new Order({
-      products: checkoutData.items.map(i => i._id),
+      products: checkoutData.items.map(i => ({
+        product: i._id,
+        size: i.size || "M",
+        qty: i.qty || 1,
+        priceAtPurchase: i.salePrice || 0
+      })),
       user: req.session.user._id,
       total: totalAmount,
       status: "Placed",
@@ -228,7 +233,12 @@ router.post('/payment/razorpay/verify', requireLogin, async (req, res) => {
     const totalAmount = computeTotal(items);
 
     const order = new Order({
-      products: items.map(i => i._id),
+      products: items.map(i => ({
+        product: i._id,
+        size: i.size || "M",
+        qty: i.qty || 1,
+        priceAtPurchase: i.salePrice || 0
+      })),
       user: req.session.user._id,
       total: totalAmount,
       status: 'Paid'

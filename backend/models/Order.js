@@ -3,7 +3,14 @@ const Product = require("./Product");
 
 
 const orderSchema = new mongoose.Schema({
-  products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+  products: [
+    {
+      product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+      size: { type: String, required: true },
+      qty: { type: Number, required: true, default: 1 },
+      priceAtPurchase: { type: Number, required: true }
+    }
+  ],
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   status: { type: String, default: 'Pending' },
   total: Number,

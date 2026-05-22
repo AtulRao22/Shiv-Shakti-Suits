@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>My Profile</title>
   <link rel="stylesheet" href="/css/style.test.css">
 </head>
+
 <body>
   <header>
     <nav>
@@ -16,9 +18,12 @@
   </header>
 
   <main>
-    <h1>Welcome, <%= user.name %></h1>
-    <p>Mobile: <%= user.mobile %></p>
-    <p>Email: <%= user.email || "Not Provided" %></p>
+    <h1>Welcome, <%= user.name %>
+    </h1>
+    <p>Mobile: <%= user.mobile %>
+    </p>
+    <p>Email: <%= user.email || "Not Provided" %>
+    </p>
 
     <div class="profile-sections">
       <!-- Tabs -->
@@ -31,36 +36,43 @@
       <!-- Tab content -->
       <div class="tab-content">
         <div id="orders" class="tab-pane active">
-          <% if (orders.length === 0) { %>
+          <% if (orders.length===0) { %>
             <p>No orders found.</p>
-          <% } else { %>
-            <ul>
-              <% orders.forEach(order => { %>
-                <li>Order #<%= order._id %> - Status: <%= order.status %> - Total: ₹<%= order.total %></li>
-              <% }) %>
-            </ul>
-          <% } %>
+            <% } else { %>
+              <ul>
+                <% orders.forEach(order=> { %>
+                  <li>Order #<%= order._id %> - Status: <%= order.status %> - Total: ₹<%= order.total %>
+                  </li>
+                  <% }) %>
+              </ul>
+              <% } %>
         </div>
 
         <div id="account" class="tab-pane">
-          <p>Name: <%= user.name %></p>
-          <p>Email: <%= user.email || "Not Provided" %></p>
-          <p>Mobile: <%= user.mobile %></p>
+          <p>Name: <%= user.name %>
+          </p>
+          <p>Email: <%= user.email || "Not Provided" %>
+          </p>
+          <p>Mobile: <%= user.mobile %>
+          </p>
         </div>
 
         <div id="shipping" class="tab-pane">
-          <% if (!user.shipping || user.shipping.length === 0) { %>
+          <% if (!user.shipping || user.shipping.length===0) { %>
             <p>No shipping addresses added.</p>
-          <% } else { %>
-            <ul>
-              <% user.shipping.forEach(addr => { %>
-                <li>
-                  <p><%= addr.addressLine1 %>, <%= addr.city %>, <%= addr.state %> - <%= addr.zip %></p>
-                  <p>Phone: <%= addr.mobile %></p>
-                </li>
-              <% }) %>
-            </ul>
-          <% } %>
+            <% } else { %>
+              <ul>
+                <% user.shipping.forEach(addr=> { %>
+                  <li>
+                    <p>
+                      <%= addr.addressLine1 %>, <%= addr.city %>, <%= addr.state %> - <%= addr.zip %>
+                    </p>
+                    <p>Phone: <%= addr.mobile %>
+                    </p>
+                  </li>
+                  <% }) %>
+              </ul>
+              <% } %>
         </div>
       </div>
     </div>
@@ -68,4 +80,5 @@
 
   <script src="/js/profile.js"></script>
 </body>
+
 </html>

@@ -1,21 +1,15 @@
 const express = require("express");
-const {
-    addOrderItems,
-    getOrderById,
-    getMyOrders,
-} = require("../controllers/orderController");
-
 const { isAuthenticated, isAdmin } = require("../middleware/authMiddleware");
+const Order = require("../models/Order");
 const router = express.Router();
 
-//Mark oder as paid
+//Mark order as paid
 router.put("/:id/pay", isAuthenticated, async (req, res)=> {
     try{
         const order = await Order.findById(req.params.id);
 
         if(order) {
-            order.isPaid = true;
-            order.paidAt = Date.now();
+            order.status = "Paid";
 
             const updatedOrder = await order.save();
             res.json(updatedOrder);
@@ -34,8 +28,7 @@ router.put("/:id/deliver", isAuthenticated, isAdmin, async (req, res) => {
         const order = await Order.findById(req.params.id);
 
         if(order) {
-            order.isDelivered = true;
-            order.isDelivered = Date.now();
+            order.status = "Delivered";
 
             const updatedOrder = await order.save();
             res.json(updatedOrder);

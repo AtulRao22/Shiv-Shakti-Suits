@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
-const wishlist = require("./wishlistRoutes");
+const { isAuthenticated } = require("../middleware/authMiddleware");
+const Order = require("../models/Order");
+
 
 router.get("/", async (req, res) => {
   try {
@@ -53,5 +55,19 @@ router.get("/category/:name", async (req, res) => {
   }
 });
 
+
+// Profile page
+router.get("/profile", isAuthenticated, async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.user._id })
+      .populate("products.product")
+      .sort({ createdAt: -1 })
+      .lean();
+    res.render("profile", { user: req.user, orders });
+  } catch (err) {
+    console.error("Error loading user profile orders:", err);
+    res.render("profile", { user: req.user, orders: [] });
+  }
+});
 
 module.exports = router;

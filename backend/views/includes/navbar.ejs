@@ -75,9 +75,7 @@
       <!-- Hidden dropdown -->
       <div class="profile-menu" id="profileMenu">
         <ul>
-          <li><a href="#" id="ordersLink">My Orders</a></li>
-          <li><a href="#" id="accountLink">Account Details</a></li>
-          <li><a href="#" id="shippingLink">Shipping Address</a></li>
+          <li><a href="/profile?tab=orders" id="ordersLink">My Profile</a></li>
           <% if (user && user.isAdmin) { %>
             <!-- Admin only option -->
             <li>
