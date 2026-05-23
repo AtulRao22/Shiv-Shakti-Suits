@@ -14,6 +14,16 @@ const orderSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   status: { type: String, default: 'Pending' },
   total: Number,
+  shippingAddress: {
+    fullName: String,
+    phone: String,
+    street: String,
+    landmark: String,
+    city: String,
+    state: String,
+    pincode: String
+  },
+  mobileNumber: String,
   createdAt: { type: Date, default: Date.now }
 });
 

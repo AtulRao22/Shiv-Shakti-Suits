@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('includes/head') %>
-  </head>
-  <body>
-    <%- include('includes/navbar') %>
+
+<head>
+  <%- include('includes/head') %>
+</head>
+
+<body>
+  <%- include('includes/navbar') %>
 
     <!-- Mobile Menu Dropdown -->
     <div class="mobile-menu" id="mobileMenu">
@@ -74,39 +76,39 @@
           </div>
         </a>
         <a href="/category/formal" class="category-tab-link">
-  <div class="category-tab">
-    <div class="circle-img"><img src="/assets/Formal.webp" alt="Formal"></div>
-    <span>Formal</span>
-  </div>
-</a>
+          <div class="category-tab">
+            <div class="circle-img"><img src="/assets/Formal.webp" alt="Formal"></div>
+            <span>Formal</span>
+          </div>
+        </a>
 
-<a href="/category/casual" class="category-tab-link">
-  <div class="category-tab">
-    <div class="circle-img"><img src="/assets/casual.webp" alt="Casual"></div>
-    <span>Casual</span>
-  </div>
-</a>
+        <a href="/category/casual" class="category-tab-link">
+          <div class="category-tab">
+            <div class="circle-img"><img src="/assets/casual.webp" alt="Casual"></div>
+            <span>Casual</span>
+          </div>
+        </a>
 
-<a href="/category/punjabi" class="category-tab-link">
-  <div class="category-tab">
-    <div class="circle-img"><img src="/assets/Punjabi.webp" alt="Punjabi"></div>
-    <span>Punjabi</span>
-  </div>
-</a>
+        <a href="/category/punjabi" class="category-tab-link">
+          <div class="category-tab">
+            <div class="circle-img"><img src="/assets/Punjabi.webp" alt="Punjabi"></div>
+            <span>Punjabi</span>
+          </div>
+        </a>
 
-<a href="/category/designer" class="category-tab-link">
-  <div class="category-tab">
-    <div class="circle-img"><img src="/assets/NewArrival.webp" alt="Designer"></div>
-    <span>Designer</span>
-  </div>
-</a>
+        <a href="/category/designer" class="category-tab-link">
+          <div class="category-tab">
+            <div class="circle-img"><img src="/assets/NewArrival.webp" alt="Designer"></div>
+            <span>Designer</span>
+          </div>
+        </a>
 
-<a href="/category/modren" class="category-tab-link">
-  <div class="category-tab">
-    <div class="circle-img"><img src="/assets/Modren.webp" alt="Modren"></div>
-    <span>Modren</span>
-  </div>
-</a>
+        <a href="/category/modren" class="category-tab-link">
+          <div class="category-tab">
+            <div class="circle-img"><img src="/assets/Modren.webp" alt="Modren"></div>
+            <span>Modren</span>
+          </div>
+        </a>
 
       </div>
     </div>
@@ -142,8 +144,10 @@
             <p>Embrace your special day</p>
           </div>
         </div>
-        <button class="carousel-btn prev-btn" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-        <button class="carousel-btn next-btn" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        <button class="carousel-btn prev-btn" onclick="changeSlide(-1)"><i
+            class="fa-solid fa-chevron-left"></i></button>
+        <button class="carousel-btn next-btn" onclick="changeSlide(1)"><i
+            class="fa-solid fa-chevron-right"></i></button>
         <div class="carousel-dots">
           <span class="dot active" onclick="currentSlide(1)"></span>
           <span class="dot" onclick="currentSlide(2)"></span>
@@ -154,86 +158,92 @@
     </div>
 
     <!-- Suits Info Section -->
-<div class="suits-info-container">
-  <div class="container py-3">
-    <h2>Elegant Suits for Every Occasion</h2>
-    <p>From timeless classics to contemporary cuts, our suits are tailored to enhance your style and comfort.</p>
-    <p>Explore premium fabrics, impeccable fits, and versatile designs perfect for weddings, work, and celebrations.</p>
-    <span>Explore premium fabrics, impeccable fits, and versatile designs perfect for weddings, work, and celebrations.</span>
-  </div>
-</div>
-
-
-<!--Suits Listing Section (Grouped by Tags, 4 per tag with "View More")-->
- <div class="container py-0 position-relative features-container">
-  <% for (let tag in groupedProducts) { %>
-<div class="section-header d-flex align-items-center justify-content-between mb-3">
-  <h2 class="section-title"><%= tag %></h2>
-</div>
-    <div id="productsGrid-<%= tag.replace(/[^a-z]+/gi,'-') %>" class="row g-3">
-      <% groupedProducts[tag].forEach(function(p, idx){ %>
-        <div class="col-6 col-sm-6 col-md-4 col-lg-4 product-item <%= idx >= 6 ? 'd-none' : '' %>">
-          <a class="product-link" href="/show/<%= p._id %>">
-            <div class="product-card">
-  <div class="product-image">
-    <%
-  let isInWishlist = (wishlist || []).some(
-    w => w._id.toString() === p._id.toString()
-  );
-%>
-    <!-- Wishlist Icon -->
-<button class="wishlist-btn" data-id="<%= p._id %>">
-      <i class="<%= isInWishlist ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart' %>"></i>
-    </button>
-
-    <!-- Product Image -->
-    <img src="<%= p.imageUrls && p.imageUrls.length ? p.imageUrls[0] : '/images/placeholder.png' %>" 
-                     alt="<%= p.name %>">
-
-     <!-- Tags  -->
-    <div class="product-tags">
-      <span class="product-tag <%= tag.toLowerCase().replace(/[^a-z]+/g,'-') %>"><%= tag %></span>
-    </div>
-  </div>
-
-  <div class="product-info">
-    <!-- Product Name -->
-    <h3 class="product-name"><%= p.name %></h3>
-
-    <!-- Price Section (Sale, MRP, Discount in same line) -->
-    <div class="product-price">
-      <span class="sale-price">₹<%= p.salePrice.toLocaleString('en-IN') %></span>
-      <% if(p.mrp && p.mrp > p.salePrice){ 
-           let discount = Math.round(((p.mrp - p.salePrice) / p.mrp) * 100);
-      %>
-        <span class="mrp">₹<%= p.mrp.toLocaleString('en-IN') %></span>
-        <span class="discount">(<%= discount %>% OFF)</span>
-      <% } %>
-    </div>
-  </div>
-</div>
-
-          </a>
-        </div>
-      <% }) %>
-    </div>
-
-    <% if(groupedProducts[tag].length > 4) { %>
-      <div class="text-center">
-        <a class="view-more-btn" data-tag="<%= tag.replace(/[^a-z]+/gi,'-') %>">View More</a>
+    <div class="suits-info-container">
+      <div class="container py-3">
+        <h2>Elegant Suits for Every Occasion</h2>
+        <p>From timeless classics to contemporary cuts, our suits are tailored to enhance your style and comfort.</p>
+        <p>Explore premium fabrics, impeccable fits, and versatile designs perfect for weddings, work, and celebrations.
+        </p>
+        <span>Explore premium fabrics, impeccable fits, and versatile designs perfect for weddings, work, and
+          celebrations.</span>
       </div>
-    <% } %>
-  <% } %>
-</div>
-
-<!-- Toast Container -->
-<div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+    </div>
 
 
-<script src="/js/index.js"></script>
+    <!--Suits Listing Section (Grouped by Tags, 4 per tag with "View More")-->
+    <div class="container py-0 position-relative features-container">
+      <% for (let tag in groupedProducts) { %>
+        <div class="section-header d-flex align-items-center justify-content-between mb-3">
+          <h2 class="section-title">
+            <%= tag %>
+          </h2>
+        </div>
+        <div id="productsGrid-<%= tag.replace(/[^a-z]+/gi,'-') %>" class="row g-3">
+          <% groupedProducts[tag].forEach(function(p, idx){ %>
+            <div class="col-6 col-sm-6 col-md-4 col-lg-4 product-item <%= idx >= 6 ? 'd-none' : '' %>">
+              <a class="product-link" href="/show/<%= p._id %>">
+                <div class="product-card">
+                  <div class="product-image">
+                    <% let isInWishlist=(wishlist || []).some( w=> w._id.toString() === p._id.toString()
+                      );
+                      %>
+                      <!-- Wishlist Icon -->
+                      <button class="wishlist-btn" data-id="<%= p._id %>">
+                        <i class="<%= isInWishlist ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart' %>"></i>
+                      </button>
 
-    <script src="/js/main.js"></script>
+                      <!-- Product Image -->
+                      <img src="<%= p.imageUrls && p.imageUrls.length ? p.imageUrls[0] : '/images/placeholder.png' %>"
+                        alt="<%= p.name %>">
+
+                      <!-- Tags  -->
+                      <div class="product-tags">
+                        <span class="product-tag <%= tag.toLowerCase().replace(/[^a-z]+/g,'-') %>">
+                          <%= tag %>
+                        </span>
+                      </div>
+                  </div>
+
+                  <div class="product-info">
+                    <!-- Product Name -->
+                    <h3 class="product-name">
+                      <%= p.name %>
+                    </h3>
+
+                    <!-- Price Section (Sale, MRP, Discount in same line) -->
+                    <div class="product-price">
+                      <span class="sale-price">₹<%= p.salePrice.toLocaleString('en-IN') %></span>
+                      <% if(p.mrp && p.mrp> p.salePrice){
+                        let discount = Math.round(((p.mrp - p.salePrice) / p.mrp) * 100);
+                        %>
+                        <span class="mrp">₹<%= p.mrp.toLocaleString('en-IN') %></span>
+                        <span class="discount">(<%= discount %>% OFF)</span>
+                        <% } %>
+                    </div>
+                  </div>
+                </div>
+
+              </a>
+            </div>
+            <% }) %>
+        </div>
+
+        <% if(groupedProducts[tag].length> 4) { %>
+          <div class="text-center">
+            <a class="view-more-btn" data-tag="<%= tag.replace(/[^a-z]+/gi,'-') %>">View More</a>
+          </div>
+          <% } %>
+            <% } %>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+
+    <script src="/js/index.js"></script>
+
+    <!-- <script src="/js/main.js"></script> -->
     <%- include('includes/footer') %>
-  </body>
-  </html>
+</body>
 
+</html>

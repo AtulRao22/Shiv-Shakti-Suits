@@ -1,84 +1,940 @@
-<!DOCTYPE html>
-<html lang="en">
+<%- include("includes/head") %>
 
-<head>
-  <meta charset="UTF-8">
-  <title>My Profile</title>
-  <link rel="stylesheet" href="/css/style.test.css">
-</head>
+<style>
+  body {
+    background-color: #f5f6fa !important;
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+  }
 
-<body>
-  <header>
-    <nav>
-      <div class="logo">Shiv Shakti</div>
-      <div class="nav-right">
-        <span id="logoutBtn">Logout</span>
+  .profile-container {
+    max-width: 1300px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+
+  /* Back Button styling */
+  .profile-header-actions {
+    margin-bottom: 25px;
+  }
+
+  .back-home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: white !important;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px 22px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    border: none;
+    transition: all 0.3s ease;
+  }
+
+  .back-home-btn:hover {
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+  }
+
+  @media (max-width: 576px) {
+    .back-home-btn {
+      padding: 8px 18px;
+      font-size: 0.82rem;
+    }
+  }
+
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+  }
+
+  /* Sidebar Card */
+  .profile-sidebar {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    height: fit-content;
+    border: 1px solid #eef2f5;
+  }
+
+  .sidebar-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px 20px;
+    text-align: center;
+    color: white;
+    position: relative;
+  }
+
+  .avatar-container {
+    width: 90px;
+    height: 90px;
+    background: white;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .avatar-initial {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .sidebar-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+  }
+
+  .sidebar-email {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    word-break: break-all;
+  }
+
+  .sidebar-nav {
+    padding: 20px 15px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    color: #4a5568;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+  }
+
+  .nav-item:hover {
+    background-color: #f8f9fa;
+    color: #667eea;
+    transform: translateX(4px);
+  }
+
+  .nav-item.text-danger:hover {
+    background-color: #fff5f5;
+    color: #e53e3e !important;
+    transform: translateX(4px);
+  }
+
+  .nav-item.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.25);
+  }
+
+  .nav-item i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+  }
+
+  /* Main Dashboard Panel */
+  .profile-content {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    padding: 35px;
+    min-height: 500px;
+    border: 1px solid #eef2f5;
+  }
+
+  .tab-pane {
+    display: none;
+  }
+
+  .tab-pane.active {
+    display: block;
+    animation: fadeIn 0.4s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pane-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid #edf2f7;
+    padding-bottom: 12px;
+  }
+
+  .pane-title i {
+    color: #667eea;
+  }
+
+  /* Orders Tab Styles */
+  .order-card {
+    border: 1px solid #edf2f7;
+    border-radius: 16px;
+    margin-bottom: 25px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .order-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  .order-header {
+    background-color: #f8f9fc;
+    padding: 18px 25px;
+    border-bottom: 1px solid #edf2f7;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .order-info-group {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+  }
+
+  .order-info-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .info-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #a0aec0;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+  }
+
+  .info-val {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4a5568;
+  }
+
+  /* Status Badges */
+  .status-badge {
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+  }
+
+  .status-placed {
+    background-color: #ebf8ff;
+    color: #2b6cb0;
+  }
+
+  .status-paid {
+    background-color: #f0fff4;
+    color: #2f855a;
+  }
+
+  .status-delivered {
+    background-color: #f0fff4;
+    color: #2f855a;
+  }
+
+  .status-pending {
+    background-color: #fffaf0;
+    color: #dd6b20;
+  }
+
+  .order-body {
+    padding: 25px;
+  }
+
+  .order-product-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+    border-bottom: 1px dashed #edf2f7;
+  }
+
+  .order-product-row:last-child {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom: none;
+  }
+
+  .order-product-thumb {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #edf2f7;
+  }
+
+  .order-product-details {
+    flex: 1;
+  }
+
+  .order-product-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 4px;
+  }
+
+  .order-product-meta {
+    font-size: 0.85rem;
+    color: #718096;
+    display: flex;
+    gap: 15px;
+  }
+
+  .order-product-price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2d3748;
+  }
+
+  /* Order Footer / Address details */
+  .order-shipping-block {
+    background-color: #fafbfc;
+    border-top: 1px solid #edf2f7;
+    padding: 15px 25px;
+    font-size: 0.85rem;
+    color: #4a5568;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .order-shipping-block i {
+    color: #764ba2;
+    font-size: 1rem;
+  }
+
+  /* Address Tab Styles */
+  .addresses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .address-card {
+    border: 1px solid #edf2f7;
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.01);
+    transition: all 0.3s ease;
+  }
+
+  .address-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 6px 18px rgba(102, 126, 234, 0.08);
+  }
+
+  .address-type-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #edf2f7;
+    color: #4a5568;
+    padding: 4px 10px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .address-name {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 8px;
+    padding-right: 60px;
+  }
+
+  .address-details {
+    font-size: 0.9rem;
+    color: #718096;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .address-phone {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4a5568;
+    margin-bottom: 20px;
+  }
+
+  .address-actions {
+    display: flex;
+    gap: 15px;
+    border-top: 1px solid #edf2f7;
+    padding-top: 15px;
+  }
+
+  .address-btn {
+    border: none;
+    background: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    transition: color 0.2s;
+  }
+
+  .btn-edit {
+    color: #667eea;
+  }
+
+  .btn-edit:hover {
+    color: #764ba2;
+  }
+
+  .btn-delete {
+    color: #e53e3e;
+  }
+
+  .btn-delete:hover {
+    color: #9b2c2c;
+  }
+
+  .btn-add-address {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-add-address:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  }
+
+  /* Address & Profile Form Card */
+  .form-card {
+    background-color: #fafbfc;
+    border: 1px solid #edf2f7;
+    border-radius: 16px;
+    padding: 25px;
+    margin-top: 30px;
+    animation: slideDown 0.3s ease;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .form-card-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .form-card-title i {
+    color: #667eea;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 6px;
+  }
+
+  .form-control-custom {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background-color: white;
+  }
+
+  .form-control-custom:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+  }
+
+  .btn-submit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  }
+
+  .btn-cancel {
+    background-color: white;
+    color: #4a5568;
+    border: 1.5px solid #cbd5e0;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-submit:hover, .btn-cancel:hover {
+    opacity: 0.95;
+  }
+
+  .btn-submit:active, .btn-cancel:active {
+    transform: scale(0.98);
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #a0aec0;
+  }
+
+  .empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: #cbd5e0;
+  }
+
+  .empty-state p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+  }
+
+  /* Mobile Responsive Additions */
+  @media (max-width: 992px) {
+    .profile-grid {
+      grid-template-columns: 1fr;
+      gap: 25px;
+    }
+    
+    .profile-content {
+      padding: 25px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .profile-container {
+      margin: 20px auto;
+      padding: 0 12px;
+    }
+
+    .profile-sidebar {
+      border-radius: 16px;
+    }
+
+    .sidebar-header {
+      padding: 30px 15px;
+    }
+
+    /* Transform vertical nav list into a clean, horizontal scroll tab bar for mobile viewports */
+    .sidebar-nav {
+      display: flex;
+      overflow-x: auto;
+      padding: 12px 15px;
+      gap: 10px;
+      white-space: nowrap;
+      border-bottom: 1px solid #edf2f7;
+      background-color: #fafbfc;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; /* Hide scrollbars for Firefox */
+    }
+
+    .sidebar-nav::-webkit-scrollbar {
+      display: none; /* Hide scrollbars for Chrome/Safari */
+    }
+
+    .nav-item {
+      margin-bottom: 0 !important;
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      border-radius: 30px;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #logoutBtnProfile {
+      margin-top: 0 !important;
+      border-top: none !important;
+      padding-top: 10px !important;
+    }
+    
+    .profile-content {
+      border-radius: 16px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .profile-content {
+      padding: 15px;
+    }
+
+    .pane-title {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+    }
+
+    .order-header {
+      padding: 15px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .order-info-group {
+      gap: 15px;
+    }
+
+    .order-body {
+      padding: 15px;
+    }
+
+    .order-product-row {
+      gap: 12px;
+    }
+
+    .order-product-thumb {
+      width: 60px;
+      height: 60px;
+    }
+
+    .order-product-name {
+      font-size: 0.88rem;
+    }
+
+    .order-shipping-block {
+      padding: 12px 15px;
+      font-size: 0.8rem;
+    }
+
+    .addresses-grid {
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
+    .address-card {
+      padding: 15px;
+    }
+
+    .form-card {
+      padding: 15px;
+    }
+
+    .grid-2 {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+</style>
+
+<%- include("includes/navbar") %>
+
+<div class="profile-container">
+  <!-- Back Action Breadcrumb/Button -->
+  <div class="profile-header-actions">
+    <a href="/" class="back-home-btn">
+      <i class="fa-solid fa-arrow-left"></i> Back to Store
+    </a>
+  </div>
+
+  <div class="profile-grid">
+    <!-- Sidebar Navigation -->
+    <div class="profile-sidebar">
+      <div class="sidebar-header">
+        <div class="avatar-container">
+          <div class="avatar-initial">
+            <%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
+          </div>
+        </div>
+        <h3 class="sidebar-name" id="sidebar-display-name"><%= user.name || 'Guest User' %></h3>
+        <p class="sidebar-email"><%= user.email %></p>
       </div>
-    </nav>
-  </header>
+      <div class="sidebar-nav">
+        <a class="nav-item tab active" data-tab="orders">
+          <i class="fa-solid fa-shopping-bag"></i> My Orders
+        </a>
+        <a class="nav-item tab" data-tab="shipping">
+          <i class="fa-solid fa-map-marker-alt"></i> Saved Addresses
+        </a>
+        <a class="nav-item tab" data-tab="account">
+          <i class="fa-solid fa-user-gear"></i> Account Settings
+        </a>
+        <a class="nav-item text-danger" id="logoutBtnProfile">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </div>
 
-  <main>
-    <h1>Welcome, <%= user.name %>
-    </h1>
-    <p>Mobile: <%= user.mobile %>
-    </p>
-    <p>Email: <%= user.email || "Not Provided" %>
-    </p>
+    <!-- Active Panel -->
+    <div class="profile-content">
+      <!-- Orders Tab Pane -->
+      <div id="orders" class="tab-pane active">
+        <h2 class="pane-title"><i class="fa-solid fa-shopping-bag"></i> My Orders</h2>
+        <% if (!orders || orders.length === 0) { %>
+          <div class="empty-state">
+            <i class="fa-solid fa-box-open"></i>
+            <p>No orders placed yet. Start exploring our elegant collections!</p>
+            <a href="/" class="btn-add-address" style="display:inline-flex; text-decoration:none;">Shop Now</a>
+          </div>
+        <% } else { %>
+          <% orders.forEach(order => { %>
+            <div class="order-card">
+              <div class="order-header">
+                <div class="order-info-group">
+                  <div class="order-info-item">
+                    <span class="info-label">Order Placed</span>
+                    <span class="info-val"><%= new Date(order.createdAt).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'}) %></span>
+                  </div>
+                  <div class="order-info-item">
+                    <span class="info-label">Total Amount</span>
+                    <span class="info-val" style="color: #667eea;">₹<%= order.total ? order.total.toLocaleString('en-IN') : '0' %></span>
+                  </div>
+                  <div class="order-info-item">
+                    <span class="info-label">Order ID</span>
+                    <span class="info-val">#<%= order._id %></span>
+                  </div>
+                </div>
+                <div>
+                  <% 
+                    let statusClass = "status-pending";
+                    if (order.status === "Paid" || order.status === "Delivered") statusClass = "status-delivered";
+                    else if (order.status === "Placed") statusClass = "status-placed";
+                  %>
+                  <span class="status-badge <%= statusClass %>"><%= order.status %></span>
+                </div>
+              </div>
+              
+              <div class="order-body">
+                <% (order.products || []).forEach(item => { %>
+                  <div class="order-product-row">
+                    <% if (item.product) { %>
+                      <img class="order-product-thumb" src="<%= item.product.imageUrls && item.product.imageUrls.length ? item.product.imageUrls[0] : '/images/placeholder.png' %>" alt="<%= item.product.name %>">
+                      <div class="order-product-details">
+                        <h4 class="order-product-name"><%= item.product.name %></h4>
+                        <div class="order-product-meta">
+                          <span>Size: <strong><%= item.size %></strong></span>
+                          <span>Qty: <strong><%= item.qty %></strong></span>
+                        </div>
+                      </div>
+                    <% } else { %>
+                      <div class="order-product-thumb" style="background-color:#f8f9fa; display:flex; align-items:center; justify-content:center;">
+                        <i class="fa-solid fa-image" style="color:#cbd5e0; font-size:1.5rem;"></i>
+                      </div>
+                      <div class="order-product-details">
+                        <h4 class="order-product-name" style="color:#a0aec0; font-style:italic;">Product no longer available</h4>
+                        <div class="order-product-meta">
+                          <span>Size: <strong><%= item.size %></strong></span>
+                          <span>Qty: <strong><%= item.qty %></strong></span>
+                        </div>
+                      </div>
+                    <% } %>
+                    <div class="order-product-price">
+                      ₹<%= (item.priceAtPurchase * item.qty).toLocaleString('en-IN') %>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
 
-    <div class="profile-sections">
-      <!-- Tabs -->
-      <ul class="tabs">
-        <li class="tab active" data-tab="orders">Orders</li>
-        <li class="tab" data-tab="account">Account</li>
-        <li class="tab" data-tab="shipping">Shipping Address</li>
-      </ul>
-
-      <!-- Tab content -->
-      <div class="tab-content">
-        <div id="orders" class="tab-pane active">
-          <% if (orders.length===0) { %>
-            <p>No orders found.</p>
-            <% } else { %>
-              <ul>
-                <% orders.forEach(order=> { %>
-                  <li>Order #<%= order._id %> - Status: <%= order.status %> - Total: ₹<%= order.total %>
-                  </li>
-                  <% }) %>
-              </ul>
+              <% if (order.shippingAddress && order.shippingAddress.fullName) { %>
+                <div class="order-shipping-block">
+                  <i class="fa-solid fa-location-dot"></i>
+                  <span>Delivered to: <strong><%= order.shippingAddress.fullName %></strong> — <%= order.shippingAddress.street %>, <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> <%= order.shippingAddress.pincode %> (Phone: <%= order.shippingAddress.phone %>)</span>
+                </div>
               <% } %>
+            </div>
+          <% }) %>
+        <% } %>
+      </div>
+
+      <!-- Shipping / Addresses Tab Pane -->
+      <div id="shipping" class="tab-pane">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 25px; border-bottom: 2px solid #edf2f7; padding-bottom: 12px;">
+          <h2 class="pane-title" style="margin-bottom:0; border-bottom:none; padding-bottom:0;"><i class="fa-solid fa-map-marker-alt"></i> Saved Addresses</h2>
+          <button class="btn-add-address" id="btn-show-add-form"><i class="fa-solid fa-plus"></i> Add New</button>
         </div>
 
-        <div id="account" class="tab-pane">
-          <p>Name: <%= user.name %>
-          </p>
-          <p>Email: <%= user.email || "Not Provided" %>
-          </p>
-          <p>Mobile: <%= user.mobile %>
-          </p>
+        <div class="addresses-grid" id="addresses-container">
+          <% if (!user.addresses || user.addresses.length === 0) { %>
+            <div class="empty-state" style="grid-column: 1/-1; width:100%" id="address-empty-state">
+              <i class="fa-solid fa-map-location-dot"></i>
+              <p>No shipping addresses saved yet. Add an address to make your next checkout even faster!</p>
+            </div>
+          <% } else { %>
+            <% user.addresses.forEach(addr => { %>
+              <div class="address-card" id="address-card-<%= addr._id %>" 
+                   data-id="<%= addr._id %>"
+                   data-fullname="<%= addr.fullName %>"
+                   data-phone="<%= addr.phone %>"
+                   data-street="<%= addr.street %>"
+                   data-landmark="<%= addr.landmark || '' %>"
+                   data-city="<%= addr.city %>"
+                   data-state="<%= addr.state %>"
+                   data-pincode="<%= addr.pincode %>"
+                   data-type="<%= addr.type %>">
+                <span class="address-type-badge"><%= addr.type %></span>
+                <h4 class="address-name"><%= addr.fullName %></h4>
+                <p class="address-details">
+                  <%= addr.street %><% if(addr.landmark) { %>, <%= addr.landmark %><% } %><br>
+                  <%= addr.city %>, <%= addr.state %> - <strong><%= addr.pincode %></strong>
+                </p>
+                <p class="address-phone"><i class="fa-solid fa-phone" style="font-size:0.8rem; margin-right:6px; color:#a0aec0;"></i><%= addr.phone %></p>
+                <div class="address-actions">
+                  <button class="address-btn btn-edit edit-addr-btn" data-id="<%= addr._id %>"><i class="fa-solid fa-pen"></i> Edit</button>
+                  <button class="address-btn btn-delete delete-addr-btn" data-id="<%= addr._id %>"><i class="fa-solid fa-trash-can"></i> Delete</button>
+                </div>
+              </div>
+            <% }) %>
+          <% } %>
         </div>
 
-        <div id="shipping" class="tab-pane">
-          <% if (!user.shipping || user.shipping.length===0) { %>
-            <p>No shipping addresses added.</p>
-            <% } else { %>
-              <ul>
-                <% user.shipping.forEach(addr=> { %>
-                  <li>
-                    <p>
-                      <%= addr.addressLine1 %>, <%= addr.city %>, <%= addr.state %> - <%= addr.zip %>
-                    </p>
-                    <p>Phone: <%= addr.mobile %>
-                    </p>
-                  </li>
-                  <% }) %>
-              </ul>
-              <% } %>
+        <!-- Add/Edit Address Form Card (Hidden by default) -->
+        <div class="form-card" id="address-form-card" style="display:none;">
+          <h3 class="form-card-title" id="form-card-title"><i class="fa-solid fa-plus-circle"></i> Add New Address</h3>
+          <form id="address-editor-form">
+            <input type="hidden" id="edit-address-id" value="">
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label" for="addr-fullname">Full Name *</label>
+                <input type="text" id="addr-fullname" class="form-control-custom" required placeholder="Full Name">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="addr-phone">Mobile Number *</label>
+                <input type="tel" id="addr-phone" class="form-control-custom" required placeholder="10-digit number" pattern="[0-9]{10}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="addr-street">Street Address *</label>
+              <input type="text" id="addr-street" class="form-control-custom" required placeholder="House No., Building, Street Name">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="addr-landmark">Landmark (Optional)</label>
+              <input type="text" id="addr-landmark" class="form-control-custom" placeholder="E.g. Near Shiv Temple">
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label" for="addr-city">City *</label>
+                <input type="text" id="addr-city" class="form-control-custom" required placeholder="City">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="addr-state">State *</label>
+                <input type="text" id="addr-state" class="form-control-custom" required placeholder="State">
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label" for="addr-pincode">Pincode *</label>
+                <input type="text" id="addr-pincode" class="form-control-custom" required placeholder="6-digit Pincode" pattern="[0-9]{6}">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="addr-type">Address Type</label>
+                <select id="addr-type" class="form-control-custom">
+                  <option value="Home">Home (All day delivery)</option>
+                  <option value="Work">Work (Delivery between 9 AM - 5 PM)</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-submit" id="btn-save-address">Save Address</button>
+              <button type="button" class="btn-cancel" id="btn-cancel-address">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Account Settings Tab Pane -->
+      <div id="account" class="tab-pane">
+        <h2 class="pane-title"><i class="fa-solid fa-user-gear"></i> Account Settings</h2>
+        
+        <div class="form-card" style="margin-top: 0; background-color: white;">
+          <h3 class="form-card-title"><i class="fa-solid fa-id-card"></i> Personal Information</h3>
+          <form id="profile-update-form">
+            <div class="form-group">
+              <label class="form-label" for="profile-name">Display Name</label>
+              <input type="text" id="profile-name" class="form-control-custom" required value="<%= user.name || '' %>" placeholder="Enter display name">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="profile-email">Email Address (Read-only)</label>
+              <input type="email" id="profile-email" class="form-control-custom" readonly disabled value="<%= user.email %>" style="background-color: #f7fafc; color: #a0aec0; cursor: not-allowed; border-color: #e2e8f0;">
+              <small style="color: #a0aec0; margin-top: 6px; display:block;">Email address cannot be changed as it is used for secure OTP login.</small>
+            </div>
+            
+            <button type="submit" class="btn-submit" style="margin-top: 10px;">Save Profile Name</button>
+          </form>
         </div>
       </div>
     </div>
-  </main>
+  </div>
+</div>
 
-  <script src="/js/profile.js"></script>
-</body>
+<%- include("includes/footer") %>
 
-</html>
+<script src="/js/profile.js"></script>

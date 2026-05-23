@@ -168,6 +168,23 @@ router.post("/checkout/place-order", requireLogin, async (req, res) => {
 
     const totalAmount = computeTotal(checkoutData.items);
 
+    const user = await User.findById(req.session.user._id);
+    const selectedAddress = user ? user.addresses.id(req.body.addressId) : null;
+    let shippingAddress = {};
+    let mobileNumber = "";
+    if (selectedAddress) {
+      shippingAddress = {
+        fullName: selectedAddress.fullName,
+        phone: selectedAddress.phone,
+        street: selectedAddress.street,
+        landmark: selectedAddress.landmark,
+        city: selectedAddress.city,
+        state: selectedAddress.state,
+        pincode: selectedAddress.pincode
+      };
+      mobileNumber = selectedAddress.phone;
+    }
+
     // Map to existing Order schema (products, user, total, status)
     const order = new Order({
       products: checkoutData.items.map(i => ({
@@ -179,6 +196,8 @@ router.post("/checkout/place-order", requireLogin, async (req, res) => {
       user: req.session.user._id,
       total: totalAmount,
       status: "Placed",
+      shippingAddress,
+      mobileNumber
     });
 
     await order.save();
@@ -217,7 +236,7 @@ router.post('/payment/razorpay/create-order', requireLogin, async (req, res) => 
  */
 router.post('/payment/razorpay/verify', requireLogin, async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, addressId } = req.body;
 
     const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
     hmac.update(razorpay_order_id + '|' + razorpay_payment_id);
@@ -232,6 +251,23 @@ router.post('/payment/razorpay/verify', requireLogin, async (req, res) => {
 
     const totalAmount = computeTotal(items);
 
+    const user = await User.findById(req.session.user._id);
+    const selectedAddress = user ? user.addresses.id(addressId) : null;
+    let shippingAddress = {};
+    let mobileNumber = "";
+    if (selectedAddress) {
+      shippingAddress = {
+        fullName: selectedAddress.fullName,
+        phone: selectedAddress.phone,
+        street: selectedAddress.street,
+        landmark: selectedAddress.landmark,
+        city: selectedAddress.city,
+        state: selectedAddress.state,
+        pincode: selectedAddress.pincode
+      };
+      mobileNumber = selectedAddress.phone;
+    }
+
     const order = new Order({
       products: items.map(i => ({
         product: i._id,
@@ -241,7 +277,9 @@ router.post('/payment/razorpay/verify', requireLogin, async (req, res) => {
       })),
       user: req.session.user._id,
       total: totalAmount,
-      status: 'Paid'
+      status: 'Paid',
+      shippingAddress,
+      mobileNumber
     });
     await order.save();
 

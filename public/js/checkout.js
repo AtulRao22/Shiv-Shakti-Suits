@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelectorAll('.address-card').forEach(card => {
         card.addEventListener('click', function(e) {
-            if (!(e.target && (e.target.classList.contains('edit-address') || e.target.classList.contains('delete-address')))) {
+            if (!(e.target && (e.target.closest('.edit-addr-btn') || e.target.closest('.delete-addr-btn')))) {
                 document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
                 this.classList.add('selected');
                 const radio = this.querySelector('input[type="radio"]');
@@ -129,7 +129,7 @@ document.getElementById('save-address-btn').addEventListener('click', async () =
 });
 
 // Edit Address (prefill)
-document.querySelectorAll('.edit-address').forEach(btn => {
+document.querySelectorAll('.edit-addr-btn').forEach(btn => {
   btn.addEventListener('click', function (e) {
     e.stopPropagation();
     const card = this.closest('.address-card');
@@ -148,7 +148,7 @@ document.querySelectorAll('.edit-address').forEach(btn => {
 });
 
 // Delete Address
-document.querySelectorAll('.delete-address').forEach(btn => {
+document.querySelectorAll('.delete-addr-btn').forEach(btn => {
   btn.addEventListener('click', async function (e) {
     e.stopPropagation();
     const addressId = this.dataset.id;
@@ -225,7 +225,10 @@ paymentForm.addEventListener('submit', async function (e) {
         const verifyRes = await fetch('/payment/razorpay/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(response)
+          body: JSON.stringify({
+            ...response,
+            addressId: addressIdInput.value
+          })
         });
         const vr = await verifyRes.json();
         if (vr.success) {
