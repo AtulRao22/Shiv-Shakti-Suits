@@ -2,58 +2,259 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 
-// Add your serviceable pincodes here or fetch from DB
-const serviceablePincodes = ["110001", "400001", "560001", "700001", "302017","333033","333026"];
+const serviceablePincodes = [
+  "110001",
+  "400001",
+  "560001",
+  "700001",
+  "302017",
+  "333033",
+  "333026",
+  "302001",
+  "302003",
+  "302004",
+  "302006",
+  "302012",
+  "302013",
+  "302015",
+  "302017",
+  "302018",
+  "302019",
+  "302020",
+  "302021",
+  "302028",
+  "302029",
+  "302039",
+  // DELHI
+  "110001",
+  "110002",
+  "110003",
+  "110005",
+  "110006",
+  "110007",
+  "110008",
+  "110009",
+  "110015",
+  "110016",
+  "110017",
+  "110018",
+  "110019",
+  "110020",
+  "110024",
+  "110025",
+  "110027",
+  "110034",
+  "110035",
+  "110041",
+  "110045",
+  "110058",
+  "110059",
+  "110075",
+  "110085",
+  "110092",
+  "110096",
+
+  // GURUGRAM
+  "122001",
+  "122002",
+  "122003",
+  "122004",
+  "122006",
+  "122007",
+  "122008",
+  "122009",
+  "122010",
+  "122011",
+  "122015",
+  "122016",
+  "122017",
+  "122018",
+  "122051",
+  "122052",
+  "122101",
+  "122102",
+  "122105",
+
+  // NOIDA / GREATER NOIDA
+  "201301",
+  "201303",
+  "201304",
+  "201305",
+  "201306",
+  "201307",
+  "201308",
+  "201309",
+  "201310",
+  "201312",
+  // BENGALURU
+  "560001",
+  "560002",
+  "560003",
+  "560004",
+  "560005",
+  "560006",
+  "560008",
+  "560009",
+  "560010",
+  "560011",
+  "560012",
+  "560013",
+  "560016",
+  "560017",
+  "560018",
+  "560019",
+  "560020",
+  "560021",
+  "560022",
+  "560023",
+  "560024",
+  "560025",
+  "560026",
+  "560027",
+  "560028",
+  "560029",
+  "560030",
+  "560031",
+  "560032",
+  "560034",
+  "560035",
+  "560037",
+  "560038",
+  "560039",
+  "560040",
+  "560041",
+  "560042",
+  "560043",
+  "560044",
+  "560045",
+  "560046",
+  "560047",
+  "560048",
+  "560049",
+  "560050",
+  "560051",
+  "560052",
+  "560053",
+  "560054",
+  "560055",
+  "560056",
+  "560057",
+  "560058",
+  "560059",
+  "560060",
+  "560061",
+  "560062",
+  "560063",
+  "560064",
+  "560065",
+  "560066",
+  "560067",
+  "560068",
+  "560069",
+  "560070",
+  "560071",
+  "560072",
+  "560073",
+  "560074",
+  "560075",
+  "560076",
+  "560078",
+  "560079",
+  "560080",
+  "560081",
+  "560082",
+  "560083",
+  "560084",
+  "560085",
+  "560086",
+  "560087",
+  "560088",
+  "560089",
+  "560090",
+  "560091",
+  "560092",
+  "560093",
+  "560094",
+  "560095",
+  "560096",
+  "560097",
+  "560098",
+  "560099",
+  "560100",
+  "560102",
+  "560103",
+  "560104",
+  "560105",
+  "560106",
+  "560108",
+  "560109",
+  "560110",
+  "560111",
+  "560112",
+  "560113",
+  "560114",
+  "560115",
+  "560116",
+  "560117",
+  "560118",
+  "560119",
+  "560120",
+  "560121",
+  "560122",
+  "560123",
+  "560124",
+  "560125"
+];
 
 router.post("/check", async (req, res) => {
   const { pincode } = req.body;
 
   if (!pincode || pincode.length !== 6) {
-    return res.json({ success: false, message: "Please enter a valid 6-digit pincode." });
+    return res.json({
+      success: false,
+      message: "Please enter valid pincode."
+    });
   }
 
   try {
+    const apiRes = await axios.get(
+      `https://api.zippopotam.us/in/${pincode}`
+    );
 
-    // Fetch pincode details
-    const apiRes = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`);
-    const data = apiRes.data[0];
+    const place = apiRes.data.places?.[0];
 
-    if (!data || data.Status !== "Success" || !data.PostOffice?.length) {
-      return res.json({ success: false, message: "Invalid pincode." });
-    }
-
-    // const postOffice = data.PostOffice[0];
-    // const { Name: Area, District, State } = postOffice;
-
-     let mainOffice = data.PostOffice.find(po => po.DeliveryStatus === "Head Post Office");
-
-     if (!mainOffice) {
-      mainOffice = data.PostOffice.find(po => po.DeliveryStatus === "Sub Post Office") || data.PostOffice[0];
-    }
-
-    const { Name: Area, District, State } = mainOffice;
-    const isAvailable = serviceablePincodes.includes(pincode);
-
-    if (isAvailable) {
-      return res.json({
-        success: true,
-        message: `✅ Delivery available in ${Area}, ${District}, ${State}.`,
-        area: Area,
-        district: District,
-        state: State,
-      });
-    } else {
+    if (!place) {
       return res.json({
         success: false,
-        message: `❌ Sorry, delivery not available in ${Area}  ${District}, ${State}.`,
-        area: Area,
-        district: District,
-        state: State,
+        message: "Invalid pincode."
       });
     }
+
+    const Area = place["place name"];
+    const State = place["state"];
+    const District = place["state abbreviation"] || State;
+
+    const isAvailable =
+      serviceablePincodes.includes(pincode);
+
+    return res.json({
+      success: isAvailable,
+      message: isAvailable
+        ? `✅ Delivery available in ${Area}, ${State}`
+        : `❌ Delivery not available in ${Area}, ${State}`,
+      area: Area,
+      district: District,
+      state: State
+    });
+
   } catch (err) {
-    console.error("Pincode check error:", err.message);
-    return res.json({ success: false, message: "⚠️ Server error. Please try again later." });
+    console.log(err.message);
+
+    return res.json({
+      success: false,
+      message: "Invalid pincode."
+    });
   }
 });
+
 module.exports = router;

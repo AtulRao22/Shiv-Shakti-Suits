@@ -14,12 +14,14 @@ router.get('/dashboard', async (req, res) => {
     const productCount = await Product.countDocuments();
     const orderCount = await Order.countDocuments();
     const userCount = await User.countDocuments();
+    const websiteTraffic = req.app.locals.visitors || 0;
 
     res.render('admin/dashboard', {
       user: req.session.user, // pass user info to EJS
       productCount,
       orderCount,
-      userCount
+      userCount,
+      websiteTraffic
     });
   } catch (err) {
     console.error(err);

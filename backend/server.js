@@ -8,6 +8,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const axios = require("axios");
+const trackTraffic = require("./middleware/traffic");
 
 const connectDB = require("./config/db");
 
@@ -65,6 +66,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Use traffic middleware on main routes
+app.use("/", trackTraffic);
+
 // Routes
 app.use("/", homeRoutes);
 app.use("/api/users", userRoutes);
@@ -78,6 +82,7 @@ app.use("/", checkoutRoutes);
 app.use("/admin", adminRoutes);
 app.use("/api/pincode", pincodeRoutes);
 app.use("/reviews", reviewRoutes);
+
 
 
 // Start server
