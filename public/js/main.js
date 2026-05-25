@@ -38,6 +38,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+    // Synchronize frontend localStorage session with backend session state
+    if (window.hasOwnProperty("isServerLoggedIn") && !window.isServerLoggedIn) {
+        if (localStorage.getItem("authToken")) {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("user");
+        }
+    }
+
+    // Check if URL has login=true query parameter (e.g. backend session expired redirect)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("login") === "true") {
+        // Clear local storage as we are no longer authenticated
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("user");
+        // Show login modal
+        window.showLoginModal();
+    }
+
     // Open mobile menu
     if (menuButton) {
         menuButton.addEventListener('click', function () {
