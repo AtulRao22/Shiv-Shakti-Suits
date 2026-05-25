@@ -34,11 +34,24 @@ router.get("/", async (req, res) => {
 router.get("/category/:name", async (req, res) => {
   try {
     const categoryName = req.params.name;
+    let products;
 
-    // Fetch products (all or by category)
-    const products = await Product.find(
-      categoryName === "all" ? {} : { category: categoryName }
-    );
+    const lowerName = categoryName.toLowerCase();
+    if (lowerName === "newarrival" || lowerName === "newarrivals") {
+      const twentyDaysAgo = new Date();
+      twentyDaysAgo.setDate(twentyDaysAgo.getDate() - 20);
+      products = await Product.find({
+        createdAt: { $gte: twentyDaysAgo }
+      }).sort({ createdAt: -1 });
+    } else if (lowerName === "bestseller" || lowerName === "bestsellers") {
+      products = await Product.find().sort({ totalOrders: -1 });
+    } else {
+      products = await Product.find(
+        lowerName === "all"
+          ? {}
+          : { category: { $regex: new RegExp("^" + categoryName + "$", "i") } }
+      );
+    }
 
     // Count products
     const productCount = products.length;
@@ -54,6 +67,7 @@ router.get("/category/:name", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
 
 
 // Profile page
