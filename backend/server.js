@@ -48,7 +48,7 @@ app.use(session({
     mongoUrl: process.env.MONGO_URL || "mongodb://localhost:27017/yourDB",
     collectionName: "sessions"
   }),
-  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
+  cookie: { maxAge: 1000 * 60 * 60 * 24 * 10 } // 10 days
 }));
 
 // View engine
