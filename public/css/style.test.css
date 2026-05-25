@@ -774,7 +774,6 @@ body {
   }
 
   .category-tabs {
-    /* padding: 10px 10px; */
     gap: 8px;
   }
 
@@ -1368,19 +1367,10 @@ body {
     margin-top: 5px;
   }
 
-  /* .product-item {
-    width: 46% !important;
-    max-width: 46% !important;
-    padding-left: 40px;
-    padding-right: 0;
-    padding-right: 5px;
-    box-sizing: border-box;
-  } */
-
 
   /* Reduce product card padding/margin */
   .product-card {
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
     margin-left: 10px;
   }
 
