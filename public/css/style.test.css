@@ -850,13 +850,15 @@ body {
   height: 100%;
   /* height: auto; */
   opacity: 0;
-  transition: opacity 0.7s ease-in-out;
+  transform: translateX(40px) scale(1.05);
+  transition: all .9s ease;
   cursor: pointer;
   pointer-events: none;
 }
 
 .carousel-slide.active {
   opacity: 1;
+  transform: translateX(0) scale(1);
   pointer-events: auto;
 }
 
@@ -870,6 +872,7 @@ body {
   height: 100%;
   /* height: auto; */
   object-fit: cover;
+  object-position: center 25%;
 }
 
 .slide-overlay {
