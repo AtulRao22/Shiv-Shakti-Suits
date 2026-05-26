@@ -552,9 +552,7 @@ function updateProfileMenu(user) {
 
     let menuHtml = `
         <ul>
-            <li><a href="/orders">My Orders</a></li>
-            <li><a href="/profile">Account Details</a></li>
-            <li><a href="/shipping">Shipping Address</a></li>
+            <li><a href="/profile">My Profile</a></li>
     `;
 
     if (user.isAdmin) {

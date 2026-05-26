@@ -115,33 +115,44 @@
     <!-- Photo Carousel Section -->
     <div class="photo-carousel-container">
       <div class="photo-carousel">
-        <div class="carousel-slide active" onclick="window.location.href='/category/bestseller'">
-          <img src="/assets/NewArrival.webp" alt="Fashion Collection 1">
-          <div class="slide-overlay">
-            <h3>Latest Fashion Collection</h3>
-            <p>Discover our exclusive designer wear</p>
-          </div>
+        <div class="carousel-slide active">
+          <a href="/category/designer" class="d-block h-100">
+            <img src="/assets/NewArrival.webp" alt="Fashion Collection 1">
+
+            <div class="slide-overlay">
+              <h3>Latest Fashion Collection</h3>
+              <p>Discover our exclusive designer wear</p>
+            </div>
+          </a>
         </div>
-        <div class="carousel-slide" onclick="window.location.href='/category/newarrival'">
-          <img src="/assets/Modren.webp" alt="Fashion Collection 2">
-          <div class="slide-overlay">
-            <h2>New Arrivals</h2>
-            <p>Fresh styles for the modern woman</p>
-          </div>
+        <div class="carousel-slide">
+          <a href="/category/newarrival" class="d-block h-100">
+            <img src="/assets/Modren.webp" alt="Fashion Collection 2">
+
+            <div class="slide-overlay">
+              <h2>New Arrivals</h2>
+              <p>Fresh styles for the modern woman</p>
+            </div>
+          </a>
         </div>
-        <div class="carousel-slide" onclick="window.location.href='/category/festival'">
-          <img src="/assets/Bestseller.webp" alt="Fashion Collection 3">
-          <div class="slide-overlay">
-            <h2>Festival Collection</h2>
-            <p>Perfect for every celebration</p>
-          </div>
+        <div class="carousel-slide">
+          <a href="/category/festival" class="d-block h-100">
+            <img src="/assets/Bestseller.webp" alt="Fashion Collection 3">
+            <div class="slide-overlay">
+              <h2>Festival Collection</h2>
+              <p>Perfect for every celebration</p>
+            </div>
+          </a>
         </div>
-        <div class="carousel-slide" onclick="window.location.href='/category/wedding'">
-          <img src="/assets/Formal.webp" alt="Fashion Collection 4">
-          <div class="slide-overlay">
-            <h2>Wedding Collection</h2>
-            <p>Embrace your special day</p>
-          </div>
+        <div class="carousel-slide">
+          <a href="/category/wedding" class="d-block h-100">
+            <img src="/assets/Formal.webp" alt="Fashion Collection 4">
+
+            <div class="slide-overlay">
+              <h2>Wedding Collection</h2>
+              <p>Embrace your special day</p>
+            </div>
+          </a>
         </div>
         <button class="carousel-btn prev-btn" onclick="changeSlide(-1)"><i
             class="fa-solid fa-chevron-left"></i></button>
@@ -227,7 +238,7 @@
             <% }) %>
         </div>
 
-        <% if(groupedProducts[tag].length> 4) { %>
+        <% if(groupedProducts[tag].length> 6) { %>
           <div class="text-center">
             <a class="view-more-btn" data-tag="<%= tag.replace(/[^a-z]+/gi,'-') %>">View More</a>
           </div>
