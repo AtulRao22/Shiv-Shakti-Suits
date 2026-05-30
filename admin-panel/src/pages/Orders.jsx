@@ -5,18 +5,18 @@ import { getOrders, updateOrderStatus } from '../api'
 const STATUS_OPTIONS = ['Placed', 'Paid', 'Processing', 'Shipped', 'Delivered', 'Cancelled']
 
 const STATUS_BADGE = {
-  Placed:     'badge-placed',
-  Paid:       'badge-paid',
+  Placed: 'badge-placed',
+  Paid: 'badge-paid',
   Processing: 'badge-processing',
-  Shipped:    'badge-shipped',
-  Delivered:  'badge-delivered',
-  Cancelled:  'badge-cancelled',
+  Shipped: 'badge-shipped',
+  Delivered: 'badge-delivered',
+  Cancelled: 'badge-cancelled',
 }
 
 /* ── Single order row — has its own status state ─────────────────── */
 function OrderRow({ order, onStatusSaved }) {
-  const [status, setStatus]   = useState(order.status)
-  const [saving, setSaving]   = useState(false)
+  const [status, setStatus] = useState(order.status)
+  const [saving, setSaving] = useState(false)
 
   const handleSave = async () => {
     if (status === order.status) {
@@ -124,10 +124,10 @@ function OrderRow({ order, onStatusSaved }) {
 
 /* ── Orders Page ──────────────────────────────────────────────────── */
 export default function Orders() {
-  const [orders, setOrders]   = useState([])
+  const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter]   = useState('All')
-  const [search, setSearch]   = useState('')
+  const [filter, setFilter] = useState('All')
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     getOrders()

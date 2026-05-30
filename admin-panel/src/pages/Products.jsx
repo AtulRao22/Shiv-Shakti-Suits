@@ -32,18 +32,18 @@ function ConfirmDialog({ onConfirm, onCancel }) {
 /* ── Edit Product Modal ─────────────────────────────────────────── */
 function EditModal({ product, onClose, onSaved }) {
   const [form, setForm] = useState({
-    name:        product.name        || '',
-    mrp:         product.mrp         || '',
-    salePrice:   product.salePrice   || '',
-    category:    product.category    || '',
+    name: product.name || '',
+    mrp: product.mrp || '',
+    salePrice: product.salePrice || '',
+    category: product.category || '',
     description: product.description || '',
     tags: Array.isArray(product.tags)
       ? product.tags.join(', ')
       : (product.tags || ''),
   })
-  const [newImages, setNewImages]   = useState([])
-  const [previews, setPreviews]     = useState(product.imageUrls || [])
-  const [saving, setSaving]         = useState(false)
+  const [newImages, setNewImages] = useState([])
+  const [previews, setPreviews] = useState(product.imageUrls || [])
+  const [saving, setSaving] = useState(false)
 
   const handleChange = (e) =>
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
@@ -59,12 +59,12 @@ function EditModal({ product, onClose, onSaved }) {
     setSaving(true)
     try {
       const fd = new FormData()
-      fd.append('name',        form.name)
-      fd.append('mrp',         form.mrp)
-      fd.append('salePrice',   form.salePrice)
-      fd.append('category',    form.category)
+      fd.append('name', form.name)
+      fd.append('mrp', form.mrp)
+      fd.append('salePrice', form.salePrice)
+      fd.append('category', form.category)
       fd.append('description', form.description)
-      fd.append('tags',        form.tags)
+      fd.append('tags', form.tags)
       newImages.forEach((img) => fd.append('images', img))
 
       const data = await updateProduct(product._id, fd)
@@ -169,11 +169,11 @@ const getTotalStock = (p) =>
 
 /* ── Products Page ───────────────────────────────────────────────── */
 export default function Products() {
-  const [products, setProducts]     = useState([])
-  const [loading, setLoading]       = useState(true)
-  const [search, setSearch]         = useState('')
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
   const [editProduct, setEditProduct] = useState(null)
-  const [deleteId, setDeleteId]     = useState(null)
+  const [deleteId, setDeleteId] = useState(null)
 
   useEffect(() => {
     getProducts()
@@ -212,7 +212,7 @@ export default function Products() {
 
   return (
     <>
-      {deleteId  && <ConfirmDialog onConfirm={handleDelete} onCancel={() => setDeleteId(null)} />}
+      {deleteId && <ConfirmDialog onConfirm={handleDelete} onCancel={() => setDeleteId(null)} />}
       {editProduct && <EditModal product={editProduct} onClose={() => setEditProduct(null)} onSaved={handleSaved} />}
 
       <div className="page-header-row">
@@ -269,7 +269,7 @@ export default function Products() {
               <tbody>
                 {filtered.map((p, i) => {
                   const stock = getTotalStock(p)
-                  const tags  = Array.isArray(p.tags)
+                  const tags = Array.isArray(p.tags)
                     ? p.tags
                     : (p.tags || '').split(',').map((t) => t.trim()).filter(Boolean)
 
@@ -312,7 +312,7 @@ export default function Products() {
                       <td>
                         <span className={
                           stock === 0 ? 'stock-out' :
-                          stock < 2   ? 'stock-low' : 'stock-ok'
+                            stock < 2 ? 'stock-low' : 'stock-ok'
                         }>
                           {stock}
                         </span>
