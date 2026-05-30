@@ -244,15 +244,6 @@ BREVO_API_KEY=your_brevo_api_key
 ## 📈 Challenges & Performance Tuning
 
 - **Advanced Response Parallelization:** Reconstructed administrative JSON endpoints using `Promise.all` to fetch statistics, count items, and pull transaction streams concurrently—saving up to 60% of database transaction wait times.
-- **Stateful Cache Optimization:** Designed a custom caching hook to allow the single-page admin panel to feel lightning-fast during navigation by immediately displaying stale-state cache files before performing updates.
-- **Express-Level Caching Rules:** Configured custom header overrides for Express static handlers. Dynamic hashed Vite bundles (`.js`, `.css`) are cached permanently in the client's browser (1 year), while `index.html` is fetched on demand to ensure immediate code updates.
-
----
-
-## 📜 License
-
-Distributed under the ISC License. See `LICENSE` for more information.
-
 ---
 
 ## 🙋‍♂️ Author
