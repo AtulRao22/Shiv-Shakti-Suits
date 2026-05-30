@@ -55,8 +55,10 @@ app.use(session({
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Static files
+// Static files (main website)
 app.use(express.static(path.join(__dirname, "../public")));
+// Static files for React admin panel build
+app.use('/admin-panel', express.static(path.join(__dirname, '../public/admin-panel/dist')));
 
 
 

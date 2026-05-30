@@ -42,6 +42,9 @@ const isAdmin = (req, res, next) => {
   if (req.session.user && req.session.user.isAdmin) {
     next(); // allow access
   } else {
+    // Return JSON for API/fetch requests, redirect for browser page loads
+    const acceptsHTML = req.headers.accept && req.headers.accept.includes('text/html');
+    if (acceptsHTML) return res.redirect('/?login=true');
     res.status(403).json({ message: "Not authorized as admin" });
   }
 };

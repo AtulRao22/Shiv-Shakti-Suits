@@ -1,52 +1,65 @@
 const express = require('express');
-const router = express.Router();
+const router  = express.Router();
+const path    = require('path');
 const Product = require('../models/Product');
-const Order = require('../models/Order');
-const User = require('../models/User');
-const { isAdmin } = require("../middleware/authMiddleware");
+const Order   = require('../models/Order');
+const User    = require('../models/User');
+const { isAdmin } = require('../middleware/authMiddleware');
 
-// Apply admin check to all routes
+// Guard every /admin/* route
 router.use(isAdmin);
 
-// Dashboard
-router.get('/dashboard', async (req, res) => {
+// ═══════════════════════════════════════════════════════════════════════════
+// JSON API endpoints  (consumed by the React admin SPA)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * GET /admin/api/stats
+ * Returns dashboard statistics as JSON.
+ */
+router.get('/api/stats', async (req, res) => {
   try {
-    const productCount = await Product.countDocuments();
-    const orderCount = await Order.countDocuments();
-    const userCount = await User.countDocuments();
+    const [productCount, orderCount, userCount] = await Promise.all([
+      Product.countDocuments(),
+      Order.countDocuments(),
+      User.countDocuments(),
+    ]);
+
     const websiteTraffic = req.app.locals.visitors || 0;
 
-    res.render('admin/dashboard', {
-      user: req.session.user, // pass user info to EJS
-      productCount,
-      orderCount,
-      userCount,
-      websiteTraffic
+    // Compute total revenue from Paid + Delivered orders
+    const revenueResult = await Order.aggregate([
+      { $match: { status: { $in: ['Paid', 'Delivered'] } } },
+      { $group: { _id: null, total: { $sum: '$total' } } },
+    ]);
+    const totalRevenue = revenueResult[0]?.total || 0;
+
+    // Last 5 orders for the recent-orders table on the dashboard
+    const recentOrders = await Order.find()
+      .populate('user', 'name email')
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .lean();
+
+    res.json({
+      totalRevenue,
+      totalUsers:    userCount,
+      totalOrders:   orderCount,
+      totalProducts: productCount,
+      websiteTraffic,
+      recentOrders,
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
+    console.error('[admin/api/stats]', err);
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Products page
-router.get('/products', async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.render('admin/products', { products, user: req.session.user });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
-  }
-});
-
-// Show Add Product form
-router.get("/add-product", (req, res) => {
-  res.render("admin/addProduct", { user: req.session.user });
-});
-
-// Orders page
-router.get('/orders', async (req, res) => {
+/**
+ * GET /admin/api/orders
+ * Returns full orders list as JSON.
+ */
+router.get('/api/orders', async (req, res) => {
   try {
     const orders = await Order.find()
       .populate('user')
@@ -54,34 +67,55 @@ router.get('/orders', async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
-    res.render('admin/orders', { orders, user: req.session.user });
+    res.json(orders);
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
+    console.error('[admin/api/orders]', err);
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Update order status (admin only, session-based)
+// ═══════════════════════════════════════════════════════════════════════════
+// Shared POST routes  (used by both EJS and React)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * POST /admin/orders/:id/status
+ * Updates an order's status. Returns JSON (used by React).
+ */
 router.post('/orders/:id/status', async (req, res) => {
   try {
-    const { status } = req.body; // e.g. 'Placed', 'Paid', 'Shipped', 'Delivered', 'Cancelled'
+    const { status } = req.body;
     const allowed = ['Placed', 'Paid', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+
     if (!allowed.includes(status)) {
       return res.status(400).json({ success: false, message: 'Invalid status' });
     }
+
     const order = await Order.findByIdAndUpdate(
       req.params.id,
       { status },
       { new: true }
     );
-    if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
     return res.json({ success: true, order });
   } catch (err) {
-    console.error(err);
+    console.error('[admin/orders/:id/status]', err);
     res.status(500).json({ success: false, message: 'Failed to update order status' });
   }
 });
 
-
+// ═══════════════════════════════════════════════════════════════════════════
+// Catch-all GET — serves the React admin SPA for all /admin/* page routes
+// IMPORTANT: This must always be the LAST route in this file.
+// ═══════════════════════════════════════════════════════════════════════════
+router.get('*', (req, res) => {
+  res.sendFile(
+    path.resolve(__dirname, '../../public/admin-panel/dist/index.html')
+  );
+});
 
 module.exports = router;
