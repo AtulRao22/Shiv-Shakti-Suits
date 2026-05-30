@@ -19,27 +19,30 @@ router.use(isAdmin);
  */
 router.get('/api/stats', async (req, res) => {
   try {
-    const [productCount, orderCount, userCount] = await Promise.all([
+    const websiteTraffic = req.app.locals.visitors || 0;
+
+    const [
+      productCount,
+      orderCount,
+      userCount,
+      revenueResult,
+      recentOrders
+    ] = await Promise.all([
       Product.countDocuments(),
       Order.countDocuments(),
       User.countDocuments(),
+      Order.aggregate([
+        { $match: { status: { $in: ['Paid', 'Delivered'] } } },
+        { $group: { _id: null, total: { $sum: '$total' } } },
+      ]),
+      Order.find()
+        .populate('user', 'name email')
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .lean(),
     ]);
 
-    const websiteTraffic = req.app.locals.visitors || 0;
-
-    // Compute total revenue from Paid + Delivered orders
-    const revenueResult = await Order.aggregate([
-      { $match: { status: { $in: ['Paid', 'Delivered'] } } },
-      { $group: { _id: null, total: { $sum: '$total' } } },
-    ]);
     const totalRevenue = revenueResult[0]?.total || 0;
-
-    // Last 5 orders for the recent-orders table on the dashboard
-    const recentOrders = await Order.find()
-      .populate('user', 'name email')
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .lean();
 
     res.json({
       totalRevenue,

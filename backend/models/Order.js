@@ -27,4 +27,8 @@ const orderSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+// Add indexes for optimized queries
+orderSchema.index({ status: 1 });
+orderSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('Order', orderSchema);
