@@ -35,19 +35,6 @@ The application utilizes a **high-performance hybrid architecture**:
 
 ---
 
-## 🏛️ Hybrid Architecture & Tech Stack
-
-This platform leverages the strengths of both Server-Side Rendering (SSR) and Client-Side SPAs to deliver the absolute best UX:
-
-```mermaid
-graph TD
-    A[Client Browser] -->|Browse Storefront / SEO| B(EJS Server-Side Rendered Pages)
-    A -->|Manage Admin Dashboard| C(Decoupled React.js Single Page App)
-    B -->|Node.js/Express Server| D[(MongoDB Database)]
-    C -->|REST API Requests| D
-    B -->|Payment Authentication| E[Razorpay Payment Gateway]
-```
-
 ### 💻 Technology Breakdown
 
 | Component | Technology | Description |
@@ -58,7 +45,7 @@ graph TD
 | **Database** | MongoDB & Mongoose ODM | Documents database handling products, user sessions, and orders. |
 | **Session & Auth** | `express-session`, `connect-mongo`, `bcryptjs` | MongoDB-backed persistent user sessions & password encryption. |
 | **Payments** | Razorpay Node SDK | Complete checkout and payment signature verification flow. |
-| **Services** | `nodemailer`, Brevo, Mailersend, Cloudinary | Automated e-mail systems & cloud image hosting for product photos. |
+| **Services** |  Mailersend, Cloudinary | Automated e-mail systems & cloud image hosting for product photos. |
 
 ---
 
